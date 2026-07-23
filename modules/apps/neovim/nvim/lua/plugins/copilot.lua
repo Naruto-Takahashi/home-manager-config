@@ -5,9 +5,18 @@ return {
     cmd = "Copilot",
     event = "VeryLazy", -- LSP を nvim 起動直後に初期化し，InsertEnter 前に接続完了させる
     config = function()
+      -- Node.js が無い環境 (例: sudo権限が無くNixで同梱できないホスト) では
+      -- copilot.lua がエージェントプロセスを起動できずエラーになるため，
+      -- その場合は静かに無効化する。
+      local node = vim.fn.exepath("node")
+      if node == "" then
+        vim.notify("copilot.lua: node が見つからないため無効化しました", vim.log.levels.WARN)
+        return
+      end
+
       local mc = require("matugen")
       require("copilot").setup({
-        copilot_node_command = vim.fn.exepath("node"),
+        copilot_node_command = node,
         suggestion = {
           enabled = true,
           auto_trigger = true,

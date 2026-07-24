@@ -209,7 +209,9 @@ function agy-ss() {
     local latest_file=$(ls -t "$ss_dir"/Screenshot*.png 2>/dev/null | head -n 1)
     if [ -n "$latest_file" ]; then
         cp "$latest_file" "$ss_dir/latest.png"
-        if command -v wl-copy >/dev/null 2>&1; then
+        if command -v pbcopy >/dev/null 2>&1; then
+            echo -n "$latest_file" | pbcopy
+        elif command -v wl-copy >/dev/null 2>&1; then
             echo -n "$latest_file" | wl-copy
         elif command -v xclip >/dev/null 2>&1; then
             echo -n "$latest_file" | xclip -selection clipboard

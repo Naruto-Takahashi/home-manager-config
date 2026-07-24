@@ -18,6 +18,15 @@
 # 各セクション (komorebi/cava 等) と揃えること。
 set -euo pipefail
 
+# `sed -i` はGNU/BSDで引数の取り方が違う (BSDは-iの直後をバックアップ拡張子
+# として消費するため、`sed -i -E` と書くと`-E`が拡張子として食われてしまい
+# 通常のBRE解釈に落ちる)。一時ファイル経由の置換に統一して両OSで揃える。
+sedi() {
+  local file="${*: -1}"
+  local tmp; tmp="$(mktemp)"
+  sed "${@:1:$(($#-1))}" "$file" > "$tmp" && mv "$tmp" "$file"
+}
+
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 CACHE="$HOME/.cache/matugen/colors.lua"
 YASB_CACHE="$HOME/.cache/matugen/yasb-palette.css"
@@ -57,7 +66,7 @@ sub_kv() {
   for pair in "$@"; do
     key="${pair%%=*}"
     var="${pair#*=}"
-    sed -i -E "s/^(\s*${key}\s*=\s*)\"#[0-9a-fA-F]{6}\"/\1\"${!var}\"/" "$file"
+    sedi -E "s/^(\s*${key}\s*=\s*)\"#[0-9a-fA-F]{6}\"/\1\"${!var}\"/" "$file"
   done
 }
 
@@ -97,7 +106,7 @@ bake_yazi_template() {
 
 bake_starship() {
   local f="$REPO_ROOT/modules/shell/starship/starship.toml"
-  sed -i -E \
+  sedi -E \
     -e "s/^(accent = )\"#[0-9a-fA-F]{6}\"/\1\"${accent}\"/" \
     -e "s/^(accent_pale = )\"#[0-9a-fA-F]{6}\"/\1\"${accent_pale}\"/" \
     -e "s/^(tertiary = )\"#[0-9a-fA-F]{6}\"/\1\"${tertiary}\"/" \
@@ -111,7 +120,7 @@ bake_starship() {
 
 bake_atuin() {
   local f="$REPO_ROOT/modules/theming/matugen/fallbacks/atuin-theme.toml"
-  sed -i -E \
+  sedi -E \
     -e "s/^(Base = )\"#[0-9a-fA-F]{6}\"/\1\"${text}\"/" \
     -e "s/^(Title = )\"#[0-9a-fA-F]{6}\"/\1\"${accent}\"/" \
     -e "s/^(Important = )\"#[0-9a-fA-F]{6}\"/\1\"${accent}\"/" \
@@ -126,7 +135,7 @@ bake_atuin() {
 
 bake_btop() {
   local f="$REPO_ROOT/modules/theming/matugen/fallbacks/btop.theme"
-  sed -i -E \
+  sedi -E \
     -e "s/(theme\[main_bg\]=)\"#[0-9a-fA-F]{6}\"/\1\"${surface}\"/" \
     -e "s/(theme\[main_fg\]=)\"#[0-9a-fA-F]{6}\"/\1\"${text}\"/" \
     -e "s/(theme\[title\]=)\"#[0-9a-fA-F]{6}\"/\1\"${text}\"/" \
@@ -156,21 +165,21 @@ bake_eza() {
   # 最初の色コードから検出し、そのロールの新しい値へ一括置換する
   local cur
   cur="$(grep -m1 'directory:' "$f" | grep -oE '#[0-9a-fA-F]{6}')"
-  [[ -n "$cur" ]] && sed -i "s/${cur}/${secondary}/g" "$f"
+  [[ -n "$cur" ]] && sedi "s/${cur}/${secondary}/g" "$f"
   cur="$(grep -A1 -m1 'ドキュメント・テキスト・インフラ系' "$f" | grep -oE '#[0-9a-fA-F]{6}' | head -1)"
-  [[ -n "$cur" ]] && sed -i "s/${cur}/${tertiary}/g" "$f"
+  [[ -n "$cur" ]] && sedi "s/${cur}/${tertiary}/g" "$f"
   cur="$(grep -A1 -m1 'スクリプト・メディア系' "$f" | grep -oE '#[0-9a-fA-F]{6}' | head -1)"
-  [[ -n "$cur" ]] && sed -i "s/${cur}/${complement}/g" "$f"
+  [[ -n "$cur" ]] && sedi "s/${cur}/${complement}/g" "$f"
   cur="$(grep -A1 -m1 'Web・データ系' "$f" | grep -oE '#[0-9a-fA-F]{6}' | head -1)"
-  [[ -n "$cur" ]] && sed -i "s/${cur}/${triad}/g" "$f"
+  [[ -n "$cur" ]] && sedi "s/${cur}/${triad}/g" "$f"
   cur="$(grep -A1 -m1 'コンパイル言語・アーカイブ' "$f" | grep -oE '#[0-9a-fA-F]{6}' | head -1)"
-  [[ -n "$cur" ]] && sed -i "s/${cur}/${error}/g" "$f"
+  [[ -n "$cur" ]] && sedi "s/${cur}/${error}/g" "$f"
   echo "✓ apps/eza/theme.yml"
 }
 
 bake_lazygit() {
   local f="$REPO_ROOT/modules/apps/lazygit/default.nix"
-  sed -i -E \
+  sedi -E \
     -e "s/(activeBorderColor = \[ )\"#[0-9a-fA-F]{6}\"/\1\"${accent}\"/" \
     -e "s/(inactiveBorderColor = \[ )\"#[0-9a-fA-F]{6}\"/\1\"${muted}\"/" \
     -e "s/(searchingActiveBorderColor = \[ )\"#[0-9a-fA-F]{6}\"/\1\"${tertiary}\"/" \
@@ -186,7 +195,7 @@ bake_lazygit() {
 
 bake_cz() {
   local f="$REPO_ROOT/modules/apps/git-hooks/cz.toml"
-  sed -i -E \
+  sedi -E \
     -e "s/(\[\"(qmark|answer|pointer|highlighted)\", \"fg:)#[0-9a-fA-F]{6}( bold\"\])/\1${accent}\3/" \
     -e "s/(\[\"selected\", \"fg:)#[0-9a-fA-F]{6}(\"\])/\1${tertiary}\2/" \
     -e "s/(\[\"separator\", \"fg:)#[0-9a-fA-F]{6}(\"\])/\1${secondary}\2/" \
@@ -198,7 +207,7 @@ bake_cz() {
 bake_komorebi() {
   local f="$REPO_ROOT/modules/wm/komorebi/komorebi.json"
   local outline="${muted}" # matugen-apply.sh実行時のoutline(subtext0)相当。近似値としてmutedを使う
-  sed -i -E \
+  sedi -E \
     -e "s/(\"single\": *)\"#[0-9a-fA-F]{6}\"/\1\"${accent}\"/" \
     -e "s/(\"floating\": *)\"#[0-9a-fA-F]{6}\"/\1\"${accent}\"/" \
     -e "s/(\"monocle\": *)\"#[0-9a-fA-F]{6}\"/\1\"${tertiary}\"/" \
@@ -209,7 +218,7 @@ bake_komorebi() {
 
 bake_yasb_cava() {
   local f="$REPO_ROOT/modules/wm/yasb/config.yaml"
-  sed -i -E \
+  sedi -E \
     -e "s/(foreground: \")#[0-9a-fA-F]{6}/\1${tertiary}/" \
     -e "s/(gradient_color_1: ')#[0-9a-fA-F]{6}/\1${tertiary}/" \
     -e "s/(gradient_color_2: ')#[0-9a-fA-F]{6}/\1${tertiary}/" \
@@ -231,7 +240,7 @@ bake_yasb_styles() {
   ' "$f" > "$tmp"
   mv "$tmp" "$f"
   # ルート変数ブロック外にある壁紙ギャラリーの背景(surface系)も合わせる
-  sed -i -E \
+  sedi -E \
     -e "s/(background-color: )#[0-9a-fA-F]{6};(\s*$)/\1${surface};\2/" \
     "$f"
   echo "✓ wm/yasb/styles.css"
@@ -239,7 +248,7 @@ bake_yasb_styles() {
 
 bake_functions_zsh() {
   local f="$REPO_ROOT/modules/shell/zsh/functions.zsh"
-  sed -i -E \
+  sedi -E \
     -e "s/(pointer:)#[0-9a-fA-F]{6}/\1${accent}/" \
     -e "s/(marker:)#[0-9a-fA-F]{6}/\1${accent}/" \
     -e "s/(prompt:)#[0-9a-fA-F]{6}/\1${accent}/" \
@@ -286,7 +295,7 @@ PYEOF
 
 bake_matugen_apply_safety_net() {
   local f="$REPO_ROOT/modules/theming/matugen/wsl/matugen-apply.sh"
-  sed -i -E \
+  sedi -E \
     -e "s/(accent_pale=)\"#[0-9a-fA-F]{6}\"/\1\"${accent_pale}\"/" \
     -e "s/(complement=)\"#[0-9a-fA-F]{6}\"/\1\"${complement}\"/" \
     -e "s/(triad=)\"#[0-9a-fA-F]{6}\"/\1\"${triad}\"/" \

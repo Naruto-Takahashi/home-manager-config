@@ -29,7 +29,7 @@ OSレベルのシステム定義から，シェル環境，ウィンドウマネ
 | :--- | :--- | :--- | :--- |
 | **NixOS** | 🗔 Hyprland | [hyprland.md](docs/hyprland.md) | Waylandタイル操作，Matugen動的配色，Waybar連携． |
 | **Windows / WSL2** | 🗔 komorebi + YASB | [komorebi.md](docs/komorebi.md) / [matugen-palette.md](docs/matugen-palette.md) | Windows側タイルウィンドウ操作，YASBステータスバー，Matugen動的配色連携． |
-| **macOS** | 🗔 AeroSpace | [aerospace.nix](modules/apps/aerospace/default.nix) | macOS用タイル操作，`Cmd+Ctrl`二重修飾キー，JankyBorders枠線表示． |
+| **macOS** | 🗔 AeroSpace | [aerospace.nix](modules/apps/aerospace/default.nix) / [matugen-palette.md](docs/matugen-palette.md) | macOS用タイル操作，`Cmd+Ctrl`二重修飾キー，JankyBorders枠線表示，Matugen壁紙配色連携． |
 | **NixOS / Desktop** | ⌨️ Kanata | [kanata.md](docs/kanata.md) | システム級キーマップ（SandS Vim風移動，Mac風IME切り替え）． |
 | **共通 (App)** | 💻 WezTerm | [wezterm.md](docs/wezterm.md) | 85%半透明適用，Matugen配色タブ，Leaderキー（`Ctrl+Space`）管理． |
 | **共通 (App)** | 📝 Neovim | [neovim.md](docs/neovim.md) | Lazy.nvimによる構成，高度なカスタムマクロとプラグイン群． |
@@ -151,6 +151,8 @@ WSL2環境で動作させる手順です．
 ### D. macOS (darwin) 環境の場合 (`nalt-mac`)
 
 M1 Mac などの macOS 環境でシステム設定およびアプリケーション群を統合管理する手順です．
+キーボード操作 (Kanata) と壁紙配色連携 (Matugen) は macOS の TCC (権限管理) の都合上，
+Nixの適用だけでは完結せず，何点か手動でのGUI操作が必要です．下記の順番通りに進めてください．
 
 1. **Xcode Command Line Tools のインストール**  
    インストールされていない場合は，以下を実行して導入します．
@@ -165,12 +167,26 @@ M1 Mac などの macOS 環境でシステム設定およびアプリケーショ
    ```
 
 3. **Homebrew のインストール**  
-   Nix-darwin による Cask アプリ（Karabiner-Elements など）の管理に必要となるため，事前にインストールしておきます．
+   Nix-darwin による Cask アプリ（AeroSpace, Vivaldi, Raycast, Alt-Tab など）の管理に
+   必要となるため，事前にインストールしておきます．
    ```bash
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
 
-4. **設定の構築とシステムへの適用**  
+4. **Karabiner-DriverKit-VirtualHIDDevice (v6.2.0) の手動インストール**  
+   Kanataがキー入力を仮想デバイスへ書き込むために必須の低レベルドライバです．
+   Karabiner-Elements本体は導入しません（BackgroundTaskManagementでKanataと競合するため）．
+   バージョンが合わないと `connect_failed` エラーで起動しないので，**必ずv6.2.0**を
+   [公式リリース](https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/tag/v6.2.0)
+   から取得し `.pkg` をインストールしてください．インストール後：
+   - `システム設定 → 一般 → ログイン項目と機能拡張 → ドライバの機能拡張` で
+     `Karabiner DriverKit VirtualHIDDevice` を有効化する
+   - ターミナルで以下を実行し，システム拡張の有効化を要求する
+     ```bash
+     sudo "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
+     ```
+
+5. **設定の構築とシステムへの適用**  
    リポジトリを `ghq` 規定位置に配置後，シンボリックリンクを作成してシステム構成を適用します．
    ```bash
     # シンボリックリンクの作成 (初回のみ)
@@ -185,6 +201,36 @@ M1 Mac などの macOS 環境でシステム設定およびアプリケーショ
    # 2回目以降の更新適用 (こちらが推奨・高速)
    darwin-rebuild switch --flake .#nalt-mac
    ```
+   初回適用時に，Kanataバイナリを安定パス (`/usr/local/bin/kanata`) へ再署名して
+   配置する自己署名証明書が自動生成されます（TCC権限をリビルドのたびに失い直さない
+   ための仕組み。詳細はコメント付きで `hosts/mac/darwin.nix` を参照）．
+
+6. **Kanataへの権限付与 (初回のみ)**  
+   `システム設定 → プライバシーとセキュリティ` で以下2つを許可してください．
+   `/usr/local/bin/kanata` をFinderの `Cmd+Shift+G` で直接パス入力して追加する
+   のが確実です．
+   - **入力監視 (Input Monitoring)**
+   - **アクセシビリティ (Accessibility)**
+
+   許可後にKanataが権限を拾わない場合は，一度再起動を促してください．
+   ```bash
+   sudo launchctl kickstart -k system/org.nixos.kanata
+   ```
+
+7. **配色反映 (Matugen) の初回許可 (任意)**  
+   `ctrl-cmd-w` (壁紙ピッカー) や `matugen-apply` を初めて実行すると，現在の壁紙を
+   取得するために「システムイベント」のオートメーション許可を求めるダイアログが
+   出ることがあります．許可すると以後は自動で通ります．詳細は
+   [matugen-palette.md](docs/matugen-palette.md) を参照してください．
+
+8. **AeroSpace設定の再読み込み**  
+   `xdg.configFile` で生成される `aerospace.toml` はファイルを書き換えるだけでは
+   AeroSpace自身に反映されません（`after-startup-command` は起動時にしか走らない
+   ため）．`darwin-rebuild switch` の後は毎回リロードしてください．
+   ```bash
+   aerospace reload-config
+   ```
+   （AeroSpaceを再起動すれば同じ効果があります．次回ログイン時は自動で最新設定が読まれます．）
 
 ![divider](https://capsule-render.vercel.app/api?type=rect&height=3&color=0:e6c384,50:7aa89f,100:a292a3)
 
@@ -201,7 +247,7 @@ Declarative configurations for NixOS, Ubuntu (Desktop), WSL2, and macOS managed 
 | :--- | :--- | :--- | :--- |
 | **NixOS** | 🗔 Hyprland | [hyprland.md](docs/hyprland.md) | Wayland tiling, Matugen color scheme, Waybar. |
 | **Windows / WSL2** | 🗔 komorebi + YASB | [komorebi.md](docs/komorebi.md) / [matugen-palette.md](docs/matugen-palette.md) | Windows-side tiling WM, YASB status bar, Matugen dynamic theming. |
-| **macOS** | 🗔 AeroSpace | [aerospace.nix](modules/apps/aerospace/default.nix) | macOS tiling, `Cmd+Ctrl` modifier, JankyBorders highlight. |
+| **macOS** | 🗔 AeroSpace | [aerospace.nix](modules/apps/aerospace/default.nix) / [matugen-palette.md](docs/matugen-palette.md) | macOS tiling, `Cmd+Ctrl` modifier, JankyBorders highlight, Matugen wallpaper theming. |
 | **NixOS / Desktop** | ⌨️ Kanata | [kanata.md](docs/kanata.md) | System-level remap (SandS navigation, macOS-like IME). |
 | **Common (App)** | 💻 WezTerm | [wezterm.md](docs/wezterm.md) | 75% transparent window, dynamic tab parsing, Leader key. |
 | **Common (App)** | 📝 Neovim | [neovim.md](docs/neovim.md) | Custom config built with Lazy.nvim, optimized Vim macros. |
@@ -239,17 +285,38 @@ cd nix-config
 3. Synchronize configurations into Windows side directories: `sync-win && exec zsh`
 
 ### macOS Setup (`nalt-mac`)
+Keyboard remapping (Kanata) and wallpaper-based theming (Matugen) need a few manual
+GUI steps due to macOS's TCC permission model — Nix alone can't finish the setup.
 1. Install Xcode Command Line Tools: `xcode-select --install`
 2. Install Nix and enable Flakes.
 3. Install Homebrew (required for nix-darwin cask management):
    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-4. Setup configuration symlink:
+4. Manually install **Karabiner-DriverKit-VirtualHIDDevice v6.2.0** (exact version
+   required — Kanata's Rust crate is pinned to it) from the
+   [official release](https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/tag/v6.2.0).
+   Do not install Karabiner-Elements itself (it fights Kanata via Background Task
+   Management). After installing the `.pkg`, enable it under
+   `System Settings → General → Login Items & Extensions → Driver Extensions`, then run:
+   `sudo "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate`
+5. Setup configuration symlink:
    `mv ~/.config/home-manager ~/.config/home-manager.bak`
    `ln -s ~/ghq/github.com/Naruto-Takahashi/nix-config ~/.config/home-manager`
-5. Apply and activate (First-time bootstrap):
+6. Apply and activate (First-time bootstrap):
    `sudo nix run github:LnL7/nix-darwin -- switch --flake .#nalt-mac --impure`
-6. Apply subsequent updates (Recommended/Fast):
+   (a self-signed cert is auto-generated on first activation so Kanata's TCC grants
+   survive future rebuilds — see `hosts/mac/darwin.nix`)
+7. Grant Kanata **Input Monitoring** and **Accessibility** permissions under
+   `System Settings → Privacy & Security` (add `/usr/local/bin/kanata` via Finder's
+   `Cmd+Shift+G`). If it doesn't take effect immediately:
+   `sudo launchctl kickstart -k system/org.nixos.kanata`
+8. First run of the wallpaper picker (`ctrl-cmd-w`) / `matugen-apply` may prompt for
+   an Automation permission for "System Events" (used to detect the current
+   wallpaper) — allow it once. See [matugen-palette.md](docs/matugen-palette.md).
+9. Apply subsequent updates (Recommended/Fast):
    `darwin-rebuild switch --flake .#nalt-mac`
+   Then reload AeroSpace so the rewritten config actually takes effect
+   (`after-startup-command` only runs at AeroSpace's own launch, not on file
+   changes): `aerospace reload-config`
 
 
 </details>

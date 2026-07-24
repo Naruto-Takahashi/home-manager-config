@@ -103,6 +103,11 @@ in
       pkgs.bash-language-server # bash/zsh LSP
       pkgs.shellcheck # bash-language-server が診断に使う
       pkgs.shfmt # bash-language-server がフォーマットに使う
+      # telescope.nvim (live_grep/find_files) が実行時に呼ぶ外部コマンド。
+      # WSL/NixOSはmodules/desktop/packages.nix経由で入るがMacはそれを
+      # importしないため、ここで明示的に供給する (eza同様の理由)。
+      pkgs.ripgrep
+      pkgs.fd
     ];
   };
 

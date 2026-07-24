@@ -57,6 +57,17 @@
 
 同じパレットを WSL・Mac・NixOS の3つのホストで別の経路で反映している。
 
+### 壁紙ファイルの配置場所
+
+各ホストの壁紙ピッカーが画像を探すディレクトリ。ここに `.png`/`.jpg`/`.jpeg`/`.webp`
+などを置いておく (ディレクトリが無ければ作成すること)。
+
+| ホスト | 配置先 | ピッカー |
+| :--- | :--- | :--- |
+| **WSL** | `<Windowsユーザープロファイル>\Pictures\wallpapers`<br>(WSL側からは `/mnt/c/Users/<user>/Pictures/wallpapers`) | YASBの `wallpapers` ウィジェット、または `wallpaper-pick.sh` (ALT+W, fzf) |
+| **Mac** | `~/Pictures/Wallpapers` | `ctrl-cmd-w` (Vivaldiポップアップ、`wallpaper-pick-gui.py`) / `wallpaper-pick` (fzf端末版)。`MATUGEN_WALLPAPER_DIR` 環境変数で変更可 |
+| **NixOS (Hyprland)** | `~/Pictures/wallpapers` | rofiの壁紙ピッカー (`wppicker.sh`) |
+
 ### WSL (Windows / komorebi + YASB)
 
 中核は `modules/theming/matugen/wsl/matugen-apply.sh`

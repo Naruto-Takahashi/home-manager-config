@@ -55,7 +55,7 @@
 
 ## 反映の仕組み
 
-同じパレットを 2 つのホストで別の経路で反映している。
+同じパレットを WSL・Mac・NixOS の3つのホストで別の経路で反映している。
 
 ### WSL (Windows / komorebi + YASB)
 
@@ -130,6 +130,54 @@ matugen 単体では作れないものを分けている。後者は WSL/NixOS �
         (wezterm は colors.lua と同一内容の11キーをそのまま使う)
 ```
 
+### Mac (AeroSpace)
+
+WSL版の簡略版。YASB/komorebi/ロック画面などWindows固有部分を持たず、
+壁紙決定〜配色反映を1本の `matugen-apply` (mac) にまとめている。実体は
+`modules/theming/matugen/mac/`。
+
+```
+壁紙変更 (ctrl-cmd-w のポップアップピッカー、または手動でSystem Settings)
+  → matugen-apply [壁紙パス | 省略時はSystem Events経由で現在の壁紙を自動検出]
+     1. matugen image <壁紙> -c ~/.config/matugen-mac/config.toml
+        → テンプレート palette.css (WSL版と同じCSS変数構成) から
+          ~/.cache/matugen/mac-palette.css を生成 (matugenが作るのはこの1枚だけ)
+     2. WSL版と同じ抽出→派生色計算→レンダリングをそのまま行う:
+        - CSS変数からMaterial roleを抽出し一時colors.luaを組み立てる
+        - derive-colors.py (共通lib) でcomplement/triad/accent_pale/selection_bgを追記
+        - render-template.sh (共通lib) でstarship/lazygit/cz.toml/yazi theme.toml/
+          eza/theme.yml/atuin-theme.toml/btop.themeをレンダリング
+        - tealdeer-config.py / fzf-colors.sh もWSL版と同じ
+     3. colors.lua を ~/.config/wezterm/matugen-colors.lua と
+        ~/.cache/matugen/colors.lua へコピー
+     4. aerospace-launch-borders (modules/apps/aerospace/launch-borders.sh) を呼び、
+        AeroSpace(JankyBorders)の枠色(accent/muted)を反映する
+```
+
+- 壁紙変更の入口は2つ:
+  - `ctrl-cmd-w` → `wallpaper-pick-popup.sh` がローカルHTTPサーバ
+    (`wallpaper-pick-gui.py`) を起動し、Vivaldiのapp-modeウィンドウで
+    `~/Pictures/Wallpapers` のサムネイルグリッドをポップアップ表示する。
+    クリックすると壁紙変更(`osascript`でSystem Eventsに設定)→`matugen-apply`が
+    即座に走り、完了後サーバは自動終了する。
+  - `wallpaper-pick` (fzfのターミナル版。WSL `wallpaper-pick.sh` と同系統) も
+    引き続き使える。プレビューは `chafa --format symbols` (WezTerm imgcatは
+    fzfの再描画でエスケープシーケンスが崩れるため不採用)。見た目は
+    `modules/shell/zsh/functions.zsh` と同じ `FZF_DEFAULT_OPTS` を読む。
+- `home-manager switch` (`darwin-rebuild switch`) のたびに、`home.activation`
+  フックがその時点の壁紙で自動的に一度 `matugen-apply` を実行する
+  (初回・Automation許可待ちなどで失敗してもビルド自体は止めない)。
+- AeroSpaceの枠色 (`launch-borders.sh`) は **`borders` を都度 `pkill` して
+  再起動しない**。`borders` は起動中に同じコマンドを再実行するとIPC経由で
+  設定を生きたまま更新する仕様のため、`pkill`すると次のインスタンスが
+  上がるまでの一瞬、枠ハイライトが消える。`pgrep -x borders` で起動有無を
+  判定し、起動中ならそのまま同じコマンドを再実行するだけにしている。
+- macOSの `sed` (BSD sed) は `\s` などGNU拡張の正規表現クラスを解釈できず、
+  `render-template.sh` の色抽出が黙って失敗する(プレースホルダが残ったまま
+  になる)不具合があったため、共通ライブラリ側を `[[:space:]]` (POSIX標準)に
+  書き換えて解消した。WSL/NixOS側もこの変更の影響を受けるが、GNU
+  sedでも`[[:space:]]`は等価に動くため挙動は変わらない。
+
 ### 共通モジュール `modules/theming/matugen/`
 
 派生色計算 (`lib/derive-colors.py`) とテンプレート後処理
@@ -147,8 +195,8 @@ WM非依存のモジュール。`profiles/base.nix` から全ホスト共通で 
   `primary_container`) と wezterm パレットのキー数差 (WSL 11キー / NixOS
   7キー) は、この共通化で解消済み。両OSとも `accent_pale` は白ブレンド式、
   wezterm は colors.lua と同一の11キーになった。
-- **NixOS (`wppicker.sh`) と WSL (`matugen-apply.sh`) の両方がこの共通
-  モジュールを呼ぶ。** WSL はパレット抽出元 (`yasb-palette.css` の CSS変数)
+- **NixOS (`wppicker.sh`) と WSL/Mac (`matugen-apply.sh`) がこの共通
+  モジュールを呼ぶ。** WSL/Mac はパレット抽出元 (`yasb-palette.css`/`mac-palette.css` の CSS変数)
   が colors.lua と形式が違うため、抽出後に一時 colors.lua を組み立てて
   `derive-colors.py` に渡す一手間がある (NixOS は matugen が直接 colors.lua
   を生成するため不要)。lazygit/yazi の生成は両OSとも `render-template.sh`
@@ -213,22 +261,25 @@ commit された配色) は、壁紙を変えるたびに手動で1ファイル�
 フォールバックではなく**レンダリング元テンプレート**そのものなので対象外
 (生の色コードが混入していないかだけ `bake_yazi_template` が検査する)。
 
-Hyprland側 (`modules/wm/hyprland/`) のwaybar/hyprlockフォールバックは、
-このスクリプトの対象に**まだ入っていない** (WSLとは別ホスト・別壁紙のため、
+Hyprland側 (`modules/wm/hyprland/`) のwaybar/hyprlockフォールバックと、
+Mac側 (`modules/apps/aerospace/launch-borders.sh` のAeroSpace枠色フォールバック)
+は、このスクリプトの対象に**まだ入っていない** (WSLとは別ホスト・別壁紙のため、
 そのホスト上で実行して確認する必要がある)。
 
-### 2経路の違いまとめ
+### 3経路の違いまとめ
 
-| | WSL | NixOS |
-| :--- | :--- | :--- |
-| matugen の役割 | palette.css を1枚生成するだけ | 全テンプレート生成 + post_hook |
-| パレット抽出 | palette.css の CSS変数から | matugen が colors.lua を直接生成 |
-| 色相回転・プレースホルダ後処理 (yazi/lazygit) | `modules/theming/matugen/lib/` (共通) | `modules/theming/matugen/lib/` (共通) |
-| starship 生成方式 | render-template.sh (共通テンプレート) | render-template.sh (共通テンプレート) |
-| 反映先が Windows | あり (/mnt/c へ配置 + sed) | なし |
+| | WSL | Mac | NixOS |
+| :--- | :--- | :--- | :--- |
+| matugen の役割 | palette.css を1枚生成するだけ | mac-palette.css を1枚生成するだけ | 全テンプレート生成 + post_hook |
+| パレット抽出 | palette.css の CSS変数から | mac-palette.css の CSS変数から (WSLと同じ変数名) | matugen が colors.lua を直接生成 |
+| 色相回転・プレースホルダ後処理 (yazi/lazygit) | `modules/theming/matugen/lib/` (共通) | `modules/theming/matugen/lib/` (共通) | `modules/theming/matugen/lib/` (共通) |
+| starship 生成方式 | render-template.sh (共通テンプレート) | render-template.sh (共通テンプレート) | render-template.sh (共通テンプレート) |
+| 壁紙変更の入口 | YASBウィジェット / ALT+W (fzf) | `ctrl-cmd-w` (Vivaldiポップアップ) / `wallpaper-pick` (fzf) | rofi (`wppicker.sh`) |
+| WM枠色の反映方式 | komorebi.json を sed → 同期 reload | `borders` へ同じコマンドを再実行 (IPCで生きたまま更新) | hyprland の post_hook |
+| 反映先が Windows | あり (/mnt/c へ配置 + sed) | なし | なし |
 
 新しいアプリを追従させたいときは、Material role の参照だけで足りるなら
-WSL は matugen-apply.sh に palette.css からの抽出を足し、NixOS は
+WSL/Mac は matugen-apply.sh に palette.css からの抽出を足し、NixOS は
 `config.toml` にネイティブ `[templates.x]` を足すだけでよい。色相回転が
-必要なら、両OSとも `modules/theming/matugen/` にテンプレートを足し、
+必要なら、いずれのOSも `modules/theming/matugen/` にテンプレートを足し、
 それぞれのスクリプトから `render-template.sh` を呼べばよい。

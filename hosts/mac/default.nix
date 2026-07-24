@@ -10,6 +10,7 @@
   imports = [
     ../../profiles/base.nix
     ../../modules/apps/aerospace
+    ../../modules/theming/matugen/mac
   ];
 
   # -----------------------------------------------------------------------

@@ -1,0 +1,6 @@
+# matugen 設定 (Mac用): 壁紙から抽出した色で :root パレットブロックを生成する
+[config]
+
+[templates.palette]
+input_path = '~/.config/matugen-mac/palette.css'
+output_path = '~/.cache/matugen/mac-palette.css'

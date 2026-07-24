@@ -1,9 +1,15 @@
 # =========================================================================
 # AeroSpace タイリングウィンドウマネージャ宣言的設定モジュール
 # =========================================================================
-{ config, pkgs, ... }:
+{ config, pkgs, dotfilesPath, ... }:
 
 {
+  # borders起動スクリプト。matugenパレット(~/.cache/matugen/colors.lua)の
+  # accent/mutedがあればそれを使い、無ければ青ベースのフォールバックを使う。
+  home.file.".local/bin/aerospace-launch-borders" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/modules/apps/aerospace/launch-borders.sh";
+  };
+
   # --- AeroSpace設定 ---
   # aerospace.toml設定ファイルの宣言的な自動生成を行います．
   xdg.configFile."aerospace/aerospace.toml".text = ''
@@ -16,12 +22,18 @@
     default-root-container-layout = 'tiles'
     default-root-container-orientation = 'auto'
 
+    # マウスカーソルが乗ったウィンドウに自動でフォーカスを移します（focus follows mouse）．
+    focus-follows-mouse.enabled = true
+
+    # キーボード操作等でフォーカスが変わった際は，逆にマウスカーソルの方をフォーカスウィンドウの中央へ追従させます．
+    on-focus-changed = ['move-mouse window-lazy-center']
+
     # AeroSpace起動完了時にJankyBorders（アクティブウィンドウ枠線表示ツール）をバックグラウンド実行します．
-    # 色はWSL/NixOS側のMatugenフォールバックパレット（青ベース）に合わせています．
-    # active_color = accent (#a2c9fd), inactive_color = muted (#c3c6cf)
-    # 参考: modules/wm/komorebi/komorebi.json の border_colours (single/unfocused)
+    # 色はmatugenパレット(~/.cache/matugen/colors.lua)のaccent/mutedに追従します
+    # (未生成時はWSL/NixOS側と同じ青ベースのフォールバック値を使います)．
+    # 参考: modules/theming/matugen/mac/matugen-apply.sh, modules/apps/aerospace/launch-borders.sh
     after-startup-command = [
-      'exec-and-forget /opt/homebrew/bin/borders active_color=0xffa2c9fd inactive_color=0xffc3c6cf width=6.0'
+      'exec-and-forget /Users/nalt/.local/bin/aerospace-launch-borders'
     ]
 
     # ギャップ設定（Gaps）
@@ -109,6 +121,7 @@
     ctrl-cmd-y = 'exec-and-forget /etc/profiles/per-user/nalt/bin/wezterm start /etc/profiles/per-user/nalt/bin/yazi'
     ctrl-cmd-n = 'exec-and-forget /etc/profiles/per-user/nalt/bin/wezterm start /etc/profiles/per-user/nalt/bin/nvim'
     ctrl-cmd-b = 'exec-and-forget open -n -a Vivaldi'
+    ctrl-cmd-w = 'exec-and-forget /Users/nalt/.local/bin/wallpaper-pick-popup'
 
     # ウィンドウの結合（Alt + Ctrl + HJKL）
     ctrl-cmd-alt-h = 'join-with left'

@@ -86,6 +86,10 @@ if [[ "$SCOPE" == "deps" || "$SCOPE" == "deps-dev" ]]; then
   fi
 fi
 
-sed -i "1s/^/${EMOJI} /" "$MSG_FILE"
+# `sed -i` はGNU/BSDで引数の取り方が違う(BSDはサフィックス必須)ため、
+# 一時ファイル経由で書き換えることで両方で同じ挙動にする。
+TMP_MSG="$(mktemp)"
+sed "1s/^/${EMOJI} /" "$MSG_FILE" > "$TMP_MSG"
+mv "$TMP_MSG" "$MSG_FILE"
 
 exit 0

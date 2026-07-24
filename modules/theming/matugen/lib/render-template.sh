@@ -15,8 +15,8 @@ while IFS='=' read -r key value; do
     [[ -n "$key" ]] || continue
     upper="$(echo "$key" | tr '[:lower:]' '[:upper:]')"
     SED_ARGS+=(-e "s/@@${upper}@@/${value//\//\\/}/g")
-done < <(grep -oE '^\s*[a-z_]+\s*=\s*"#[0-9a-fA-F]{6}"' "$COLORS_LUA" \
-    | sed -E 's/^\s*([a-z_]+)\s*=\s*"(#[0-9a-fA-F]{6})"/\1=\2/')
+done < <(grep -oE '^[[:space:]]*[a-z_]+[[:space:]]*=[[:space:]]*"#[0-9a-fA-F]{6}"' "$COLORS_LUA" \
+    | sed -E 's/^[[:space:]]*([a-z_]+)[[:space:]]*=[[:space:]]*"(#[0-9a-fA-F]{6})"/\1=\2/')
 
 [[ ${#SED_ARGS[@]} -gt 0 ]] || { echo "no colors parsed from $COLORS_LUA" >&2; exit 1; }
 

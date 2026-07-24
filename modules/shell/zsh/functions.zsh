@@ -89,12 +89,16 @@ bindkey -M menuselect 'l' vi-forward-char
 [[ -f ~/.cache/matugen/starship.toml ]] && export STARSHIP_CONFIG=~/.cache/matugen/starship.toml
 
 # lazygitはLG_CONFIG_FILEにカンマ区切りで複数ファイルを渡すと後勝ちでマージする。
-# ベース設定(customCommands等、Nix管理の~/.config/lazygit/config.yml)に対し、
-# matugenが生成する配色だけのテーマパッチ(gui.themeのみ)を重ねる。
-# これによりcustomCommandsをNix側1箇所に書くだけで済み、
-# matugenテンプレート側と二重管理にならない。
+# ベース設定(customCommands等、Nix管理のconfig.yml)に対し、matugenが生成する
+# 配色だけのテーマパッチ(gui.themeのみ)を重ねる。これによりcustomCommandsを
+# Nix側1箇所に書くだけで済み、matugenテンプレート側と二重管理にならない。
+# home-manager (programs.lazygit) はconfig.ymlをOS標準の場所に置くため、
+# Linux/WSLでは ~/.config/lazygit/config.yml、Macでは
+# ~/Library/Application Support/lazygit/config.yml とベースパスが異なる。
+LAZYGIT_BASE_CONFIG="$HOME/.config/lazygit/config.yml"
+[[ "$OSTYPE" == darwin* ]] && LAZYGIT_BASE_CONFIG="$HOME/Library/Application Support/lazygit/config.yml"
 if [[ -f ~/.cache/matugen/lazygit-theme.yml ]]; then
-  export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.cache/matugen/lazygit-theme.yml"
+  export LG_CONFIG_FILE="$LAZYGIT_BASE_CONFIG,$HOME/.cache/matugen/lazygit-theme.yml"
 fi
 
 # matugen生成のeza配色があればそちらを優先します (ファイル名は theme.yml 固定)．

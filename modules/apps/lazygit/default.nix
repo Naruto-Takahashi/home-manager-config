@@ -28,7 +28,7 @@
           key = "<c-g>";
           description = "Generate commit message via Gemini and Edit";
           context = "global";
-          command = "/home/nalt/.local/bin/lazygit-gemini-commit";
+          command = "${config.home.homeDirectory}/.local/bin/lazygit-gemini-commit";
           output = "terminal";
         }
         {

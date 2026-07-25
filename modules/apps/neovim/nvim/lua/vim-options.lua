@@ -78,7 +78,9 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
         -- Visual選択・検索ハイライトもkanagawaの生の青/オレンジ配色のままだった
         -- ため，matugenパレットに揃える (Pmenuと同じ理由)
-        hl(0, "Visual", { bg = mc.selection_bg })
+        -- VisualはWezTermのカーソル色 (tertiary) と揃える。文字色もWezTermの
+        -- cursor_fgと同じsurfaceにして濃い背景の上でも読めるようにする
+        hl(0, "Visual", { bg = mc.tertiary, fg = mc.surface })
         hl(0, "Search", { bg = mc.tertiary, fg = mc.on_accent })
         hl(0, "CurSearch", { bg = mc.accent, fg = mc.on_accent, bold = true })
         hl(0, "IncSearch", { bg = mc.accent, fg = mc.on_accent, bold = true })

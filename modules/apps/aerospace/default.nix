@@ -13,16 +13,18 @@
   # AeroSpace自身の`start-at-login`はmacOSのログインアイテムとして働くため、
   # ログインセッションが完全に立ち上がる前に起動してしまうことがある。
   # その場合カスタム設定(キーバインド・gaps等)を読み込めずデフォルト値
-  # (ギャップ0・独自バインド無し)のまま起動してしまう。ログイン後に少し
-  # 待ってから明示的にreload-configすることで、常に正しい設定を確実に
-  # 読み込ませる。
+  # (ギャップ0・独自バインド無し)のまま起動してしまい、加えて
+  # after-startup-command (borders起動) も取りこぼされる。
+  # after-startup-commandはAeroSpace自身の起動時に一度しか実行されず
+  # reload-configでは再実行されないため、borders起動はここで明示的に
+  # 行う必要がある。ログイン後に少し待ってから両方を確実に行う。
   launchd.agents.aerospace-reload-config = {
     enable = true;
     config = {
       ProgramArguments = [
         "/bin/sh"
         "-c"
-        "sleep 20 && /opt/homebrew/bin/aerospace reload-config"
+        "sleep 20 && /opt/homebrew/bin/aerospace reload-config && $HOME/.local/bin/aerospace-launch-borders"
       ];
       RunAtLoad = true;
       StandardOutPath = "/tmp/aerospace-reload-config.out.log";
@@ -64,13 +66,16 @@
     ]
 
     # ギャップ設定（Gaps）
+    # WSL側komorebi (modules/wm/komorebi/komorebi.json) の
+    # default_container_padding=6 (ウィンドウ間) / default_workspace_padding=1
+    # (画面端) に合わせています．
     [gaps]
     inner.horizontal = 6
     inner.vertical = 6
-    outer.left = 6
-    outer.bottom = 6
-    outer.top = 2
-    outer.right = 6
+    outer.left = 1
+    outer.bottom = 1
+    outer.top = 1
+    outer.right = 1
 
     # キーバインド設定（Main Mode）
     # macOS標準および一般コピペ（Cmd）と衝突させないため，すべての操作プレフィックスに Ctrl+Cmd (ctrl-cmd) を使用します．

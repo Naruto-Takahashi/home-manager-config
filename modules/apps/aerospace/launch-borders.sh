@@ -24,8 +24,8 @@ if [[ -f "$COLORS" ]]; then
 fi
 
 if pgrep -x borders >/dev/null 2>&1; then
-    /opt/homebrew/bin/borders "active_color=0xff${accent}" "inactive_color=0xff${muted}" width=6.0
+    /opt/homebrew/bin/borders "active_color=0xff${accent}" "inactive_color=0xff${muted}" width=8.0
 else
-    /opt/homebrew/bin/borders "active_color=0xff${accent}" "inactive_color=0xff${muted}" width=6.0 &
+    /opt/homebrew/bin/borders "active_color=0xff${accent}" "inactive_color=0xff${muted}" width=8.0 &
     disown
 fi

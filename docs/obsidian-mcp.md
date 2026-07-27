@@ -23,6 +23,21 @@
 
 ---
 
+## Claude Code での利用
+
+Claude Codeは標準でMCPサーバーに対応しているため，`agy-brain`/`gemini-brain`のような専用ラッパースクリプトは不要で，Claude Code自身の設定にMCPサーバーを1回登録するだけでよい:
+
+```
+claude mcp add -s user obsidian -e OBSIDIAN_VAULT="/mnt/c/Users/tnaru/Obsidian/Vault" -- npx -y @bitbonsai/mcpvault
+```
+
+- `-s user` でユーザースコープ (全プロジェクト共通) に登録される。この設定は `~/.claude.json` に保存され，home-manager管理外 (Claude Code自身の状態ファイルであり，宣言的に上書きすると他の状態を壊すリスクがあるため意図的に対象外にしている)
+- 新しい環境では上記コマンドを一度実行するだけでよい (`claude mcp list` で `obsidian: ... ✔ Connected` と出れば成功)
+- ルールプロンプト (セッション開始時に読むべきファイル・書き込み先など) はagy-brain/gemini-brainのように自動注入されないため，必要ならCLAUDE.mdやセッション冒頭で明示的に伝える運用になる
+- 会話ログの自動Vault保存 (`02_Journal/`) もagy-brain/gemini-brain相当の仕組みは無い (Claude Codeは会話履歴の保存場所・形式が異なるため未実装)
+
+---
+
 ## 他OSでの扱い
 
 NixOS・macOSではこのモジュールをimportしていません。Vaultのパスハードコード (`/mnt/c/Users/tnaru/...`) がWindowsパス前提であることもあり，他OS向けには未移植です。

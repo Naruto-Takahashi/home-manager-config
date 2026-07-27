@@ -173,7 +173,10 @@ in
         command = "npx";
         args = [ "-y" "@bitbonsai/mcpvault" ];
         env = {
-          OBSIDIAN_VAULT = "${config.home.homeDirectory}/ghq/github.com/Naruto-Takahashi/obsidian-vault";
+          # 以前は誤って ~/ghq/.../obsidian-vault (git バックアップ用クローン、
+          # 実際のノートは入っていない) を指していた。Obsidianアプリ・
+          # agy-brain/gemini-brain が実際に読み書きするVaultに合わせる
+          OBSIDIAN_VAULT = vaultPath;
         };
       };
     };

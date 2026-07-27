@@ -23,23 +23,25 @@
 
 `format-tab-title` イベントに，現在実行中のプログラム名（プロセス）を監視してタブタイトルをインテリジェントに上書きするカスタムスクリプトを組み込んでいます．
 
-| 実行中のプロセス | 表示されるタブタイトル | 説明 |
+| 実行中のプロセス / タイトル | 表示されるタブタイトル | 説明 |
 | :--- | :--- | :--- |
+| タイトルが `✳` で始まる，または `claude` を含む (大小無視) | **`Claude`** | Claude Code実行時 (最優先で判定) |
+| `nvim` | **`Neovim`** | エディタ作業時 |
 | `cmd.exe` | **`CMD`** | Windowsコマンドプロンプト実行時 |
 | `powershell.exe` / `pwsh.exe` | **`PowerShell`** | PowerShell起動時 |
 | `wsl.exe` / `wslhost.exe` | **`Ubuntu`** | WSL (Ubuntu) 上の作業時 |
-| `nvim` | **`Neovim`** | エディタ作業時 |
 | その他 | *(実行中のバッファ名等)* | 標準タイトルをスマートにフォールバック |
 
 また，タブのアクティブ状態を視覚的に強調するため，アクティブタブの両端には美しい三角形（Nerd Font `ple_lower_right_triangle` / `ple_upper_left_triangle`）のカラー枠が表示されます．
 
 ---
 
-## キーバインド・操作ショートカット (Leader: Ctrl+Space)
+## キーバインド・操作ショートカット (Leader: Ctrl+; / Ctrl+Space)
 
 WezTermの標準ショートカットをすべて無効化（`disable_default_key_bindings = true`）し，**独自の Leader キー操作系**（tmux/screen風）で完全に制御します．
 
-* **Leader キー**: **`Ctrl + Space`** (入力後，2秒間入力待ち受け)
+* **Leader キー**: **`Ctrl + ;`** (本来のバインド) または **`Ctrl + Space`** (補助的な代替キー，入力後2秒間入力待ち受け)。
+  `Ctrl + ;` が本来のバインドなのは，CapsLock→Ctrl改修 ([kanata.md](kanata.md) 参照) 環境でCtrl+Spaceだと同じ指での連続操作になり打ちにくいため．
 
 ### 1. タブ操作 (Tab Management)
 

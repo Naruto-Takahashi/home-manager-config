@@ -183,7 +183,7 @@ zshの`cd`と同じzoxide履歴を共有するので、シェルでよく行く�
 
 ## テーマカスタマイズ（本環境の設定）
 
-設定ファイル: [`modules/yazi.nix`](../modules/yazi.nix)
+設定ファイル: [`modules/apps/yazi/default.nix`](../modules/apps/yazi/default.nix)
 
 ### 色彩設定（Matugen パレット準拠）
 

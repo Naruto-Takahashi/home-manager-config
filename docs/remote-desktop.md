@@ -62,5 +62,5 @@ tailscale ip -4
 - **日本語入力**: Kanataは Sunshineの仮想キーボード（"Keyboard passthrough"）も掴むため，リモートからの左右Altタップでも ローカル同様にIME切り替えが効く．Windows側のIMEは必ず半角英数（オフ）にしておくこと．
 - **電源**: 遠隔から電源は入れられない．離席時はシャットダウンしない．BIOS/UEFIの「AC Power Loss後にPower On」を有効にしておくと停電後も自動復帰する．
 - **SSH復旧**: Sunshineが応答しないときは `ssh nalt@<Tailscale IP>` で入って `systemctl --user restart sunshine`．
-- **セキュリティ**: SunshineとSSHはTailscale経由でのみ到達可能．SSHは鍵を登録したら `PasswordAuthentication = false` に絞るのを推奨．
+- **セキュリティ**: SunshineとSSHはTailscale経由でのみ到達可能．SSHは既に鍵認証のみ (`PasswordAuthentication = false`，`hosts/nixos/default.nix`) に絞ってある．
 - **クライアント解除**: Sunshine Web UIのPINタブから登録済みデバイスを個別に削除できる．

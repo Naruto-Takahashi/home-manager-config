@@ -1,7 +1,9 @@
-# 全構成が評価 (eval) できることを検証する。ビルドはしない。
+# 全構成が評価 (eval) できることを検証する。
 # importパス切れ・構文エラー・オプションのtypoをpush時点で検出するのが目的。
-# ビルドは重いので、flake.lock自動更新PR (update_flake_lock_action) の時だけ
-# build ジョブで全構成を実際にビルドし、依存更新による壊れを検出する。
+# build ジョブは全構成を実際にビルドし、evalだけでは検出できない依存関係の
+# 壊れ (atuinのような外部パッケージ内部実装への依存等) を検出する。atuinの
+# TUIを自前パッチでビルドしていた頃は重かったが、パッチを撤廃しキャッシュが
+# 効くようになったため常時実行にしている。
 name: check
 
 on:
@@ -70,7 +72,6 @@ jobs:
           exit $fail
 
   build-linux:
-    if: github.head_ref == 'update_flake_lock_action'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -81,7 +82,6 @@ jobs:
         run: nix build '.#nixosConfigurations.nixos.config.system.build.toplevel' --no-link
 
   build-mac:
-    if: github.head_ref == 'update_flake_lock_action'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4

@@ -67,8 +67,8 @@
 
     # ギャップ設定（Gaps）
     [gaps]
-    inner.horizontal = 8
-    inner.vertical = 8
+    inner.horizontal = 10
+    inner.vertical = 10
     outer.left = 8
     outer.bottom = 8
     outer.top = 4

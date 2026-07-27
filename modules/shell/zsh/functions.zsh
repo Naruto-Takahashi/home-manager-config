@@ -49,7 +49,7 @@ zstyle ':completion:*' menu select
 
 # --- fzf設定 ---
 # fzfオプションおよびCtrl+T，Ctrl+Rのプレビュー表示を設定します．
-export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --highlight-line --color=pointer:#a2c9fd,marker:#a2c9fd,prompt:#a2c9fd,info:#bbc7db,hl:#bbc7db,hl+:#bbc7db,bg+:#303030'
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --highlight-line --color=pointer:#a2c9fd,marker:#a2c9fd,prompt:#a2c9fd,info:#bbc7db,hl:#bbc7db,hl+:#bbc7db,bg+:#303030,spinner:#bbc7db'
 # matugen生成のfzf配色があれば上書きします（matugen-applyが生成します）．
 [[ -f ~/.cache/matugen/fzf-colors.sh ]] && source ~/.cache/matugen/fzf-colors.sh
 # zoxide (cdi等) が内部で起動するfzfは既定だと見た目が微妙に異なる
@@ -122,8 +122,11 @@ mkcd() {
 # 注意: `ls`エイリアスはhome-managerの生成順序上この関数より後に定義されるため、
 # ここで`ls`と書くと関数パース時点でエイリアス展開されず、
 # 素の/実行ファイルのlsが実行されてしまう。直接ezaコマンドを書く。
+# 対話シェル・実端末 (tty) 以外 (Claude Codeのsandboxed bash実行など、
+# `zsh -c '...'` 経由でcdだけ行われるケース) では実行しない。非対話環境だと
+# 出力先の扱いによってはhangすることがあり、実害の割に何も見えないため。
 function chpwd() {
-    eza --icons
+    [[ -o interactive ]] && [[ -t 1 ]] && eza --icons
 }
 
 # 3. 競技プログラミング用C++のコンパイル＆実行を行います．
@@ -156,6 +159,41 @@ zle -N ghq-fzf
 bindkey '^g' ghq-fzf
 bindkey -M viins '^g' ghq-fzf
 bindkey -M vicmd '^g' ghq-fzf
+
+# 5.5. atuinの履歴DBを実物のfzfで検索します (Ctrl+R)。
+# atuin自身のTUIをfzf風に再現するのはソースパッチが必要で運用コストが
+# 高すぎたため撤廃した (modules/shell/atuin/default.nix参照)。atuinは
+# 履歴の記録・同期バックエンドとしてのみ使い、検索UIはfzfそのものに
+# 任せることで、fzfのネイティブな枠線・ハイライト設定 (FZF_DEFAULT_OPTS、
+# matugen追従) がそのまま使える。
+function atuin-fzf() {
+  local selected
+  # --read0/--print0: `\`継続の複数行コマンドは実際に改行込みで1件の履歴として
+  # 保存されているため、改行区切り(fzfのデフォルト)で渡すと複数候補に分解されて
+  # しまう。NUL区切りにすることで1コマンド=1候補として扱う (fzfは--read0時、
+  # 複数行の候補もそのまま複数行表示してくれる)。
+  # Ctrl+R (fzf内): global(全履歴) → directory(現在のディレクトリのみ) →
+  # session(現在のシェルセッションのみ) → globalの順にトグルする。以前の
+  # atuin自身のTUIにあった「UI内Ctrl+Rでフィルタを切り替える」挙動の代替。
+  # (atuin history listにはhost単位のフィルタフラグが無いため3段階まで)
+  # モード名は旧パッチ同様、外枠のタイトルとして埋め込む (--border-label)。
+  selected=$(atuin history list --cmd-only --print0 | fzf --read0 -q "$LBUFFER" \
+    --border-label ' GLOBAL ' \
+    --bind 'ctrl-r:transform:case "$FZF_BORDER_LABEL" in
+      " GLOBAL ") echo "reload(atuin history list --cmd-only --print0 --cwd)+change-border-label( DIRECTORY )" ;;
+      " DIRECTORY ") echo "reload(atuin history list --cmd-only --print0 --session)+change-border-label( SESSION )" ;;
+      *) echo "reload(atuin history list --cmd-only --print0)+change-border-label( GLOBAL )" ;;
+    esac')
+  if [[ -n $selected ]]; then
+    BUFFER="$selected"
+    CURSOR=$#BUFFER
+  fi
+  zle reset-prompt
+}
+zle -N atuin-fzf
+bindkey '^r' atuin-fzf
+bindkey -M viins '^r' atuin-fzf
+bindkey -M vicmd '^r' atuin-fzf
 
 # 6. zsh-syntax-highlighting用のカスタムカラースタイルを設定します．
 # Kanagawa Dragon 系の落ち着いた色に合わせる（ネオンな green/red,bold を回避）

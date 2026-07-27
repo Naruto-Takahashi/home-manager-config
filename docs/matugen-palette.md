@@ -104,12 +104,12 @@
         - YASB styles.css   : MATUGEN マーカー間を差し替えて /mnt/c へ配置
         - komorebi.json     : 枠色 (single/floating/monocle) を sed → 同期 reload
         - colors.lua        : nvim / yazi / wezterm 共通の Lua パレット (完成形をコピー)。
-                              selection_bg (surface色、fzf/nvim/atuinの選択行背景
-                              に共通で使う) もここに含まれる
+                              selection_bg (surface色、fzf/nvimの選択行背景に
+                              共通で使う) もここに含まれる
         - starship (Windows): 生成済み ~/.cache/matugen/starship.toml から
                               os_logo を除去した PowerShell 用変種を /mnt/c へ配置
-        - fzf               : 設定ファイルを丸ごと生成 (ATUIN_SELECTION_BGの
-                              exportも同じfzf-colors.shに含める)
+        - fzf               : 設定ファイルを丸ごと生成 (FZF_DEFAULT_OPTS。
+                              atuinのCtrl+R検索もこのfzfをそのまま使う)
         - cava              : config.yaml 内の色を sed (inode 保持で watch_config を維持)。
                               この書き換えは YASB の全体リロードを誘発するため必ず最後。
                               komorebi のリロードと重なると YASB→komorebi の pipe

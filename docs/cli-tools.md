@@ -27,29 +27,20 @@ atuin / btop / tealdeer の配色は Matugen 連携 (壁紙由来 + kanagawa-dra
 
 ---
 
-## atuin — シェル履歴の検索・記録
+## atuin — シェル履歴の記録・検索
 
-`Ctrl+R` が atuin の全文検索 UI に置き換わっています。**↑キーは従来の zsh 履歴のまま**です。
+atuin はシェル履歴の記録・暗号化同期の**バックエンド**として使い、`Ctrl+R` の検索 UI は実物の `fzf` に置き換えています (`atuin-fzf`, `modules/shell/zsh/functions.zsh`)。**↑キーは従来の zsh 履歴のまま**です。
 
 | 操作 | 動作 |
 | :--- | :--- |
-| **`Ctrl+R`** | 履歴検索 UI を開く (fuzzy 検索。打つだけで絞り込み) |
-| **`↑` / `↓`** | 候補の移動 (最上段で `↑` を押しても終了しない) |
-| **`Enter`** | 選択したコマンドを即実行 |
-| **`Tab`** | 実行せずプロンプトに挿入 (編集してから実行したいとき) |
-| **`Ctrl+R` (UI 内)** | フィルタ切替 (global → host → session → directory) |
+| **`Ctrl+R`** | `atuin history list --cmd-only` を fzf にパイプして検索 (fuzzy 検索) |
+| **`Enter` (fzf内)** | 選択したコマンドをプロンプトに挿入 (実行はもう一度 Enter) |
 | **`Esc`** | 閉じる |
 
 - 実行ディレクトリ・終了コード・所要時間も記録されます
 - `atuin stats` でよく使うコマンドの統計が見られます
-- フィルタの「directory」は「今のディレクトリで実行したものだけ」— 特定プロジェクトの履歴を掘るのに便利
-- `\` 継続の複数行コマンドは改行・インデントごと記録され、`Tab`/`Enter` での呼び出し時に縦に並んだ元の形で復元される。リスト内では1行に畳んで表示 (改行は見た目だけ空白に変換し `^J` 表記が出ないようにしている)。プレビュー欄は表示崩れがあったため無効化済み
-- レイアウトは検索バー上・結果下 (`invert = true`)、fzf 風の枠線付き (`style = "full"`)。検索欄と結果の間は fzf と同じ「一致件数/全件数 ────」の区切りが表示される (件数は検索一致ハイライトと同じ AlertWarn 色。全件数は DB 全体の件数を流用しており、fzf の「絞り込み前プール」とは厳密には意味が異なる)。キーヘルプは非表示
-- フィルタモード名 (`GLOBAL`/`HOST`/`SESSION`/`DIRECTORY`/`WORKSPACE`) は外枠自体のタイトルとして埋め込まれる (`╭─ GLOBAL ─╮`)。枠線は fzf 実機と同じ枠線色 (#5f5f87) で統一されている (matugen には追従しない固定色)
-- 左端のインジケータは fzf 風の塗りブロック (`▌`)。選択行は accent 太字、それ以外の行は選択行の背景と同じグレー
-- 配色は fzf (ghq 検索等) と同じ文法: 選択行の背景色は環境変数 `ATUIN_SELECTION_BG` (matugen の surface 色、starship の `git_branch` 背景と同じ値) を実行時に読む。ビルド不要で壁紙テーマに追従する (未設定/不正なら固定色にフォールバック)。検索一致文字 = fzf の hl と同色 (matugen tertiary)
-- 実行時間列 (例: `20ms`) は成功=緑・失敗=赤 (zsh syntax-highlighting と同じ固定色)。経過時間列は非表示 (実行時刻は `Ctrl+O` のインスペクタで確認)
-- 注: 見た目の大部分は `modules/shell/atuin/fzf-style.patch` によるソースパッチで実現している (atuin はソースから再ビルドされる)。数字ショートカット (Alt+1..9) は komorebi のワークスペース移動と衝突するため番号表示ごと無効化
+- 配色・枠線・ハイライトは `FZF_DEFAULT_OPTS` (matugen 追従、`modules/theming/matugen/templates/fzf-colors.sh`) に従う。Ctrl+G の ghq ジャンプと同じ見た目
+- 過去は atuin 自身の TUI を fzf 風に見せるためソースパッチ (`fzf-style.patch`) を当てていたが、atuin の内部レンダリング実装のリファクタで頻繁にパッチが壊れ運用コストが高すぎたため撤廃した。検索 UI 自体を素の fzf に任せることで、見た目のカスタマイズにソースパッチが不要になった
 
 ---
 

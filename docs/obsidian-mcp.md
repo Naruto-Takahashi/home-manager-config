@@ -17,10 +17,10 @@
 
 | コマンド | 対象CLI | 動作 |
 | :--- | :--- | :--- |
-| `agy-brain` | Antigravity CLI | ルールプロンプト付きで対話セッションを起動し，終了後に会話ログ (`transcript.jsonl`) をパースして `02_Journal/Antigravity/` にMarkdownで保存 |
-| `gemini-brain` | Gemini CLI | 同上。Gemini CLIのセッション履歴 (`~/.gemini/tmp/<project>/chats/session-*.jsonl`) から `02_Journal/Gemini/` に保存 |
+| `agy-brain` | Antigravity CLI | ルールプロンプト付きで対話セッションを起動し，終了後に会話ログ (`transcript.jsonl`) からユーザー発言だけを抽出し，`02_Journal/Antigravity/` に要約(箇条書き)として保存 |
+| `gemini-brain` | Gemini CLI | 同上。Gemini CLIのセッション履歴 (`~/.gemini/tmp/<project>/chats/session-*.jsonl`) から同様に `02_Journal/Gemini/` に保存 |
 
-どちらも `jq` でJSONL形式の会話ログをパースし，ユーザー発言・アシスタント応答 (thinking/toolCallsを含む) をYAMLフロントマター付きのMarkdownノートに変換します。保存後は必ずファイルパスをターミナルに表示します。
+どちらも `jq` でJSONL形式の会話ログをパースするが，**アシスタントの応答本文・思考プロセスは保存しない** (2026-07-27に方針変更。Vaultが陳腐化したAIログで肥大化する主因だったため。詳細は [[04_Library/Knowledge/mistakes|mistakes.md]] の「情報の粒度管理・陳腐化防止」参照)。ユーザー発言だけを抜き出した軽量な箇条書きに留め，重要な知見・決定はセッション中にルールプロンプトの指示で `04_Library/Knowledge`・`04_Library/Decisions`・`03_Projects` へ直接書き込ませる。保存後は必ずファイルパスをターミナルに表示する。
 
 ---
 

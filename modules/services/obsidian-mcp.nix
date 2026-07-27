@@ -80,24 +80,22 @@ let
           TRANSCRIPT_PATH="$NEW_LATEST/transcript.jsonl"
           if [ -f "$TRANSCRIPT_PATH" ]; then
             SESSION_ID=$(basename "$NEW_LATEST")
+            # 生ログ(アシスタントの応答・思考プロセス全文)は保存しない
+            # (Vaultの肥大化・陳腐化の主因だったため2026-07-27に方針変更)。
+            # ユーザー発言だけを抜き出した軽量な箇条書き要約に留める。
+            # 重要な知見・決定はセッション中にルールプロンプトが
+            # Knowledge/Decisions/Projectsへ直接書き込ませている
             {
               echo "---"
               echo "date: $(date "+%Y-%m-%d")"
-              echo "tags: [ai-log, antigravity]"
+              echo "tags: [ai-log, antigravity, summary]"
               echo "session_id: $SESSION_ID"
               echo "---"
-              echo "# Antigravity CLI 会話ログ"
+              echo "# Antigravity CLI セッション要約 (ユーザー発言のみ)"
               echo ""
-              jq -r 'select(.type=="USER_INPUT" or .type=="PLANNER_RESPONSE") | 
-                     if .type=="USER_INPUT" then
-                       "\n---\n\n## 👤 ユーザー\n" + (.content // "")
-                     else
-                       "\n## 🤖 アシスタント\n" + 
-                       (if .thinking then "\n<details>\n<summary>思考プロセス</summary>\n\n" + .thinking + "\n</details>\n" else "" end) +
-                       (.content // "")
-                     end' "$TRANSCRIPT_PATH"
+              jq -r 'select(.type=="USER_INPUT") | "- " + ((.content // "") | gsub("\n"; " "))' "$TRANSCRIPT_PATH"
             } > "$LOG_FILE"
-            echo "-> 会話ログを保存しました: $LOG_FILE"
+            echo "-> セッション要約を保存しました: $LOG_FILE"
           fi
         fi
       fi
@@ -135,24 +133,22 @@ let
           mkdir -p "$LOG_DIR"
           LOG_FILE="$LOG_DIR/$DATE_STR.md"
 
+          # 生ログ(アシスタントの応答・思考プロセス全文)は保存しない
+          # (Vaultの肥大化・陳腐化の主因だったため2026-07-27に方針変更)。
+          # ユーザー発言だけを抜き出した軽量な箇条書き要約に留める。
+          # 重要な知見・決定はセッション中にルールプロンプトが
+          # Knowledge/Decisions/Projectsへ直接書き込ませている
           {
             echo "---"
             echo "date: $(date "+%Y-%m-%d")"
-            echo "tags: [ai-log, gemini]"
+            echo "tags: [ai-log, gemini, summary]"
             echo "project: $PROJECT_NAME"
             echo "---"
-            echo "# Gemini CLI 会話ログ"
+            echo "# Gemini CLI セッション要約 (ユーザー発言のみ)"
             echo ""
-            jq -r 'select(.type=="user" or .type=="gemini") | 
-                   if .type=="user" then
-                     "\n---\n\n## 👤 ユーザー\n" + (.content[0].text // "")
-                   else
-                     "\n## 🤖 アシスタント\n" + 
-                     (if (.thoughts | length > 0) then "\n<details>\n<summary>思考プロセス (" + .thoughts[0].subject + ")</summary>\n\n" + ([.thoughts[].description] | join("\n\n")) + "\n</details>\n" else "" end) +
-                     (if (.content != "") then "\n" + .content else (if (.toolCalls | length > 0) then "\n> [!INFO] ツール実行: " + ([.toolCalls[].displayName] | join(", ")) else "" end) end)
-                   end' "$NEW_LATEST"
+            jq -r 'select(.type=="user") | "- " + ((.content[0].text // "") | gsub("\n"; " "))' "$NEW_LATEST"
           } > "$LOG_FILE"
-          echo "-> 会話ログを保存しました: $LOG_FILE"
+          echo "-> セッション要約を保存しました: $LOG_FILE"
         fi
       fi
     '';

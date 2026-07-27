@@ -21,21 +21,30 @@ OSレベルのシステム定義から，シェル環境，ウィンドウマネ
 
 ![divider](https://capsule-render.vercel.app/api?type=rect&height=3&color=0:e6c384,50:7aa89f,100:a292a3)
 
-## 🗺️ 設定・キーマップ詳細
+## 🗺️ どれがどのOSで動くか (対応表)
 
-各モジュールの機能やキーバインドの詳細については，以下の個別ドキュメントからご確認ください．
+このリポジトリは4つのホスト (`nixosConfigurations.nixos` / `homeConfigurations.nalt-ubuntu` / `homeConfigurations.nalt-wsl` / `darwinConfigurations.nalt-mac`) を1つのFlakeから宣言的に管理しています．
+全ホスト共通の土台は [`profiles/base.nix`](profiles/base.nix) で，そこにホストごとの [`hosts/<host>/`](hosts) が個別モジュールを足していく構造です．
+**同じ「Alt長押しでウィンドウ操作」のような機能でも，OSごとに実装方式が違う**箇所があるので，表で確認してから各ドキュメントに進んでください．
 
-| 対象環境 | コンポーネント / モジュール | ガイドと詳細 | 主な役割 |
-| :--- | :--- | :--- | :--- |
-| **NixOS** | 🗔 Hyprland | [hyprland.md](docs/hyprland.md) | Waylandタイル操作，Matugen動的配色，Waybar連携． |
-| **Windows / WSL2** | 🗔 komorebi + YASB | [komorebi.md](docs/komorebi.md) / [matugen-palette.md](docs/matugen-palette.md) | Windows側タイルウィンドウ操作，YASBステータスバー，Matugen動的配色連携． |
-| **macOS** | 🗔 AeroSpace | [aerospace.nix](modules/apps/aerospace/default.nix) / [matugen-palette.md](docs/matugen-palette.md) | macOS用タイル操作，`Cmd+Ctrl`二重修飾キー，JankyBorders枠線表示，Matugen壁紙配色連携． |
-| **NixOS / Desktop** | ⌨️ Kanata | [kanata.md](docs/kanata.md) | システム級キーマップ（SandS Vim風移動，Mac風IME切り替え）． |
-| **共通 (App)** | 💻 WezTerm | [wezterm.md](docs/wezterm.md) | 85%半透明適用，Matugen配色タブ，Leaderキー（`Ctrl+Space`）管理． |
-| **共通 (App)** | 📝 Neovim | [neovim.md](docs/neovim.md) | Lazy.nvimによる構成，高度なカスタムマクロとプラグイン群． |
-| **共通 (App)** | 📁 Yazi | [yazi.md](docs/yazi.md) | Matugen配色の透過ファイラー，シェル連携による移動同期． |
-| **共通 (CLI)** | 🧰 CLI小物 | [cli-tools.md](docs/cli-tools.md) | atuin履歴検索，tldr，fd，delta，btop，smasshの使い方集． |
-| **NixOS ⇄ Windows** | 🖥️ Remote Desktop | [remote-desktop.md](docs/remote-desktop.md) | Tailscale + Sunshine/Moonlight による大学VPN不要の無人リモート接続． |
+凡例: ✅ 有効 / ➖ 未導入 (この構成では使っていない) / 🪟 Windows側で動作 (WSLからは同期のみ)
+
+| 機能 / モジュール | NixOS | Ubuntu | WSL2 | macOS | 詳細ドキュメント |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| 🗔 **タイルWM** | Hyprland ✅ | ➖ | komorebi 🪟 | AeroSpace ✅ | [hyprland.md](docs/hyprland.md) / [komorebi.md](docs/komorebi.md) / [aerospace.md](docs/aerospace.md) |
+| 📊 **ステータスバー** | Waybar ✅ | ➖ | YASB 🪟 | macOS標準メニューバー | [hyprland.md](docs/hyprland.md) / [komorebi.md](docs/komorebi.md) |
+| ⌨️ **キーボードリマップ** | Kanata ✅ | Kanata ✅※1 | AutoHotkey 🪟※2 | Kanata ✅※3 | [kanata.md](docs/kanata.md) |
+| 🎨 **壁紙連動の動的配色 (Matugen)** | ✅ | ➖※4 | ✅ (Windows側) | ✅ | [matugen-palette.md](docs/matugen-palette.md) |
+| 🌐 **日本語入力** | fcitx5 + Mozc ✅ | fcitx5 + Mozc ✅ | Windows標準IME (kanata非搭載のため対象外) | macOS標準IME | [kanata.md](docs/kanata.md) (切替キーのみ) |
+| 🖥️ **リモートデスクトップ (Tailscale+Sunshine)** | ✅ | ➖ | ➖ (接続元クライアント) | ➖ | [remote-desktop.md](docs/remote-desktop.md) |
+| 📔 **Obsidian MCP連携** | ➖ | ➖ | ✅ | ➖ | [obsidian-mcp.md](docs/obsidian-mcp.md) |
+| 🍺 **Homebrew Cask管理** | ➖ | ➖ | ➖ | ✅ | [hosts/mac/darwin.nix](hosts/mac/darwin.nix) |
+| 💻 **WezTerm / Neovim / Yazi / lazygit / git / eza / bat / btop / atuin / starship / gitmoji等** | ✅ | ✅ | ✅ | ✅ | [wezterm.md](docs/wezterm.md) / [neovim.md](docs/neovim.md) / [yazi.md](docs/yazi.md) / [cli-tools.md](docs/cli-tools.md) / [gitmoji.md](docs/gitmoji.md) |
+
+※1 Ubuntu側はKanata自体は動きますが，このリポジトリではUbuntu用のタイルWMを設定していないため，`Alt`長押しのウィンドウ操作系バインド (`Super+...`) を実際に処理するWM側の設定はありません．SandS移動・IME切替・CapsLock改修は問題なく使えます．
+※2 WSLからはWindows側の物理キーボードを直接掴めないため，Kanataではなく [`modules/input/ahk/main.ahk`](modules/input/ahk/main.ahk) が同等の機能を別実装しています．
+※3 macOSはWM操作の変換先が`Ctrl+Cmd`（NixOS/Ubuntuは`Super`単体）になるなど，キー配線が一部異なります．詳細は[kanata.md](docs/kanata.md)の「対象OS・実装方式の違い」を参照．
+※4 Ubuntu環境向けのMatugen配色パイプラインは未整備です（`modules/theming/matugen/`はWSL・Mac・NixOS向けの実装のみ）．
 
 ![divider](https://capsule-render.vercel.app/api?type=rect&height=3&color=0:e6c384,50:7aa89f,100:a292a3)
 
@@ -51,11 +60,13 @@ OSレベルのシステム定義から，シェル環境，ウィンドウマネ
 │   └── mac/                   # macOS用 nix-darwin + Home Manager 統合設定
 ├── modules/                   # 再利用可能な共通設定モジュール群
 │   ├── wm/                    # ウィンドウマネージャー設定 (hyprland, komorebi, yasb)
-│   ├── apps/                  # アプリケーション個別設定 (wezterm, neovim, yazi, lazygit, git, bat)
+│   ├── apps/                  # アプリケーション個別設定 (wezterm, neovim, yazi, lazygit, git, bat,
+│   │                          #   eza, btop, git-hooks, aerospace[Mac専用], vivaldi)
 │   ├── services/              # ユーザーサービス (obsidian-mcp)
-│   ├── shell/                 # シェル・端末環境 (zsh, starship, fastfetch, direnv)
-│   ├── input/                 # 入力系 (kanata キーリマップ, fcitx5 日本語入力)
-│   ├── theming/               # Matugen 共通ロジック / テンプレート / WSL パイプライン
+│   ├── shell/                 # シェル・端末環境 (zsh, starship, fastfetch, direnv, atuin)
+│   ├── input/                 # 入力系 (kanata キーリマップ[NixOS/Ubuntu/Mac], ahk[WSL], fcitx5 日本語入力)
+│   ├── theming/                # Matugen 共通ロジック / テンプレート (lib, templates) と
+│   │                          #   ホスト別パイプライン (wsl/, mac/)
 │   └── desktop/               # Linux GUI 共通 (パッケージ, デスクトップエントリ, MIME)
 ├── profiles/                  # 全ホスト共通プロファイル (base.nix)
 └── docs/                      # 各種仕様・キーマップ解説ドキュメント
@@ -74,164 +85,14 @@ git clone https://github.com/Naruto-Takahashi/nix-config.git
 cd nix-config
 ```
 
-### A. NixOS 環境へ導入する場合
+OSごとの詳しい手順は個別ページに分けています．上の対応表で自分のホストを確認してから該当ページを開いてください．
 
-NixOSの公式インストーラで最小インストール（ユーザー名は **`nalt`** で作成）を完了した後の手順です．
-
-1. **ハードウェア構成ファイルのコピー**  
-   PC固有のハードウェア構成ファイルをリポジトリ内に上書きコピーし，Gitの追跡対象に加えます．
-   ```bash
-   cp /etc/nixos/hardware-configuration.nix hosts/nixos/hardware-configuration.nix
-   git add hosts/nixos/hardware-configuration.nix
-   ```
-
-2. **設定の構築とシステムへの適用**  
-   Flakesを利用してシステム構成と Home Manager の設定を一括適用します．
-   ```bash
-   sudo nixos-rebuild switch --flake .#nixos --impure
-   ```
-
-3. **システムの再起動**  
-   Kanata などのシステムサービスを完全に認識させるため，適用後は一度PCを再起動してください．
-
-4. **リモートデスクトップの初回認証（必要な場合）**  
-   Tailscaleのログインや Sunshine のペアリングなど，Nixで再現されない認証ステートの初期化手順は [remote-desktop.md](docs/remote-desktop.md) を参照してください．
-
----
-
-### B. Ubuntu デスクトップ環境の場合 (`nalt-ubuntu`)
-
-Nix非搭載の通常の Ubuntu Linux に Home Manager プロファイルを導入する手順です．
-
-1. **Nix パッケージマネージャーのインストール** (シングルユーザーモード)
-   ```bash
-   curl -L https://nixos.org/nix/install | sh
-   . ~/.nix-profile/etc/profile.d/nix.sh
-   ```
-
-2. **Nix Flakes 機能の有効化**
-   ```bash
-   mkdir -p ~/.config/nix
-   echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-   ```
-
-3. **Home Manager プロファイルの適用**
-   ```bash
-   nix run github:nix-community/home-manager -- switch --flake .#nalt-ubuntu --impure
-   ```
-   > `--impure` は必須です．nixGL が `builtins.currentTime` を参照するため，純粋評価では失敗します．
-
-4. **ユーザーサービスの登録とシェル再起動**
-   ```bash
-   systemctl --user daemon-reload
-   systemctl --user enable --now kanata
-   exec zsh
-   ```
-
----
-
-### C. WSL2 (Ubuntu) 環境の場合 (`nalt-wsl`)
-
-WSL2環境で動作させる手順です．
-
-1. **NixのインストールとFlakesの有効化** (上記の Ubuntu 手順 1 & 2 と同様)
-2. **Home Manager プロファイルの適用**
-   ```bash
-   nix run github:nix-community/home-manager -- switch --flake .#nalt-wsl --impure
-   ```
-3. **Windows側への設定ファイル同期**  
-   WSL2環境下で管理される WezTerm や komorebi / YASB の設定を Windows ホストに反映するため，以下の同期コマンドを実行します．
-   ```bash
-   sync-win
-   exec zsh
-   ```
-
----
-
-### D. macOS (darwin) 環境の場合 (`nalt-mac`)
-
-M1 Mac などの macOS 環境でシステム設定およびアプリケーション群を統合管理する手順です．
-キーボード操作 (Kanata) と壁紙配色連携 (Matugen) は macOS の TCC (権限管理) の都合上，
-Nixの適用だけでは完結せず，何点か手動でのGUI操作が必要です．下記の順番通りに進めてください．
-
-1. **Xcode Command Line Tools のインストール**  
-   インストールされていない場合は，以下を実行して導入します．
-   ```bash
-   xcode-select --install
-   ```
-
-2. **Nix のインストール**  
-   Determinate Nix インストーラを使用してインストールを行います．
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-   ```
-
-3. **Homebrew のインストール**  
-   Nix-darwin による Cask アプリ（AeroSpace, Vivaldi, Raycast, Alt-Tab など）の管理に
-   必要となるため，事前にインストールしておきます．
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-
-4. **設定の構築とシステムへの適用**  
-   リポジトリを `ghq` 規定位置に配置後，シンボリックリンクを作成してシステム構成を適用します．
-   ```bash
-    # シンボリックリンクの作成 (初回のみ)
-    mv ~/.config/home-manager ~/.config/home-manager.bak
-    ln -s ~/ghq/github.com/Naruto-Takahashi/nix-config ~/.config/home-manager
- 
-    # システムの適用と有効化 (初回起動時は nix run でブートストラップ)
-    cd ~/ghq/github.com/Naruto-Takahashi/nix-config
-    git add .
-    sudo nix run github:LnL7/nix-darwin -- switch --flake .#nalt-mac --impure
-
-   # 2回目以降の更新適用 (こちらが推奨・高速)
-   darwin-rebuild switch --flake .#nalt-mac
-   ```
-   初回適用時に，Kanataバイナリを安定パス (`/usr/local/bin/kanata`) へ再署名して
-   配置する自己署名証明書が自動生成されます（TCC権限をリビルドのたびに失い直さない
-   ための仕組み。詳細はコメント付きで `hosts/mac/darwin.nix` を参照）．
-   また同じタイミングで **Karabiner-DriverKit-VirtualHIDDevice v6.2.0**
-   (Kanataの仮想キーボード出力に必須のドライバ) のダウンロード・インストール・
-   システム拡張の有効化リクエストも自動で行われます（`hash`固定の`fetchurl`で
-   取得するため常に同じバージョンになります。バージョンが合わないと
-   `connect_failed` エラーで起動しません）。
-
-5. **ドライバの機能拡張を有効化 (初回のみ・手動)**  
-   上記でインストール・有効化リクエストまでは自動化されていますが，**実際に
-   有効化するトグルはSIPの制約上どうしても手動操作が必要**です．
-   `システム設定 → 一般 → ログイン項目と機能拡張 → ドライバの機能拡張` を開き，
-   `Karabiner DriverKit VirtualHIDDevice` を有効化してください．
-
-6. **Kanataへの権限付与 (初回のみ)**  
-   `システム設定 → プライバシーとセキュリティ` で以下2つを許可してください．
-   `/usr/local/bin/kanata` をFinderの `Cmd+Shift+G` で直接パス入力して追加する
-   のが確実です．
-   - **入力監視 (Input Monitoring)**
-   - **アクセシビリティ (Accessibility)**
-
-   許可後にKanataが権限を拾わない場合は，一度再起動を促してください．
-   ```bash
-   sudo launchctl kickstart -k system/org.nixos.kanata
-   ```
-
-7. **配色反映 (Matugen) の初回許可 (任意)**  
-   `ctrl-cmd-w` (壁紙ピッカー) や `matugen-apply` を初めて実行すると，現在の壁紙を
-   取得するために「システムイベント」のオートメーション許可を求めるダイアログが
-   出ることがあります．許可すると以後は自動で通ります．詳細は
-   [matugen-palette.md](docs/matugen-palette.md) を参照してください．
-
-8. **AeroSpace設定の再読み込み (通常は不要)**  
-   ログイン20秒後にAeroSpaceの設定リロードとborders起動を自動で行うLaunchAgent
-   (`modules/apps/aerospace/default.nix`) があるため，通常は何もしなくても
-   次回ログイン時に最新設定が反映されます．`darwin-rebuild switch` 直後，
-   ログアウトを待たずにすぐ反映を見たい場合だけ手動でリロードしてください
-   （`xdg.configFile`で生成される`aerospace.toml`はファイルを書き換えただけでは
-   AeroSpace自身に反映されず，`after-startup-command`はAeroSpace自身の起動時に
-   しか走らないため）．
-   ```bash
-   aerospace reload-config
-   ```
+| ホスト | セットアップ手順 | 特記事項 |
+| :--- | :--- | :--- |
+| 🐧 **NixOS** | [docs/setup-nixos.md](docs/setup-nixos.md) | 最もシンプル。`nixos-rebuild switch`一発 |
+| 🟠 **Ubuntu (Desktop)** | [docs/setup-ubuntu.md](docs/setup-ubuntu.md) | Nix非搭載環境へのシングルユーザーインストールから |
+| 🪟 **WSL2** | [docs/setup-wsl.md](docs/setup-wsl.md) | 適用後に`sync-win`でWindows側へ設定を同期 |
+| 🍎 **macOS** | [docs/setup-mac.md](docs/setup-mac.md) | 手順が最も多い。TCC/SIPの都合で数点だけ手動のGUI操作が残る |
 
 ![divider](https://capsule-render.vercel.app/api?type=rect&height=3&color=0:e6c384,50:7aa89f,100:a292a3)
 
@@ -242,18 +103,37 @@ Nixの適用だけでは完結せず，何点か手動でのGUI操作が必要�
 
 Declarative configurations for NixOS, Ubuntu (Desktop), WSL2, and macOS managed via **Nix Flakes**, **Home Manager**, and **nix-darwin**.
 
-## 🗺️ Documentation & Navigation
+## 🗺️ What runs where (OS support matrix)
 
-| Target | Module | Guide | Key Functionality |
-| :--- | :--- | :--- | :--- |
-| **NixOS** | 🗔 Hyprland | [hyprland.md](docs/hyprland.md) | Wayland tiling, Matugen color scheme, Waybar. |
-| **Windows / WSL2** | 🗔 komorebi + YASB | [komorebi.md](docs/komorebi.md) / [matugen-palette.md](docs/matugen-palette.md) | Windows-side tiling WM, YASB status bar, Matugen dynamic theming. |
-| **macOS** | 🗔 AeroSpace | [aerospace.nix](modules/apps/aerospace/default.nix) / [matugen-palette.md](docs/matugen-palette.md) | macOS tiling, `Cmd+Ctrl` modifier, JankyBorders highlight, Matugen wallpaper theming. |
-| **NixOS / Desktop** | ⌨️ Kanata | [kanata.md](docs/kanata.md) | System-level remap (SandS navigation, macOS-like IME). |
-| **Common (App)** | 💻 WezTerm | [wezterm.md](docs/wezterm.md) | 75% transparent window, dynamic tab parsing, Leader key. |
-| **Common (App)** | 📝 Neovim | [neovim.md](docs/neovim.md) | Custom config built with Lazy.nvim, optimized Vim macros. |
-| **Common (App)** | 📁 Yazi | [yazi.md](docs/yazi.md) | Cyberdream transparent file manager with shell sync hook. |
-| **Common (CLI)** | 🧰 CLI tools | [cli-tools.md](docs/cli-tools.md) | Usage cheatsheet for atuin, tldr, fd, delta, btop, smassh. |
+This repo manages four hosts (`nixosConfigurations.nixos` / `homeConfigurations.nalt-ubuntu` /
+`homeConfigurations.nalt-wsl` / `darwinConfigurations.nalt-mac`) from a single flake. All hosts
+share [`profiles/base.nix`](profiles/base.nix) as a baseline, and each [`hosts/<host>/`](hosts)
+adds host-specific modules on top. **The same logical feature (e.g. "hold Alt to manage windows")
+is often implemented differently per OS** — check this table before diving into a doc.
+
+Legend: ✅ enabled · ➖ not set up in this config · 🪟 runs on the Windows side (WSL only syncs to it)
+
+| Feature / Module | NixOS | Ubuntu | WSL2 | macOS | Docs |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| 🗔 **Tiling WM** | Hyprland ✅ | ➖ | komorebi 🪟 | AeroSpace ✅ | [hyprland.md](docs/hyprland.md) / [komorebi.md](docs/komorebi.md) / [aerospace.md](docs/aerospace.md) |
+| 📊 **Status bar** | Waybar ✅ | ➖ | YASB 🪟 | native macOS menu bar | [hyprland.md](docs/hyprland.md) / [komorebi.md](docs/komorebi.md) |
+| ⌨️ **Keyboard remapping** | Kanata ✅ | Kanata ✅* | AutoHotkey 🪟** | Kanata ✅*** | [kanata.md](docs/kanata.md) |
+| 🎨 **Wallpaper-driven theming (Matugen)** | ✅ | ➖**** | ✅ (Windows side) | ✅ | [matugen-palette.md](docs/matugen-palette.md) |
+| 🌐 **Japanese input** | fcitx5 + Mozc ✅ | fcitx5 + Mozc ✅ | native Windows IME (no Kanata here) | native macOS IME | [kanata.md](docs/kanata.md) (switch keys only) |
+| 🖥️ **Remote desktop (Tailscale+Sunshine)** | ✅ | ➖ | ➖ (client only) | ➖ | [remote-desktop.md](docs/remote-desktop.md) |
+| 📔 **Obsidian MCP** | ➖ | ➖ | ✅ | ➖ | [obsidian-mcp.md](docs/obsidian-mcp.md) |
+| 🍺 **Homebrew Cask management** | ➖ | ➖ | ➖ | ✅ | [hosts/mac/darwin.nix](hosts/mac/darwin.nix) |
+| 💻 **WezTerm / Neovim / Yazi / lazygit / git / eza / bat / btop / atuin / starship / gitmoji, etc.** | ✅ | ✅ | ✅ | ✅ | [wezterm.md](docs/wezterm.md) / [neovim.md](docs/neovim.md) / [yazi.md](docs/yazi.md) / [cli-tools.md](docs/cli-tools.md) / [gitmoji.md](docs/gitmoji.md) |
+
+\* Kanata itself runs fine on Ubuntu, but this repo doesn't configure a tiling WM for Ubuntu, so
+the WM-facing bindings (`Super+...`) have nothing to act on them. SandS navigation, IME switching,
+and the CapsLock remap all still work.
+\*\* WSL can't grab Windows' physical keyboard directly, so [`modules/input/ahk/main.ahk`](modules/input/ahk/main.ahk)
+reimplements the equivalent behavior separately instead of using Kanata.
+\*\*\* macOS translates the WM modifier to `Ctrl+Cmd` (vs. bare `Super` on NixOS/Ubuntu) and a few
+other keys differ — see "OS別の違い" in [kanata.md](docs/kanata.md).
+\*\*\*\* There's no Matugen theming pipeline for Ubuntu yet (`modules/theming/matugen/` only has
+WSL, Mac, and NixOS implementations).
 
 ## 📂 Repository Structure
 
@@ -261,7 +141,7 @@ Declarative configurations for NixOS, Ubuntu (Desktop), WSL2, and macOS managed 
 * `modules/`: Shared reusable configurations (Window managers, CLI apps, Zsh configs).
 * `docs/`: In-depth manuals and keyboard shortcuts mapping lists.
 
-## 🚀 Quick Start (Setup Commands)
+## 🚀 Quick Start
 
 ```bash
 mkdir -p ~/ghq/github.com/Naruto-Takahashi
@@ -270,56 +150,15 @@ git clone https://github.com/Naruto-Takahashi/nix-config.git
 cd nix-config
 ```
 
-### NixOS Setup
-1. Copy target `hardware-configuration.nix` under `hosts/nixos/`.
-2. Apply changes: `sudo nixos-rebuild switch --flake .#nixos --impure`
-3. Reboot to let Kanata services spin up.
+Detailed per-host setup steps live in `docs/` (Japanese only, same convention as the rest of `docs/`).
+The short version:
 
-### Standalone Ubuntu Setup
-1. Install Nix and enable Flakes.
-2. Build home profile: `nix run github:nix-community/home-manager -- switch --flake .#nalt-ubuntu --impure`
-3. Enable Kanata systemd service: `systemctl --user enable --now kanata && exec zsh`
-
-### WSL2 Setup
-1. Install Nix and enable Flakes.
-2. Build home profile: `nix run github:nix-community/home-manager -- switch --flake .#nalt-wsl --impure`
-3. Synchronize configurations into Windows side directories: `sync-win && exec zsh`
-
-### macOS Setup (`nalt-mac`)
-Keyboard remapping (Kanata) and wallpaper-based theming (Matugen) need a few manual
-GUI steps due to macOS's TCC permission model — Nix alone can't finish the setup.
-1. Install Xcode Command Line Tools: `xcode-select --install`
-2. Install Nix and enable Flakes.
-3. Install Homebrew (required for nix-darwin cask management):
-   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-4. Setup configuration symlink:
-   `mv ~/.config/home-manager ~/.config/home-manager.bak`
-   `ln -s ~/ghq/github.com/Naruto-Takahashi/nix-config ~/.config/home-manager`
-5. Apply and activate (First-time bootstrap):
-   `sudo nix run github:LnL7/nix-darwin -- switch --flake .#nalt-mac --impure`
-   (a self-signed cert is auto-generated on first activation so Kanata's TCC grants
-   survive future rebuilds — see `hosts/mac/darwin.nix`. The same activation also
-   downloads, installs, and requests activation for **Karabiner-DriverKit-VirtualHIDDevice
-   v6.2.0** — exact version required, Kanata's Rust crate is pinned to it, and it's
-   fetched via a hash-pinned `fetchurl` so it's always the same build. Karabiner-Elements
-   itself is never installed — it fights Kanata via Background Task Management.)
-6. Enable the driver extension (one-time, manual — this is the only step that
-   can't be automated, macOS's SIP requires a human click here): open
-   `System Settings → General → Login Items & Extensions → Driver Extensions` and
-   enable `Karabiner DriverKit VirtualHIDDevice`.
-7. Grant Kanata **Input Monitoring** and **Accessibility** permissions under
-   `System Settings → Privacy & Security` (add `/usr/local/bin/kanata` via Finder's
-   `Cmd+Shift+G`). If it doesn't take effect immediately:
-   `sudo launchctl kickstart -k system/org.nixos.kanata`
-8. First run of the wallpaper picker (`ctrl-cmd-w`) / `matugen-apply` may prompt for
-   an Automation permission for "System Events" (used to detect the current
-   wallpaper) — allow it once. See [matugen-palette.md](docs/matugen-palette.md).
-9. Apply subsequent updates (Recommended/Fast): `darwin-rebuild switch --flake .#nalt-mac`
-   A LaunchAgent (`modules/apps/aerospace/default.nix`) reloads AeroSpace's config and
-   relaunches `borders` automatically ~20s after every login, so this is normally
-   nothing to worry about. If you want changes reflected immediately without waiting
-   for the next login, run `aerospace reload-config` yourself (`after-startup-command`
-   only runs at AeroSpace's own launch, not on file changes).
+| Host | Setup guide | One-liner |
+| :--- | :--- | :--- |
+| NixOS | [docs/setup-nixos.md](docs/setup-nixos.md) | `sudo nixos-rebuild switch --flake .#nixos --impure`, then reboot |
+| Ubuntu (Desktop) | [docs/setup-ubuntu.md](docs/setup-ubuntu.md) | Install Nix, then `nix run github:nix-community/home-manager -- switch --flake .#nalt-ubuntu --impure` |
+| WSL2 | [docs/setup-wsl.md](docs/setup-wsl.md) | Same as Ubuntu but `.#nalt-wsl`, then `sync-win` to push config to the Windows side |
+| macOS | [docs/setup-mac.md](docs/setup-mac.md) | `sudo nix run github:LnL7/nix-darwin -- switch --flake .#nalt-mac --impure`, then a few manual TCC/SIP permission grants (unavoidable — see the guide) |
 
 
 </details>

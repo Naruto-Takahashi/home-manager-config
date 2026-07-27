@@ -1,12 +1,12 @@
 # 📝 Neovim 設定・主要プラグイン・キーバインド詳細
 
-このドキュメントでは，[modules/neovim.nix](../modules/neovim.nix) を通じて管理されている Neovim の基本設計，独自マッピング，および強力なプラグインエコシステムについて詳細に解説します．
+このドキュメントでは，[modules/apps/neovim/default.nix](../modules/apps/neovim/default.nix) を通じて管理されている Neovim の基本設計，独自マッピング，および強力なプラグインエコシステムについて詳細に解説します．
 
 ---
 
 ## ⚙️ 基本設定 (General Options)
 
-効率的なコーディングとモダンな視覚効果を実現するための基本オプション設計（[vim-options.lua](../modules/nvim/lua/vim-options.lua)）です．
+効率的なコーディングとモダンな視覚効果を実現するための基本オプション設計（[vim-options.lua](../modules/apps/neovim/nvim/lua/vim-options.lua)）です．
 
 * **タブ・インデント幅**: `expandtab`，`tabstop=4`，`shiftwidth=4` (スペース4つのクリーンなインデント)．
 * **相対行番号 (`relativenumber`)**: 現在行からの相対距離で番号を表示し，`10j` などのVim移動手数を一瞬で測ることができます（`number` も有効なため，現在行のみ絶対行数が表示されます）．
@@ -60,7 +60,7 @@
 
 ## 📦 主要プラグインエコシステム (Plugin Ecosystem)
 
-プラグインマネージャー **Lazy.nvim**（[init.lua](../modules/nvim/init.lua)）により，以下の最新鋭プラグインが高速に自動ロード・管理されます．
+プラグインマネージャー **Lazy.nvim**（[init.lua](../modules/apps/neovim/nvim/init.lua)）により，以下の最新鋭プラグインが高速に自動ロード・管理されます．
 
 1. **`cyberdream.lua`**: 近未来的なサイバーパンク調の極めて美しいメインカラーテーマ．背景透過処理と美しく調和．
 2. **`lsp-config.lua`**: 高度なコーディング支援（自動コード補完・エラー検出・定義ジャンプ）．

@@ -72,8 +72,12 @@ let
       if [ -d "$BRAIN_DIR" ]; then
         NEW_LATEST=$(ls -td "$BRAIN_DIR"/*/ 2>/dev/null | head -n 1)
         if [ -n "$NEW_LATEST" ] && [ "$NEW_LATEST" != "$PREV_LATEST" ]; then
+          # 02_Journal/Antigravity のようなツール別フォルダは作らず、
+          # 日付ベースの02_Journal/YYYY/MM/に統一する (2026-07-27，
+          # 02_Journal/README.mdが定義する唯一の運用ルールに合わせるため)。
+          # ツールの区別はfrontmatterのtagsで行う。
           DATE_STR=$(date "+%Y-%m-%d_%H-%M-%S")
-          LOG_DIR="$VAULT_PATH/02_Journal/Antigravity"
+          LOG_DIR="$VAULT_PATH/02_Journal/$(date "+%Y")/$(date "+%m")"
           mkdir -p "$LOG_DIR"
           LOG_FILE="$LOG_DIR/$DATE_STR.md"
 
@@ -128,8 +132,12 @@ let
       if [ -d "$HISTORY_DIR" ]; then
         NEW_LATEST=$(ls -t "$HISTORY_DIR"/session-*.jsonl 2>/dev/null | head -n 1)
         if [ -n "$NEW_LATEST" ] && [ "$NEW_LATEST" != "$PREV_LATEST" ]; then
+          # 02_Journal/Gemini のようなツール別フォルダは作らず、
+          # 日付ベースの02_Journal/YYYY/MM/に統一する (2026-07-27，
+          # 02_Journal/README.mdが定義する唯一の運用ルールに合わせるため)。
+          # ツールの区別はfrontmatterのtagsで行う。
           DATE_STR=$(date "+%Y-%m-%d_%H-%M-%S")
-          LOG_DIR="$VAULT_PATH/02_Journal/Gemini"
+          LOG_DIR="$VAULT_PATH/02_Journal/$(date "+%Y")/$(date "+%m")"
           mkdir -p "$LOG_DIR"
           LOG_FILE="$LOG_DIR/$DATE_STR.md"
 

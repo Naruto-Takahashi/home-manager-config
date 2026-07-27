@@ -173,20 +173,7 @@ Nixの適用だけでは完結せず，何点か手動でのGUI操作が必要�
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
 
-4. **Karabiner-DriverKit-VirtualHIDDevice (v6.2.0) の手動インストール**  
-   Kanataがキー入力を仮想デバイスへ書き込むために必須の低レベルドライバです．
-   Karabiner-Elements本体は導入しません（BackgroundTaskManagementでKanataと競合するため）．
-   バージョンが合わないと `connect_failed` エラーで起動しないので，**必ずv6.2.0**を
-   [公式リリース](https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/tag/v6.2.0)
-   から取得し `.pkg` をインストールしてください．インストール後：
-   - `システム設定 → 一般 → ログイン項目と機能拡張 → ドライバの機能拡張` で
-     `Karabiner DriverKit VirtualHIDDevice` を有効化する
-   - ターミナルで以下を実行し，システム拡張の有効化を要求する
-     ```bash
-     sudo "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
-     ```
-
-5. **設定の構築とシステムへの適用**  
+4. **設定の構築とシステムへの適用**  
    リポジトリを `ghq` 規定位置に配置後，シンボリックリンクを作成してシステム構成を適用します．
    ```bash
     # シンボリックリンクの作成 (初回のみ)
@@ -204,6 +191,17 @@ Nixの適用だけでは完結せず，何点か手動でのGUI操作が必要�
    初回適用時に，Kanataバイナリを安定パス (`/usr/local/bin/kanata`) へ再署名して
    配置する自己署名証明書が自動生成されます（TCC権限をリビルドのたびに失い直さない
    ための仕組み。詳細はコメント付きで `hosts/mac/darwin.nix` を参照）．
+   また同じタイミングで **Karabiner-DriverKit-VirtualHIDDevice v6.2.0**
+   (Kanataの仮想キーボード出力に必須のドライバ) のダウンロード・インストール・
+   システム拡張の有効化リクエストも自動で行われます（`hash`固定の`fetchurl`で
+   取得するため常に同じバージョンになります。バージョンが合わないと
+   `connect_failed` エラーで起動しません）。
+
+5. **ドライバの機能拡張を有効化 (初回のみ・手動)**  
+   上記でインストール・有効化リクエストまでは自動化されていますが，**実際に
+   有効化するトグルはSIPの制約上どうしても手動操作が必要**です．
+   `システム設定 → 一般 → ログイン項目と機能拡張 → ドライバの機能拡張` を開き，
+   `Karabiner DriverKit VirtualHIDDevice` を有効化してください．
 
 6. **Kanataへの権限付与 (初回のみ)**  
    `システム設定 → プライバシーとセキュリティ` で以下2つを許可してください．
@@ -223,14 +221,17 @@ Nixの適用だけでは完結せず，何点か手動でのGUI操作が必要�
    出ることがあります．許可すると以後は自動で通ります．詳細は
    [matugen-palette.md](docs/matugen-palette.md) を参照してください．
 
-8. **AeroSpace設定の再読み込み**  
-   `xdg.configFile` で生成される `aerospace.toml` はファイルを書き換えるだけでは
-   AeroSpace自身に反映されません（`after-startup-command` は起動時にしか走らない
-   ため）．`darwin-rebuild switch` の後は毎回リロードしてください．
+8. **AeroSpace設定の再読み込み (通常は不要)**  
+   ログイン20秒後にAeroSpaceの設定リロードとborders起動を自動で行うLaunchAgent
+   (`modules/apps/aerospace/default.nix`) があるため，通常は何もしなくても
+   次回ログイン時に最新設定が反映されます．`darwin-rebuild switch` 直後，
+   ログアウトを待たずにすぐ反映を見たい場合だけ手動でリロードしてください
+   （`xdg.configFile`で生成される`aerospace.toml`はファイルを書き換えただけでは
+   AeroSpace自身に反映されず，`after-startup-command`はAeroSpace自身の起動時に
+   しか走らないため）．
    ```bash
    aerospace reload-config
    ```
-   （AeroSpaceを再起動すれば同じ効果があります．次回ログイン時は自動で最新設定が読まれます．）
 
 ![divider](https://capsule-render.vercel.app/api?type=rect&height=3&color=0:e6c384,50:7aa89f,100:a292a3)
 
@@ -291,20 +292,21 @@ GUI steps due to macOS's TCC permission model — Nix alone can't finish the set
 2. Install Nix and enable Flakes.
 3. Install Homebrew (required for nix-darwin cask management):
    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-4. Manually install **Karabiner-DriverKit-VirtualHIDDevice v6.2.0** (exact version
-   required — Kanata's Rust crate is pinned to it) from the
-   [official release](https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/tag/v6.2.0).
-   Do not install Karabiner-Elements itself (it fights Kanata via Background Task
-   Management). After installing the `.pkg`, enable it under
-   `System Settings → General → Login Items & Extensions → Driver Extensions`, then run:
-   `sudo "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate`
-5. Setup configuration symlink:
+4. Setup configuration symlink:
    `mv ~/.config/home-manager ~/.config/home-manager.bak`
    `ln -s ~/ghq/github.com/Naruto-Takahashi/nix-config ~/.config/home-manager`
-6. Apply and activate (First-time bootstrap):
+5. Apply and activate (First-time bootstrap):
    `sudo nix run github:LnL7/nix-darwin -- switch --flake .#nalt-mac --impure`
    (a self-signed cert is auto-generated on first activation so Kanata's TCC grants
-   survive future rebuilds — see `hosts/mac/darwin.nix`)
+   survive future rebuilds — see `hosts/mac/darwin.nix`. The same activation also
+   downloads, installs, and requests activation for **Karabiner-DriverKit-VirtualHIDDevice
+   v6.2.0** — exact version required, Kanata's Rust crate is pinned to it, and it's
+   fetched via a hash-pinned `fetchurl` so it's always the same build. Karabiner-Elements
+   itself is never installed — it fights Kanata via Background Task Management.)
+6. Enable the driver extension (one-time, manual — this is the only step that
+   can't be automated, macOS's SIP requires a human click here): open
+   `System Settings → General → Login Items & Extensions → Driver Extensions` and
+   enable `Karabiner DriverKit VirtualHIDDevice`.
 7. Grant Kanata **Input Monitoring** and **Accessibility** permissions under
    `System Settings → Privacy & Security` (add `/usr/local/bin/kanata` via Finder's
    `Cmd+Shift+G`). If it doesn't take effect immediately:
@@ -312,11 +314,12 @@ GUI steps due to macOS's TCC permission model — Nix alone can't finish the set
 8. First run of the wallpaper picker (`ctrl-cmd-w`) / `matugen-apply` may prompt for
    an Automation permission for "System Events" (used to detect the current
    wallpaper) — allow it once. See [matugen-palette.md](docs/matugen-palette.md).
-9. Apply subsequent updates (Recommended/Fast):
-   `darwin-rebuild switch --flake .#nalt-mac`
-   Then reload AeroSpace so the rewritten config actually takes effect
-   (`after-startup-command` only runs at AeroSpace's own launch, not on file
-   changes): `aerospace reload-config`
+9. Apply subsequent updates (Recommended/Fast): `darwin-rebuild switch --flake .#nalt-mac`
+   A LaunchAgent (`modules/apps/aerospace/default.nix`) reloads AeroSpace's config and
+   relaunches `borders` automatically ~20s after every login, so this is normally
+   nothing to worry about. If you want changes reflected immediately without waiting
+   for the next login, run `aerospace reload-config` yourself (`after-startup-command`
+   only runs at AeroSpace's own launch, not on file changes).
 
 
 </details>

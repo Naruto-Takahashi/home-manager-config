@@ -3,6 +3,18 @@
 # =========================================================================
 { pkgs, ... }:
 
+let
+  # Kanataの仮想キーボード出力に必須のドライバ。KanataのRustクレート
+  # (karabiner-driverkit) がバージョン固定で依存しているため，必ずv6.2.0を使う
+  # (それ以外のバージョンだと connect_failed エラーで起動しない実績あり)。
+  # ハッシュ固定のfetchurlなので、新しいMacでのブートストラップ時にも
+  # 毎回同じ内容がダウンロードされることが保証される。
+  karabinerVhidPkg = pkgs.fetchurl {
+    url = "https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/download/v6.2.0/Karabiner-DriverKit-VirtualHIDDevice-6.2.0.pkg";
+    hash = "sha256-noxGI58HSBYSQeQkRIV5ASJOXIL1tYoXMd9McL8HNqg=";
+  };
+in
+
 {
   # -----------------------------------------------------------------------
   # システム共通パッケージの定義
@@ -63,12 +75,31 @@
 
 
 
+  # Karabiner-DriverKit-VirtualHIDDevice (v6.2.0) のダウンロード・インストール・
+  # システム拡張の有効化リクエストを自動化する．preActivationはnix-darwinの
+  # launchd起動ステップより前に走るため，新しいMacでも
+  # karabiner-vhid-daemon (下記) が参照するデーモン本体が確実に存在する状態で
+  # LaunchDaemonの読み込みが行われる．
+  # 唯一自動化できないのは「システム設定 → 一般 → ログイン項目と機能拡張 →
+  # ドライバの機能拡張」でのトグルON操作のみ (SIPにより人間の操作が必須)．
+  system.activationScripts.preActivation.text = ''
+    echo "Ensuring Karabiner-DriverKit-VirtualHIDDevice v6.2.0 is installed..."
+    installed_version="$(/usr/sbin/pkgutil --pkg-info org.pqrs.Karabiner-DriverKit-VirtualHIDDevice 2>/dev/null | /usr/bin/awk '/^version:/{print $2}')"
+    if [ "$installed_version" != "6.2.0" ]; then
+      echo "Installing Karabiner-DriverKit-VirtualHIDDevice v6.2.0 (found: ''${installed_version:-none})..."
+      /usr/sbin/installer -pkg ${karabinerVhidPkg} -target /
+    fi
+    # システム拡張の有効化をリクエストする（実際の承認はSystem Settingsでの
+    # 手動操作が必要。既に承認済みなら無害）。
+    MANAGER="/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager"
+    [ -x "$MANAGER" ] && "$MANAGER" activate || true
+  '';
+
   # Karabiner-DriverKit-VirtualHIDDevice デーモンの起動サービス設定．
   # Karabiner-Elements本体（グラバー/メニュー等）はmacOSのBackground Task
   # Managementで管理されており launchctl disable が定着しないため，
   # Karabiner-Elements本体は導入せず，このドライバ（Kanataの仮想キー出力に
   # 必須）だけを nix-darwin 管理の LaunchDaemon で直接起動する．
-  # ドライバ本体（システム拡張）は事前に手動インストール・承認が必要．
   launchd.daemons.karabiner-vhid-daemon = {
     serviceConfig = {
       ProgramArguments = [

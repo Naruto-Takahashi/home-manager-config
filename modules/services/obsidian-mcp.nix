@@ -158,6 +158,36 @@ let
     '';
   };
 
+  # --- vaultPath自体のgit自動commit&push ---
+  # Vault (/mnt/c/Users/tnaru/Obsidian/Vault) は元からgit管理下
+  # (obsidian-vault リポジトリのworking copy) だが、コミット・pushは
+  # 手動運用だったため自動化する。AIエージェント(Claude/Gemini/Antigravity)
+  # がその場で書き込んだ内容も取りこぼさないよう、変更があれば無条件でcommitする。
+  obsidian-vault-sync = pkgs.writeShellApplication {
+    name = "obsidian-vault-sync";
+    runtimeInputs = [ pkgs.git ];
+    text = ''
+      cd "${vaultPath}"
+
+      # gitリポジトリでなければ何もしない (初回セットアップがまだの環境等)
+      if [ ! -d .git ]; then
+        echo "obsidian-vault-sync: ${vaultPath} はgitリポジトリではないためスキップ"
+        exit 0
+      fi
+
+      git add -A
+
+      if git diff --cached --quiet; then
+        exit 0
+      fi
+
+      git commit -q -m "auto: vault sync $(date '+%Y-%m-%d %H:%M:%S')"
+      # ネットワーク不通等でpushが失敗してもタイマー自体は落とさない
+      # (次回実行時に前回分もまとめてpushされる)
+      git push -q || echo "obsidian-vault-sync: pushに失敗 (次回リトライされます)" >&2
+    '';
+  };
+
   # --- Claude Code 用ルール (CLAUDE.md) ---
   # agy-brain/gemini-brain の rulePrompt と同内容だが，Claude Codeには
   # ラッパースクリプトによるプロンプト強制注入の仕組みが無いため，
@@ -239,5 +269,26 @@ in
     createObsidianVault = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${vaultPath}"
     '';
+  };
+
+  # --- Vault自動sync用 systemd --user タイマー ---
+  # 30分おきにVaultの変更をcommit&pushする。WSL2はsystemd=trueが前提
+  # (/etc/wsl.conf)。ログオン中しか動かないため、ログオフ中の変更は
+  # 次回ログオン後の最初の実行でまとめて拾われる。
+  systemd.user.services.obsidian-vault-sync = {
+    Unit.Description = "Obsidian Vault の変更をgit commit & pushする";
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${obsidian-vault-sync}/bin/obsidian-vault-sync";
+    };
+  };
+  systemd.user.timers.obsidian-vault-sync = {
+    Unit.Description = "obsidian-vault-sync を30分おきに実行";
+    Timer = {
+      OnStartupSec = "5m"; # ログオン直後の混雑を避けて少し待ってから初回実行
+      OnUnitActiveSec = "30m";
+      Persistent = true; # 前回実行を過ぎていたら起動直後に追いつき実行する
+    };
+    Install.WantedBy = [ "timers.target" ];
   };
 }

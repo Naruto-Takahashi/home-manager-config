@@ -6,7 +6,8 @@
 
 ## 仕組み
 
-- **Vault**: Windows側の `C:\Users\<user>\Obsidian\Vault` (WSLからは `/mnt/c/Users/tnaru/Obsidian/Vault`)。初回はhome-managerのactivationフックが自動でディレクトリを作成します。
+- **Vault**: Windows側の `C:\Users\<user>\Obsidian\Vault` (WSLからは `/mnt/c/Users/tnaru/Obsidian/Vault`)。初回はhome-managerのactivationフックが自動でディレクトリを作成します。このディレクトリ自体が [obsidian-vault](https://github.com/Naruto-Takahashi/obsidian-vault) リポジトリのworking copy (git管理下) になっている。
+- **自動sync**: `systemd --user` タイマー (`obsidian-vault-sync.timer`) が30分おきに，Vault内の変更を `git add -A && git commit && git push` で自動的にリモートへ反映する。AIエージェントがその場で書き込んだ内容も取りこぼさない。ログオン中しか動かないため，ログオフ中の変更は次回ログオン後の初回実行 (`OnStartupSec`) でまとめて拾われる。手動で今すぐ同期したい場合は `systemctl --user start obsidian-vault-sync.service`。状態確認は `systemctl --user list-timers obsidian-vault-sync.timer`。
 - **MCP接続**: `~/.gemini/config/mcp_config.json` を宣言的に生成し，`@bitbonsai/mcpvault` (npx経由) をMCPサーバーとして登録します。`@bitbonsai/mcpvault` はVaultの場所を**環境変数ではなく位置引数**で受け取る仕様 (省略時はカレントディレクトリをVault扱いしてしまう) のため，`args` にVaultパスを直接渡しています。
 - **ルールプロンプト**: セッション開始時に「行動ルール (`04_Library/Knowledge/mistakes.md`) とユーザープロファイル (`05_Profile/`) を必ず読む」「バグ解決・設計判断・プロジェクト状態変更・ユーザーの好みの発見はその場でVaultへ書き込む (`04_Library/Knowledge/`・`04_Library/Decisions/`・`03_Projects/`・`05_Profile/`)」といった行動ルールをAIに強制するプロンプトが，下記2つのラッパースクリプトに埋め込まれています。
 

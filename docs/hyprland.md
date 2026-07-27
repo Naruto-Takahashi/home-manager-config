@@ -10,14 +10,16 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 
 ## 1. アプリケーションの起動と管理 (App Launchers)
 
+起動系キーは3ホスト共通で「アプリ名の頭文字」に統一しています (`N`=Neovim, `Y`=Yazi, `V`=Vivaldi)．[kanata.md](kanata.md)参照．
+
 | 操作内容 | ショートカットキー | 内部で送信されるキー |
 | :--- | :--- | :--- |
 | **アプリランチャー (Rofi) 起動** | `Alt` + `Space` または `Alt` + `D` | `SUPER` + `D` |
 | **ターミナル (WezTerm) 起動** | `Alt` + `Enter` | `SUPER` + `Return` |
 | **ターミナル (WezTerm，フロート800x550) 起動** | `Alt` + `Shift` + `Enter` (※物理キー) | `SUPER` + `SHIFT` + `Return` |
-| **ファイルマネージャー (Yazi，WezTerm内) 起動** | `Alt` + `E` | `SUPER` + `E` |
-| **ファイルマネージャー (Yazi，WezTerm内) 起動 (別バインド)** | `Alt` + `Y` | `SUPER` + `Y` |
-| **デフォルトブラウザ (Vivaldi) 起動** | `Alt` + `V` (以前は `Alt` + `B`) | `SUPER` + `V` |
+| **ファイルマネージャー (Yazi，WezTerm内) 起動** | `Alt` + `Y` | `SUPER` + `Y` |
+| **Neovim (WezTerm内) 起動** | `Alt` + `N` | `SUPER` + `N` |
+| **デフォルトブラウザ (Vivaldi) 起動** | `Alt` + `V` | `SUPER` + `V` |
 | **ウィンドウ一覧切り替え (Rofi Window Switcher)** | `Alt` + `Tab` | `SUPER` + `Tab` |
 
 ---
@@ -31,7 +33,7 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 | **ウィンドウのリサイズ** (幅小 / 高大 / 高小 / 幅大) | `Alt` + `U` / `I` / `O` / `P` | `SUPER` + `U/I/O/P` |
 | **フローティング (浮動表示) 切り替え** | `Alt` + `D` (物理キー) または `Alt` + `Shift` + `Space` | `SUPER` + `T` / `SHIFT+Space` |
 | **フルスクリーン表示切り替え** | `Alt` + `F` | `SUPER` + `F` |
-| **ウィンドウ分割方向の切り替え** | `Alt` + `Shift` + `T` (以前は `Alt` + `V`) | `SUPER` + `SHIFT` + `T` |
+| **ウィンドウ分割方向の切り替え** | `Alt` + `Shift` + `T` | `SUPER` + `SHIFT` + `T` |
 | **アクティブウィンドウを閉じる** | `Alt` + `Q` | `SUPER` + `SHIFT` + `W` |
 | **ウィンドウの最小化 (トグル)** | `Alt` + `M` | `SUPER` + `M` |
 | **最小化ウィンドウの表示切り替え (Scratchpad)** | `Alt` + `Shift` + `M` | `SUPER` + `SHIFT` + `M` |
@@ -77,10 +79,9 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 
 ## 現在使われていないキー
 
-以下はKanata側 (`modules/input/kanata/config.kbd`) の`hyp-*`エイリアスとしては存在しますが，Hyprland側の対応するバインドが現状無く，押しても何も起こりません（過去の機能移動の名残）:
+`Alt` + `B` (`SUPER` + `B`) はKanata側の`hyp-b`エイリアスとしては存在しますが，Hyprland側の対応するバインドが無く，押しても何も起こりません．NixOS/macOS/WSLの3ホストで共通して未使用に統一しています (経緯は[kanata.md](kanata.md)参照)．WSL側で同等機能 (レイアウト反転) が必要な場合は`Alt`+`Shift`+`B`を使ってください．
 
-- `Alt` + `N` (`SUPER` + `N`，かつてNeovim起動用だった)
-- `Alt` + `B` (`SUPER` + `B`，ブラウザ起動は`Alt`+`V`へ移動済み)
+なお `Alt` + `D` (物理キー，`SUPER` + `T`) は上表の「フローティング切替」で実際に機能しますが，同じ操作は`Alt`+`Shift`+`Space`でも行えるため，こちらを主に使う必要はありません．
 
 ---
 
@@ -89,6 +90,6 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 | ファイル | 役割 |
 | :--- | :--- |
 | `modules/wm/hyprland/config/hypr/configs/keybinds.conf` | キーバインド本体 (このドキュメントの一次情報源) |
-| `modules/wm/hyprland/config/hypr/hyprland.conf` | `$terminal`/`$fileManager`/`$menu`等の変数定義 |
+| `modules/wm/hyprland/config/hypr/hyprland.conf` | `$terminal`/`$menu`等の変数定義 |
 | `modules/wm/hyprland/config/hypr/scripts/wppicker.sh` | 壁紙ピッカー・Matugen配色反映スクリプト |
 | `modules/wm/hyprland/config/waybar/` | Waybar (ステータスバー) 設定 |

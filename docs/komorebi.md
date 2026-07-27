@@ -35,13 +35,13 @@ Windows環境のタイル型ウィンドウマネージャ **komorebi** の操�
 | **`Alt + M`** | 最小化 | **M**inimize |
 | **`Alt + T`** | タイリング ON/OFF | **T**iling |
 | **`Alt + Shift + T`** | レイアウトを巡回 (BSP → Columns → …) | **T**iling の仲間 |
-| **`Alt + B`** | レイアウトの縦横反転 (flip) | (歴史的経緯・意味なし) |
+| **`Alt + Shift + B`** | レイアウトの縦横反転 (flip) | (歴史的経緯・意味なし。以前は`Alt + B`単体だったが，起動系キーの統一のため`Alt + B`自体はNixOS/macOSと同じく未使用にし，こちらへ退避した) |
 | **`Alt + R`** | 再タイル (整列し直し) | **R**etile |
 | **`Alt + Shift + Q`** / **`Alt + Shift + W`** | ウィンドウを閉じる | **Q**uit |
 
 > [!TIP]
 > BSP レイアウトは「フォーカス中ウィンドウの長い辺」を分割するため，2枚目が上下配置になることがあります．
-> その場で直すなら **`Alt + B`** (反転)，レイアウトごと左右型 (VerticalStack / Columns) に変えるなら **`Alt + Shift + T`** を使います．
+> その場で直すなら **`Alt + Shift + B`** (反転)，レイアウトごと左右型 (VerticalStack / Columns) に変えるなら **`Alt + Shift + T`** を使います．
 
 ### 4. トラブル復旧
 
@@ -63,10 +63,13 @@ Windows環境のタイル型ウィンドウマネージャ **komorebi** の操�
 
 ### 6. アプリ起動
 
+起動系キーはNixOS/macOSと同じく「アプリ名の頭文字」に統一しています．
+
 | キーバインド | 動作 | 覚え方 |
 | :--- | :--- | :--- |
 | **`Alt + Enter`** | WezTerm を起動 (Excel アクティブ時は無効) | ターミナル定番 |
 | **`Alt + Y`** | WezTerm 上で yazi を起動 | **Y**azi |
+| **`Alt + N`** | WezTerm 上で nvim を起動 | **N**eovim |
 | **`Alt + V`** | Vivaldi を起動 | **V**ivaldi |
 
 ---

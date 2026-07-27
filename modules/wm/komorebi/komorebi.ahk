@@ -48,7 +48,9 @@ HandleDisplayChange(wParam, lParam) {
 ; BSP は新規ウィンドウをフォーカス中ウィンドウの長辺で分割するため上下配置に
 ; なることがある。レイアウトを巡回して左右型 (VerticalStack/Columns) へ即切替
 !+t::Run, komorebic cycle-layout next, , Hide
-!b::Run, komorebic flip-layout horizontal-and-vertical, , Hide
+; 素のAlt+Bは他ホスト(NixOS/macOS)に合わせて未使用に統一したため，
+; ここではAlt+Shift+Bに退避している (機能自体は維持)
+!+b::Run, komorebic flip-layout horizontal-and-vertical, , Hide
 !r::Run, komorebic retile, , Hide
 ; モニタ再接続で表示が崩れたとき等に手動で復旧 (自動復旧と同じ処理)
 !+d::Gosub, ReapplyDisplayConfig
@@ -96,9 +98,11 @@ HandleDisplayChange(wParam, lParam) {
 !+a::Run, komorebic move-workspace-to-monitor 0, , Hide
 !+f::Run, komorebic move-workspace-to-monitor 1, , Hide
 
-; --- アプリ起動 ---
+; --- アプリ起動 --- (起動系キーは他ホストと同じ「アプリ名の頭文字」に統一)
 ; ALT+Y: WezTerm で yazi
 !y::LaunchWeztermOnCursorMonitor(" -- wsl.exe --cd ~ -e zsh -ic yazi")
+; ALT+N: WezTerm で nvim
+!n::LaunchWeztermOnCursorMonitor(" -- wsl.exe --cd ~ -e zsh -ic nvim")
 ; ALT+V: Vivaldi (Chromium系は --window-position=X,Y でカーソルのあるモニタに開く)
 !v::
     CoordMode, Mouse, Screen

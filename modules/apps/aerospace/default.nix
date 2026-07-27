@@ -100,8 +100,11 @@
     # リサイズモードへの移行（Alt + R）
     ctrl-cmd-r = 'mode resize'
 
-    # ウィンドウ分割方向の切り替え（Alt + V）
-    ctrl-cmd-v = 'layout tiles horizontal vertical'
+    # ウィンドウ分割方向の切り替え（Alt + Shift + T）
+    # NixOS(togglesplit)・WSL(cycle-layout)と同じ Shift+T に統一している．
+    # 以前はAlt+Vだったが，起動系キーは「アプリ名の頭文字」に揃えるため
+    # Vivaldi起動（後述）に譲った．
+    ctrl-cmd-shift-t = 'layout tiles horizontal vertical'
 
     # フローティング/タイリングの切り替え（Alt + Shift + Space）
     ctrl-cmd-shift-space = 'layout floating tiling'
@@ -147,11 +150,12 @@
     ctrl-cmd-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
     ctrl-cmd-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
 
-    # アプリケーションのクイック起動を行います．
+    # アプリケーションのクイック起動を行います．起動系キーは全ホストで
+    # 「アプリ名の頭文字」に揃えている (N=Neovim, Y=Yazi, V=Vivaldi)．
     ctrl-cmd-enter = 'exec-and-forget open -n -a WezTerm'
     ctrl-cmd-y = 'exec-and-forget /etc/profiles/per-user/nalt/bin/wezterm start /etc/profiles/per-user/nalt/bin/yazi'
     ctrl-cmd-n = 'exec-and-forget /etc/profiles/per-user/nalt/bin/wezterm start /etc/profiles/per-user/nalt/bin/nvim'
-    ctrl-cmd-b = 'exec-and-forget open -n -a Vivaldi'
+    ctrl-cmd-v = 'exec-and-forget open -n -a Vivaldi'
     ctrl-cmd-w = 'exec-and-forget /Users/nalt/.local/bin/wallpaper-pick-popup'
 
     # ウィンドウの結合（Alt + Ctrl + HJKL）

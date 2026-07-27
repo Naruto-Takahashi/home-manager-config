@@ -66,16 +66,13 @@
     ]
 
     # ギャップ設定（Gaps）
-    # WSL側komorebi (modules/wm/komorebi/komorebi.json) の
-    # default_container_padding=6 (ウィンドウ間) / default_workspace_padding=1
-    # (画面端) に合わせています．
     [gaps]
-    inner.horizontal = 6
-    inner.vertical = 6
-    outer.left = 1
-    outer.bottom = 1
-    outer.top = 1
-    outer.right = 1
+    inner.horizontal = 8
+    inner.vertical = 8
+    outer.left = 8
+    outer.bottom = 8
+    outer.top = 4
+    outer.right = 8
 
     # キーバインド設定（Main Mode）
     # macOS標準および一般コピペ（Cmd）と衝突させないため，すべての操作プレフィックスに Ctrl+Cmd (ctrl-cmd) を使用します．

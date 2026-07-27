@@ -45,13 +45,6 @@
           extraSpecialArgs = { inherit nixgl kanagawa-dragon-yazi; };
         };
 
-        # Ubuntu デスクトップ環境用プロファイル
-        "nalt-ubuntu" = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [ ./hosts/ubuntu ];
-          extraSpecialArgs = { inherit nixgl kanagawa-dragon-yazi; };
-        };
-
         # Mac環境用プロファイル (M1 Mac Mini)
         "nalt-mac" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."aarch64-darwin";

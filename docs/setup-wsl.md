@@ -9,12 +9,21 @@ git clone https://github.com/Naruto-Takahashi/nix-config.git
 cd nix-config
 ```
 
-1. **NixのインストールとFlakesの有効化** ([Ubuntu手順](setup-ubuntu.md) の 1 & 2 と同様)
-2. **Home Manager プロファイルの適用**
+1. **Nix パッケージマネージャーのインストール** (シングルユーザーモード)
+   ```bash
+   curl -L https://nixos.org/nix/install | sh
+   . ~/.nix-profile/etc/profile.d/nix.sh
+   ```
+2. **Nix Flakes 機能の有効化**
+   ```bash
+   mkdir -p ~/.config/nix
+   echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+   ```
+3. **Home Manager プロファイルの適用**
    ```bash
    nix run github:nix-community/home-manager -- switch --flake .#nalt-wsl --impure
    ```
-3. **Windows側への設定ファイル同期**
+4. **Windows側への設定ファイル同期**
    WSL2環境下で管理される WezTerm や komorebi / YASB の設定を Windows ホストに反映するため，以下の同期コマンドを実行します．
    ```bash
    sync-win

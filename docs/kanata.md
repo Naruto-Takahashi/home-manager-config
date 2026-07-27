@@ -4,14 +4,13 @@
 
 ## 対象OS・実装方式の違い (重要)
 
-**このドキュメントの内容は NixOS・Ubuntu・macOS にのみ適用されます。Windows/WSL2環境ではKanataは一切使われません**（WSL上のプロセスはWindows側のキーボード入力を物理的に捕まえられないため）。同等の機能はWindows専用の [AutoHotkeyスクリプト](../modules/input/ahk/main.ahk) が別実装で提供しています（設定は共通ではなく、`main.ahk` 側で個別にメンテナンスされています）。
+**このドキュメントの内容は NixOS・macOS にのみ適用されます。Windows/WSL2環境ではKanataは一切使われません**（WSL上のプロセスはWindows側のキーボード入力を物理的に捕まえられないため）。同等の機能はWindows専用の [AutoHotkeyスクリプト](../modules/input/ahk/main.ahk) が別実装で提供しています（設定は共通ではなく、`main.ahk` 側で個別にメンテナンスされています）。
 
-Kanataを使う3ホストの間でも、レイヤー定義 (`config.kbd`) は共通の1ファイルですが、`wmmodifier-` プレースホルダの実際の変換先がホストごとに異なります（ホスト側の `.nix` ファイルで文字列置換）:
+Kanataを使う2ホストの間でも、レイヤー定義 (`config.kbd`) は共通の1ファイルですが、`wmmodifier-` プレースホルダの実際の変換先がホストごとに異なります（ホスト側の `.nix` ファイルで文字列置換）:
 
 | ホスト | `wmmodifier-` の変換先 | 連携するWM | 備考 |
 | :--- | :--- | :--- | :--- |
 | **NixOS** | `M-` (Super単体) | Hyprland ([hyprland.md](hyprland.md)) | `modules/input/kanata/kanata-config.nix` |
-| **Ubuntu** | `M-` (Super単体) | なし (WM未設定) | Kanata自体は動くが、Super+キーを拾うWMがこのリポジトリでは未設定 |
 | **macOS** | `C-M-` (Ctrl+Cmd) | AeroSpace ([aerospace.nix](../modules/apps/aerospace/default.nix)) | macOS標準の`Cmd`単体ショートカットと衝突しないよう二重修飾にしている |
 
 macOSはさらに以下の3点が個別の置換で上書きされています（`hosts/mac/default.nix`）:
@@ -19,7 +18,7 @@ macOSはさらに以下の3点が個別の置換で上書きされています�
 - `Alt+Space` (`hyp-d`) → `A-spc` に直接マッピング (wmmodifier経由ではなくmacOS標準のSpotlight的挙動に寄せるため)
 - `Alt+Tab` (`hyp-tab`) → `A-tab` に直接マッピング ([Alt-Tab](https://alt-tab-macos.netlify.app/)アプリとの連携用)
 
-下記の「2. 窓操作の最適化」セクションの表は `Super + ...` の**NixOS/Ubuntu向けの表記**です。macOSでは同じキー入力が `Ctrl+Cmd + ...` に変換されます。IME切り替え（3節）とSandSナビゲーション（1節）、CapsLock改修（4節）は3ホスト共通です。
+下記の「2. 窓操作の最適化」セクションの表は `Super + ...` の**NixOS向けの表記**です。macOSでは同じキー入力が `Ctrl+Cmd + ...` に変換されます。IME切り替え（3節）とSandSナビゲーション（1節）、CapsLock改修（4節）は2ホスト共通です。
 
 ---
 

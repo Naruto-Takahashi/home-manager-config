@@ -10,6 +10,26 @@
     source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/modules/apps/aerospace/launch-borders.sh";
   };
 
+  # AeroSpace自身の`start-at-login`はmacOSのログインアイテムとして働くため、
+  # ログインセッションが完全に立ち上がる前に起動してしまうことがある。
+  # その場合カスタム設定(キーバインド・gaps等)を読み込めずデフォルト値
+  # (ギャップ0・独自バインド無し)のまま起動してしまう。ログイン後に少し
+  # 待ってから明示的にreload-configすることで、常に正しい設定を確実に
+  # 読み込ませる。
+  launchd.agents.aerospace-reload-config = {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        "/bin/sh"
+        "-c"
+        "sleep 20 && /opt/homebrew/bin/aerospace reload-config"
+      ];
+      RunAtLoad = true;
+      StandardOutPath = "/tmp/aerospace-reload-config.out.log";
+      StandardErrorPath = "/tmp/aerospace-reload-config.err.log";
+    };
+  };
+
   # --- AeroSpace設定 ---
   # aerospace.toml設定ファイルの宣言的な自動生成を行います．
   xdg.configFile."aerospace/aerospace.toml".text = ''

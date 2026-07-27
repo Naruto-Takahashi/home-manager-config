@@ -1,3 +1,9 @@
+;; Rebinding a key here? Update docs/kanata.md too (it's a doc, not
+;; generated from this file, so it drifts silently otherwise). Also
+;; note the actual WM-side action for a given Super+X signal lives in
+;; each host's own doc (docs/hyprland.md, docs/aerospace.md) and can
+;; drift independently of what's written here.
+
 ;; Force Kanata reload
 (defcfg
   process-unmapped-keys yes

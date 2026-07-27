@@ -42,3 +42,27 @@ jobs:
             echo "::error::starship.toml のフォールバック版とテンプレート版の内容が乖離しています"
             exit 1
           fi
+      - name: ドキュメント内リンクの死活チェック
+        # docs/*.md と README.md 内の相対リンク (Markdown [text](path) 形式) が
+        # 実在ファイルを指しているかを検証する。リポジトリ構成変更 (ホスト削除等)
+        # の際にドキュメント側の参照更新漏れを検出するのが目的。
+        # #以降のアンカー、http(s)/mailto、`![](...)`のような記法説明用の
+        # プレースホルダは対象外。
+        run: |
+          fail=0
+          while IFS= read -r file; do
+            dir=$(dirname "$file")
+            while IFS= read -r link; do
+              path="${link%%#*}"
+              [ -z "$path" ] && continue
+              case "$path" in
+                http://*|https://*|mailto:*|"...") continue ;;
+              esac
+              target="$dir/$path"
+              if [ ! -e "$target" ]; then
+                echo "::error file=$file::broken link -> $link"
+                fail=1
+              fi
+            done < <(grep -oE '\]\([^)]+\)' "$file" | sed -E 's/^\]\((.*)\)$/\1/')
+          done < <(git ls-files 'docs/*.md' README.md)
+          exit $fail

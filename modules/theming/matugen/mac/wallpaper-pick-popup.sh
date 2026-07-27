@@ -29,4 +29,13 @@ if [[ -z "$port" ]]; then
     exit 1
 fi
 
-open -na "Vivaldi" --args --app="http://127.0.0.1:${port}" --window-size=900,720
+# --user-data-dir で毎回まっさらなプロファイルを使う。共有プロファイルだと
+# Chromium(Vivaldi)がapp-modeウィンドウの直前の状態(ネイティブフルスクリーン化
+# したことがあるなど)を記憶して復元してしまい、AeroSpaceの管理外
+# (ネイティブフルスクリーンは独立したSpaceになるため)になってしまう。
+PROFILE_DIR="$(mktemp -d)"
+open -na "Vivaldi" --args \
+    --app="http://127.0.0.1:${port}" \
+    --user-data-dir="$PROFILE_DIR" \
+    --window-position=200,120 \
+    --window-size=900,720

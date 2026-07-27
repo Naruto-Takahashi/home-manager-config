@@ -56,6 +56,13 @@
       'exec-and-forget /Users/nalt/.local/bin/aerospace-launch-borders'
     ]
 
+    # 壁紙ピッカー(wallpaper-pick-popup.sh)のVivaldiアプリモードウィンドウは
+    # ポップアップとして使いたいのでタイル化させずフローティング表示にします．
+    # タイトルで判定するため他のVivaldiウィンドウには影響しません．
+    on-window-detected = [
+      { if = 'test %{window-title} ~= "wallpaper picker"', run = 'layout floating' }
+    ]
+
     # ギャップ設定（Gaps）
     [gaps]
     inner.horizontal = 6

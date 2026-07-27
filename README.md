@@ -29,17 +29,21 @@ OSレベルのシステム定義から，シェル環境，ウィンドウマネ
 
 凡例: ✅ 有効 / ➖ 未導入 (この構成では使っていない) / (Windows) Windows側で動作 (WSLからは同期のみ)
 
-| 機能 / モジュール | NixOS | WSL2 | macOS | 詳細ドキュメント |
-| :--- | :---: | :---: | :---: | :--- |
-| **タイルWM** | Hyprland ✅ | komorebi (Windows) | AeroSpace ✅ | [hyprland.md](docs/hyprland.md) / [komorebi.md](docs/komorebi.md) / [aerospace.md](docs/aerospace.md) |
-| **ステータスバー** | Waybar ✅ | YASB (Windows) | macOS標準メニューバー | [hyprland.md](docs/hyprland.md) / [komorebi.md](docs/komorebi.md) |
-| **キーボードリマップ** | Kanata ✅ | AutoHotkey (Windows)※1 | Kanata ✅※2 | [kanata.md](docs/kanata.md) |
-| **壁紙連動の動的配色 (Matugen)** | ✅ | ✅ (Windows側) | ✅ | [matugen-palette.md](docs/matugen-palette.md) |
-| **日本語入力** | fcitx5 + Mozc ✅ | Windows標準IME (kanata非搭載のため対象外) | macOS標準IME | [kanata.md](docs/kanata.md) (切替キーのみ) |
-| **リモートデスクトップ (Tailscale+Sunshine)** | ✅ | ➖ (接続元クライアント) | ➖ | [remote-desktop.md](docs/remote-desktop.md) |
-| **Obsidian MCP連携** | ➖ | ✅ | ➖ | [obsidian-mcp.md](docs/obsidian-mcp.md) |
-| **Homebrew Cask管理** | ➖ | ➖ | ✅ | [hosts/mac/darwin.nix](hosts/mac/darwin.nix) |
-| **WezTerm / Neovim / Yazi / lazygit / git / eza / bat / btop / atuin / starship / gitmoji等** | ✅ | ✅ | ✅ | [wezterm.md](docs/wezterm.md) / [neovim.md](docs/neovim.md) / [yazi.md](docs/yazi.md) / [cli-tools.md](docs/cli-tools.md) / [gitmoji.md](docs/gitmoji.md) |
+| 機能 / モジュール | NixOS | WSL2 | macOS |
+| :--- | :---: | :---: | :---: |
+| **タイルWM** | [Hyprland](docs/hyprland.md) ✅ | [komorebi](docs/komorebi.md) (Windows) | [AeroSpace](docs/aerospace.md) ✅ |
+| **ステータスバー** | [Waybar](docs/hyprland.md) ✅ | [YASB](docs/komorebi.md) (Windows) | macOS標準メニューバー |
+| **キーボードリマップ** | [Kanata](docs/kanata.md) ✅ | [AutoHotkey](docs/kanata.md) (Windows)※1 | [Kanata](docs/kanata.md) ✅※2 |
+| **壁紙連動の動的配色** | [Matugen](docs/matugen-palette.md) ✅ | [Matugen](docs/matugen-palette.md) ✅ (Windows側) | [Matugen](docs/matugen-palette.md) ✅ |
+| **日本語入力** | fcitx5 + Mozc ✅ | Windows標準IME (kanata非搭載のため対象外) | macOS標準IME ([切替キー](docs/kanata.md)) |
+| **リモートデスクトップ** | [Tailscale+Sunshine](docs/remote-desktop.md) ✅ | ➖ (接続元クライアント) | ➖ |
+| **Obsidian MCP連携** | ➖ | [Obsidian MCP](docs/obsidian-mcp.md) ✅ | ➖ |
+| **Homebrew Cask管理** | ➖ | ➖ | [darwin.nix](hosts/mac/darwin.nix) ✅ |
+| [WezTerm](docs/wezterm.md) | ✅ | ✅ | ✅ |
+| [Neovim](docs/neovim.md) | ✅ | ✅ | ✅ |
+| [Yazi](docs/yazi.md) | ✅ | ✅ | ✅ |
+| [lazygit / eza / bat / btop / atuin / starship等](docs/cli-tools.md) | ✅ | ✅ | ✅ |
+| [gitmoji](docs/gitmoji.md) (git-hooks) | ✅ | ✅ | ✅ |
 
 ※1 WSLからはWindows側の物理キーボードを直接掴めないため，Kanataではなく [`modules/input/ahk/main.ahk`](modules/input/ahk/main.ahk) が同等の機能を別実装しています．
 ※2 macOSはWM操作の変換先が`Ctrl+Cmd`（NixOSは`Super`単体）になるなど，キー配線が一部異なります．詳細は[kanata.md](docs/kanata.md)の「対象OS・実装方式の違い」を参照．
@@ -109,17 +113,21 @@ is often implemented differently per OS** — check this table before diving int
 
 Legend: ✅ enabled · ➖ not set up in this config · (Windows) runs on the Windows side (WSL only syncs to it)
 
-| Feature / Module | NixOS | WSL2 | macOS | Docs |
-| :--- | :---: | :---: | :---: | :--- |
-| **Tiling WM** | Hyprland ✅ | komorebi (Windows) | AeroSpace ✅ | [hyprland.md](docs/hyprland.md) / [komorebi.md](docs/komorebi.md) / [aerospace.md](docs/aerospace.md) |
-| **Status bar** | Waybar ✅ | YASB (Windows) | native macOS menu bar | [hyprland.md](docs/hyprland.md) / [komorebi.md](docs/komorebi.md) |
-| **Keyboard remapping** | Kanata ✅ | AutoHotkey (Windows)* | Kanata ✅** | [kanata.md](docs/kanata.md) |
-| **Wallpaper-driven theming (Matugen)** | ✅ | ✅ (Windows side) | ✅ | [matugen-palette.md](docs/matugen-palette.md) |
-| **Japanese input** | fcitx5 + Mozc ✅ | native Windows IME (no Kanata here) | native macOS IME | [kanata.md](docs/kanata.md) (switch keys only) |
-| **Remote desktop (Tailscale+Sunshine)** | ✅ | ➖ (client only) | ➖ | [remote-desktop.md](docs/remote-desktop.md) |
-| **Obsidian MCP** | ➖ | ✅ | ➖ | [obsidian-mcp.md](docs/obsidian-mcp.md) |
-| **Homebrew Cask management** | ➖ | ➖ | ✅ | [hosts/mac/darwin.nix](hosts/mac/darwin.nix) |
-| **WezTerm / Neovim / Yazi / lazygit / git / eza / bat / btop / atuin / starship / gitmoji, etc.** | ✅ | ✅ | ✅ | [wezterm.md](docs/wezterm.md) / [neovim.md](docs/neovim.md) / [yazi.md](docs/yazi.md) / [cli-tools.md](docs/cli-tools.md) / [gitmoji.md](docs/gitmoji.md) |
+| Feature / Module | NixOS | WSL2 | macOS |
+| :--- | :---: | :---: | :---: |
+| **Tiling WM** | [Hyprland](docs/hyprland.md) ✅ | [komorebi](docs/komorebi.md) (Windows) | [AeroSpace](docs/aerospace.md) ✅ |
+| **Status bar** | [Waybar](docs/hyprland.md) ✅ | [YASB](docs/komorebi.md) (Windows) | native macOS menu bar |
+| **Keyboard remapping** | [Kanata](docs/kanata.md) ✅ | [AutoHotkey](docs/kanata.md) (Windows)* | [Kanata](docs/kanata.md) ✅** |
+| **Wallpaper-driven theming** | [Matugen](docs/matugen-palette.md) ✅ | [Matugen](docs/matugen-palette.md) ✅ (Windows side) | [Matugen](docs/matugen-palette.md) ✅ |
+| **Japanese input** | fcitx5 + Mozc ✅ | native Windows IME (no Kanata here) | native macOS IME ([switch keys](docs/kanata.md)) |
+| **Remote desktop** | [Tailscale+Sunshine](docs/remote-desktop.md) ✅ | ➖ (client only) | ➖ |
+| **Obsidian MCP** | ➖ | [Obsidian MCP](docs/obsidian-mcp.md) ✅ | ➖ |
+| **Homebrew Cask management** | ➖ | ➖ | [darwin.nix](hosts/mac/darwin.nix) ✅ |
+| [WezTerm](docs/wezterm.md) | ✅ | ✅ | ✅ |
+| [Neovim](docs/neovim.md) | ✅ | ✅ | ✅ |
+| [Yazi](docs/yazi.md) | ✅ | ✅ | ✅ |
+| [lazygit / eza / bat / btop / atuin / starship, etc.](docs/cli-tools.md) | ✅ | ✅ | ✅ |
+| [gitmoji](docs/gitmoji.md) (git-hooks) | ✅ | ✅ | ✅ |
 
 \* WSL can't grab Windows' physical keyboard directly, so [`modules/input/ahk/main.ahk`](modules/input/ahk/main.ahk)
 reimplements the equivalent behavior separately instead of using Kanata.

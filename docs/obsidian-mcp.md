@@ -35,8 +35,9 @@ claude mcp add -s user obsidian -- npx -y @bitbonsai/mcpvault "/mnt/c/Users/tnar
 - `-s user` でユーザースコープ (全プロジェクト共通) に登録される。この設定は `~/.claude.json` に保存され，home-manager管理外 (Claude Code自身の状態ファイルであり，宣言的に上書きすると他の状態を壊すリスクがあるため意図的に対象外にしている)
 - 新しい環境では上記コマンドを一度実行するだけでよい (`claude mcp list` で `obsidian: ... ✔ Connected` と出れば成功)
 - 登録直後の**今のセッションには反映されない** (MCPサーバーはセッション開始時にしかロードされない)。Claude Codeを再起動した新しいセッションで `mcp__obsidian__list_directory` 等を呼び，Vault側の実際のフォルダ (`01_Meta`/`02_Journal`/... ) が見えることを確認すること。nix-configリポジトリのファイル (`docs`/`modules`/...) が見えたらVaultパスが渡っていない
-- ルールプロンプト (セッション開始時に読むべきファイル・書き込み先など) はagy-brain/gemini-brainのように自動注入されないため，必要ならCLAUDE.mdやセッション冒頭で明示的に伝える運用になる
-- 会話ログの自動Vault保存 (`02_Journal/`) もagy-brain/gemini-brain相当の仕組みは無い (Claude Codeは会話履歴の保存場所・形式が異なるため未実装)
+- ルールプロンプト (セッション開始時に読むべきファイル・書き込み先など) は，agy-brain/gemini-brainのようなラッパースクリプトによる強制注入ではなく，グローバル `~/.claude/CLAUDE.md` (このモジュールが宣言的に配置。全プロジェクトで自動読込される) で同等の自律読み書きを実現している。中身はagy-brain/gemini-brainの`rulePrompt`と同内容で，ツール名だけClaude Code実際のMCPツール名 (`mcp__obsidian__*`) に合わせてある
+- CLAUDE.mdもMCPサーバーと同様セッション開始時にしか読み込まれないため，登録直後の**今のセッションには反映されない**。新しいセッションで自発的にVaultを読み書きし始めれば成功
+- 会話ログの自動Vault保存 (`02_Journal/`) はagy-brain/gemini-brain相当の仕組みが無い (Claude Codeは会話履歴の保存場所・形式が異なるため未実装)
 
 ---
 

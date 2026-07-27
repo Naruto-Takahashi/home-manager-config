@@ -157,6 +157,54 @@ let
       fi
     '';
   };
+
+  # --- Claude Code 用ルール (CLAUDE.md) ---
+  # agy-brain/gemini-brain の rulePrompt と同内容だが，Claude Codeには
+  # ラッパースクリプトによるプロンプト強制注入の仕組みが無いため，
+  # 標準の~/.claude/CLAUDE.md (グローバル、全プロジェクトで自動読込) に
+  # 置くことで同じ「セッション開始時に必ず読む/その場で書く」を実現する。
+  # ツール名はClaude Code側のMCPツール実名 (mcp__obsidian__*) に合わせている。
+  claudeObsidianRules = ''
+    # Obsidian Vault 連携 (外部脳)
+
+    ObsidianのVaultを「外部脳」として扱い，セッションを跨いで知識を引き継ぐ。MCP経由 (`mcp__obsidian__*` ツール群) でVaultを読み書きできる。
+
+    ## 行動ルール
+
+    1. **読み取り (セッション開始時、最初のツール呼び出しとして必ず実行)**
+       - `mcp__obsidian__read_note` で `04_Library/Knowledge/mistakes.md` と `05_Profile/` 配下のユーザープロファイルを読む
+       - ユーザーの質問に関連するキーワードで `mcp__obsidian__search_notes` を実行し，ヒットしたノートを読んでから回答する
+
+    2. **書き込み (気づいた・決まったその場で書く。「後で書く」はしない)**
+       - バグ解決・設定のハマり対策・新しい発見 → `04_Library/Knowledge/`
+       - 判断・設計の方針決定 → `04_Library/Decisions/`
+       - プロジェクトの状態変更 → `03_Projects/`
+       - ユーザーの好みの発見 → `05_Profile/`
+       - `mcp__obsidian__write_note` (新規) または `mcp__obsidian__patch_note` (既存ノートへの追記) を使う
+
+    3. **書き込みフォーマット**
+       ノートには必ず以下のYAMLフロントマターを付与する:
+       ```
+       ---
+       date: YYYY-MM-DD
+       tags: [relevant, tags]
+       project: project-name
+       related: [[Other Note]]
+       ---
+       タイトル
+
+       本文。関連ノートには [[wiki link]] でリンクする。
+       ```
+
+    4. **mistakes.md への追記ルール**
+       ユーザーから明示的な訂正を受け，かつ「繰り返し起こり得るパターン」を満たす場合，即座に `mcp__obsidian__patch_note` で `04_Library/Knowledge/mistakes.md` に追記する
+
+    5. **報告**
+       Obsidianを読み書きしたら，何を読んだ/書いたか(パス)を必ずユーザーに伝える
+
+    6. **フォールバック**
+       `mcp__obsidian__*` ツールが見当たらない場合 (MCPサーバー未接続)，その旨をユーザーに伝えて通常の対応を続ける。無言でスキップしない
+  '';
 in
 {
   # --- 連携パッケージの追加 ---
@@ -180,6 +228,10 @@ in
       };
     };
   };
+
+  # Claude Codeはグローバル ~/.claude/CLAUDE.md を全プロジェクトで自動的に
+  # 読み込むため，宣言的に配置するだけで自律的な読み書きが有効になる
+  home.file."${config.home.homeDirectory}/.claude/CLAUDE.md".text = claudeObsidianRules;
 
   # --- Obsidian Vault作成アクティベーションフック ---
   # ObsidianのVaultディレクトリを初期作成するフックです．

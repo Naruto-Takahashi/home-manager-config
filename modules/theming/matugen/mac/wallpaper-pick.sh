@@ -32,5 +32,5 @@ sel="$(find "$WALLPAPER_DIR" -maxdepth 1 -type f \
 # macOSの壁紙をすべてのデスクトップ(スペース)に設定する
 osascript -e "tell application \"System Events\" to tell every desktop to set picture to (POSIX file \"$sel\")"
 
-# 配色一式 (WezTerm/nvim/yazi/starship/lazygit/btop/eza/atuin/fzf/AeroSpace枠線) を追従
+# 配色一式 (WezTerm/nvim/yazi/starship/lazygit/btop/eza/fzf/AeroSpace枠線) を追従
 "$HOME/.local/bin/matugen-apply" "$sel"

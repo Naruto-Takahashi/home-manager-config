@@ -143,9 +143,7 @@ mkdir -p "$HOME/.cache/matugen/eza"
 mkdir -p "$HOME/.cache/matugen/tealdeer"
 python3 "$LIB/tealdeer-config.py" "$lua_tmp" "$HOME/.cache/matugen/tealdeer/config.toml"
 
-mkdir -p "$HOME/.config/atuin/themes" "$HOME/.config/btop/themes"
-"$LIB/render-template.sh" "$TPL/atuin-theme.toml" \
-    "$HOME/.config/atuin/themes/matugen.toml" "$lua_tmp"
+mkdir -p "$HOME/.config/btop/themes"
 "$LIB/render-template.sh" "$TPL/btop.theme" \
     "$HOME/.config/btop/themes/matugen.theme" "$lua_tmp"
 

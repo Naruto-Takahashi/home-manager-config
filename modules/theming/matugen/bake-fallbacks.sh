@@ -118,21 +118,6 @@ bake_starship() {
   echo "✓ shell/starship/starship.toml"
 }
 
-bake_atuin() {
-  local f="$REPO_ROOT/modules/theming/matugen/fallbacks/atuin-theme.toml"
-  sedi -E \
-    -e "s/^(Base = )\"#[0-9a-fA-F]{6}\"/\1\"${text}\"/" \
-    -e "s/^(Title = )\"#[0-9a-fA-F]{6}\"/\1\"${accent}\"/" \
-    -e "s/^(Important = )\"#[0-9a-fA-F]{6}\"/\1\"${accent}\"/" \
-    -e "s/^(Annotation = )\"#[0-9a-fA-F]{6}\"/\1\"${tertiary}\"/" \
-    -e "s/^(Guidance = )\"#[0-9a-fA-F]{6}\"/\1\"${tertiary}\"/" \
-    -e "s/^(Muted = )\"#[0-9a-fA-F]{6}\"/\1\"${muted}\"/" \
-    -e "s/^(AlertWarn = )\"#[0-9a-fA-F]{6}\"/\1\"${secondary}\"/" \
-    "$f"
-  # AlertInfo/AlertError は固定の成功/失敗セマンティックカラーなので触らない
-  echo "✓ matugen/fallbacks/atuin-theme.toml"
-}
-
 bake_btop() {
   local f="$REPO_ROOT/modules/theming/matugen/fallbacks/btop.theme"
   sedi -E \
@@ -311,7 +296,6 @@ main() {
   bake_yazi_pal
   bake_yazi_template
   bake_starship
-  bake_atuin
   bake_btop
   bake_eza
   bake_lazygit

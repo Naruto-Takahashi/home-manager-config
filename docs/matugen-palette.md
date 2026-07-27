@@ -165,7 +165,7 @@ WSL版の簡略版。YASB/komorebi/ロック画面などWindows固有部分を�
         - CSS変数からMaterial roleを抽出し一時colors.luaを組み立てる
         - derive-colors.py (共通lib) でcomplement/triad/accent_pale/selection_bgを追記
         - render-template.sh (共通lib) でstarship/lazygit/cz.toml/yazi theme.toml/
-          eza/theme.yml/atuin-theme.toml/btop.themeをレンダリング
+          eza/theme.yml/btop.themeをレンダリング
         - tealdeer-config.py / fzf-colors.sh もWSL版と同じ
      3. colors.lua を ~/.config/wezterm/matugen-colors.lua と
         ~/.cache/matugen/colors.lua へコピー
@@ -264,7 +264,7 @@ commit された配色) は、壁紙を変えるたびに手動で1ファイル�
 - `modules/apps/neovim/nvim/lua/matugen.lua` / `modules/apps/wezterm/wezterm.lua` /
   `modules/apps/yazi/init.lua` — 12キー共通パレット
 - `modules/shell/starship/starship.toml` (`palettes.matugen` ブロック)
-- `modules/theming/matugen/fallbacks/{atuin-theme.toml,btop.theme}`
+- `modules/theming/matugen/fallbacks/btop.theme`
 - `modules/apps/eza/theme.yml` / `modules/apps/lazygit/default.nix` /
   `modules/apps/git-hooks/cz.toml`
 - `modules/wm/komorebi/komorebi.json` (枠色) / `modules/wm/yasb/{styles.css,config.yaml}`
@@ -311,7 +311,7 @@ WSL/Mac は matugen-apply.sh に palette.css からの抽出を足し、NixOS �
 | :--- | :--- |
 | `modules/theming/matugen/lib/derive-colors.py` | complement/triad/accent_pale/selection_bgの派生色計算 (全ホスト共通) |
 | `modules/theming/matugen/lib/render-template.sh` | `@@KEY@@`プレースホルダのテンプレート置換エンジン (全ホスト共通) |
-| `modules/theming/matugen/templates/` | starship/lazygit/cz.toml/eza/atuin/btop用の共通テンプレート |
+| `modules/theming/matugen/templates/` | starship/lazygit/cz.toml/eza/btop用の共通テンプレート |
 | `modules/theming/matugen/wsl/matugen-apply.sh` | WSL側の壁紙変更〜配色反映パイプライン |
 | `modules/theming/matugen/mac/matugen-apply.sh` | Mac側の壁紙変更〜配色反映パイプライン |
 | `modules/wm/hyprland/config/matugen/config.toml` | NixOS側のmatugenネイティブテンプレート定義 |

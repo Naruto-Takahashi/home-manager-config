@@ -171,13 +171,12 @@ in
     mcpServers = {
       obsidian = {
         command = "npx";
-        args = [ "-y" "@bitbonsai/mcpvault" ];
-        env = {
-          # 以前は誤って ~/ghq/.../obsidian-vault (git バックアップ用クローン、
-          # 実際のノートは入っていない) を指していた。Obsidianアプリ・
-          # agy-brain/gemini-brain が実際に読み書きするVaultに合わせる
-          OBSIDIAN_VAULT = vaultPath;
-        };
+        # @bitbonsai/mcpvault はVaultパスを環境変数(OBSIDIAN_VAULT)ではなく
+        # 位置引数で受け取る仕様 (省略時はカレントディレクトリをVault扱いする)。
+        # 以前は誤って環境変数経由 + ~/ghq/.../obsidian-vault (git バックアップ用
+        # クローン、実際のノートは入っていない) を指していた。Obsidianアプリ・
+        # agy-brain/gemini-brain が実際に読み書きするVaultに合わせる
+        args = [ "-y" "@bitbonsai/mcpvault" vaultPath ];
       };
     };
   };

@@ -1,5 +1,9 @@
 # Home-Manager build output
 result
+result-*
+
+# direnv cache
+.direnv/
 
 # Editor backup files
 *~

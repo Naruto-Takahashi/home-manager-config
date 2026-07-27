@@ -2,7 +2,9 @@
 
 このドキュメントは、NixOS環境で使用する **Hyprland** Waylandコンポジタのキーバインドとワークフローに関する詳細設定を解説します。
 
-Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、物理 `Alt` キーを起点としてGlazeWM互換の快適なハッカー向けウィンドウマネージャー操作を実現しています。
+Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、物理 `Alt` キーを起点として快適なハッカー向けウィンドウマネージャー操作を実現しています。実体は [`modules/wm/hyprland/config/hypr/configs/keybinds.conf`](../modules/wm/hyprland/config/hypr/configs/keybinds.conf)（`$mainMod` = `SUPER`）です。
+
+**注意**: Kanataが送信する信号自体 (`Super+X`) は [kanata.md](kanata.md) と共通ですが、Hyprland側でそのSuperキーに何を割り当てるかは各バインド定義に依存し、経緯上ずれているキーがあります (コメントに `moved from ...` とある箇所)。ここでは実際の`keybinds.conf`の内容を正としています。
 
 ---
 
@@ -11,28 +13,32 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 | 操作内容 | ショートカットキー | 内部で送信されるキー |
 | :--- | :--- | :--- |
 | **アプリランチャー (Rofi) 起動** | `Alt` + `Space` または `Alt` + `D` | `SUPER` + `D` |
-| **ターミナル (Kitty) 起動** | `Alt` + `Enter` | `SUPER` + `Return` |
-| **ファイルマネージャー (Nautilus) 起動** | `Alt` + `E` (※物理キー) | `SUPER` + `E` |
-| **端末型ファイラー (Yazi) 起動** | `Alt` + `Shift` + `E` | `SUPER` + `SHIFT` + `E` |
-| **デフォルトブラウザ (Vivaldi) 起動**| `Alt` + `B` | `SUPER` + `B` |
+| **ターミナル (WezTerm) 起動** | `Alt` + `Enter` | `SUPER` + `Return` |
+| **ターミナル (WezTerm，フロート800x550) 起動** | `Alt` + `Shift` + `Enter` (※物理キー) | `SUPER` + `SHIFT` + `Return` |
+| **ファイルマネージャー (Yazi，WezTerm内) 起動** | `Alt` + `E` | `SUPER` + `E` |
+| **ファイルマネージャー (Yazi，WezTerm内) 起動 (別バインド)** | `Alt` + `Y` | `SUPER` + `Y` |
+| **デフォルトブラウザ (Vivaldi) 起動** | `Alt` + `V` (以前は `Alt` + `B`) | `SUPER` + `V` |
+| **ウィンドウ一覧切り替え (Rofi Window Switcher)** | `Alt` + `Tab` | `SUPER` + `Tab` |
 
 ---
 
-## 2. ウィンドウ操作 (GlazeWM 互換) (Window Management)
+## 2. ウィンドウ操作 (Window Management)
 
 | 操作内容 | ショートカットキー | 内部で送信されるキー |
 | :--- | :--- | :--- |
 | **フォーカス移動** (左 / 下 / 上 / 右) | `Alt` + `H` / `J` / `K` / `L` | `SUPER` + `H/J/K/L` |
 | **ウィンドウ位置入れ替え** | `Alt` + `Shift` + `H` / `J` / `K` / `L` | `SUPER` + `SHIFT` + `H/J/K/L` |
-| **ウィンドウのリサイズ** (幅小 / 高小 / 高大 / 幅大) | `Alt` + `U` / `I` / `O` / `P` | `SUPER` + `U/I/O/P` |
-| **フローティング (浮動表示) 切り替え** | `Alt` + `T` または `Alt` + `Shift` + `Space` | `SUPER` + `T` / `SHIFT+Space` |
+| **ウィンドウのリサイズ** (幅小 / 高大 / 高小 / 幅大) | `Alt` + `U` / `I` / `O` / `P` | `SUPER` + `U/I/O/P` |
+| **フローティング (浮動表示) 切り替え** | `Alt` + `D` (物理キー) または `Alt` + `Shift` + `Space` | `SUPER` + `T` / `SHIFT+Space` |
 | **フルスクリーン表示切り替え** | `Alt` + `F` | `SUPER` + `F` |
-| **ウィンドウ分割方向の切り替え** | `Alt` + `V` | `SUPER` + `V` |
-| **アクティブウィンドウを閉じる** | `Alt` + `Q` | `SUPER` + `SHIFT` + `Q` |
+| **ウィンドウ分割方向の切り替え** | `Alt` + `Shift` + `T` (以前は `Alt` + `V`) | `SUPER` + `SHIFT` + `T` |
+| **アクティブウィンドウを閉じる** | `Alt` + `Q` | `SUPER` + `SHIFT` + `W` |
+| **ウィンドウの最小化 (トグル)** | `Alt` + `M` | `SUPER` + `M` |
+| **最小化ウィンドウの表示切り替え (Scratchpad)** | `Alt` + `Shift` + `M` | `SUPER` + `SHIFT` + `M` |
 
 ---
 
-## 3. ワークスペースの移動 (GlazeWM 互換) (Workspace Navigation)
+## 3. ワークスペースの移動 (Workspace Navigation)
 
 | 操作内容 | ショートカットキー | 内部で送信されるキー |
 | :--- | :--- | :--- |
@@ -41,6 +47,7 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 | **次のワークスペースへ移動** | `Alt` + `S` | `SUPER` + `S` |
 | **前のワークスペースへ移動** | `Alt` + `A` | `SUPER` + `A` |
 | **直前まで表示していたワークスペースに戻る** | `Alt` + <code>`</code> (半角/全角キー付近) | `SUPER` + <code>`</code> |
+| **マウスホイールでワークスペース切り替え** | `Super` + スクロール (※物理キー操作) | — |
 
 ---
 
@@ -53,9 +60,22 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
   - `Alt` + `Shift` + `S` (`SUPER` + `SHIFT` + `S`)
 * **画面の色抽出 (カラーピッカー)**:
   - `Alt` + `C` (`SUPER` + `C`) で `hyprpicker` を起動。
+* **Waybarの再起動**:
+  - `Alt` + `R` (`SUPER` + `R`)
+* **Waybarスタイルメニュー**:
+  - `Super` + `Ctrl` + `B` (※物理キー操作)
+* **Waybarレイアウトメニュー**:
+  - `Super` + `Alt` + `B` (※物理キー操作)
+* **Waybarの表示 / 非表示切り替え**:
+  - `Super` + `Ctrl` + `H` (※物理キー操作。以前は `Super` + `H`)
 * **画面ロック**:
-  - `Super` + `Alt` + `L` (※物理キー操作)
-* **ステータスバー (Waybar) の表示 / 非表示切り替え**:
-  - `Super` + `Ctrl` + `H` (※物理キー操作)
+  - `Super` + `Alt` + `L` (※物理キー操作。以前は `Super` + `L`)
 * **ログアウト / 電源メニュー起動**:
   - `Ctrl` + `Alt` + `Delete` (Hyprlandセッションの終了)
+
+## 現在使われていないキー
+
+以下はKanata側 (`modules/input/kanata/config.kbd`) の`hyp-*`エイリアスとしては存在しますが，Hyprland側の対応するバインドが現状無く，押しても何も起こりません（過去の機能移動の名残）:
+
+- `Alt` + `N` (`SUPER` + `N`，かつてNeovim起動用だった)
+- `Alt` + `B` (`SUPER` + `B`，ブラウザ起動は`Alt`+`V`へ移動済み)

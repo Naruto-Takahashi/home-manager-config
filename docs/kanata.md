@@ -111,3 +111,14 @@ kanataはクロスプラットフォームだが，Windowsの一部機能(IMEの
 * エントリポイントは `main.ahk` の1つのみ。komorebi固有のホットキー定義 (`modules/wm/komorebi/komorebi.ahk`、[komorebi.md](komorebi.md) 参照) はここから絶対パスで `#Include` される
 * IME制御関数 (`ImmGetDefaultIMEWnd` 等のWin32 API呼び出し) は `modules/input/ahk/lib/ime_functions.ahk` に切り出している
 * `sync-win` が `~/.config/ahk` 配下をまるごと Windows の `Tools\Customization\` へコピーする
+
+---
+
+## 関連ファイル
+
+| ファイル | 役割 |
+| :--- | :--- |
+| `modules/input/kanata/config.kbd` | レイヤー定義本体 (3ホスト共通) |
+| `modules/input/kanata/kanata-config.nix` | NixOS向け`wmmodifier-`置換ロジック |
+| `hosts/mac/default.nix` | macOS向け`wmmodifier-`/その他置換ロジック |
+| `modules/input/ahk/main.ahk` | WSL/Windows向けの別実装 |

@@ -66,6 +66,8 @@
 - matugenキャッシュが無い場合は，WSL/NixOS側と同じ青ベースのフォールバック配色を使います．
 - ギャップ (`[gaps]`) は `inner.horizontal/vertical = 10`，`outer.left/bottom/right = 8`，`outer.top = 4`．WSL側komorebiの値 (`default_container_padding=6` / `default_workspace_padding=1`) と揃える案も試しましたが，見た目の好みでMac独自の値に戻しています．
 
+---
+
 ## 壁紙ピッカー
 
 `Alt + W` (`ctrl-cmd-w`) で [`wallpaper-pick-popup.sh`](../modules/theming/matugen/mac/wallpaper-pick-popup.sh) が起動し，Vivaldiのapp-modeウィンドウでサムネイルグリッドのポップアップが開きます．クリックすると即座に壁紙変更とMatugen配色反映（このAeroSpaceの枠線色を含む）が走ります．詳細は [matugen-palette.md](matugen-palette.md) を参照してください．
@@ -77,6 +79,8 @@ on-window-detected = [
   { if = 'test %{window-title} ~= "wallpaper picker"', run = 'layout floating' }
 ]
 ```
+
+---
 
 ## ログイン時の自動リカバリ (LaunchAgent)
 
@@ -90,6 +94,19 @@ AeroSpace自身の `start-at-login = true` はmacOSのログインアイテム�
 aerospace reload-config
 ```
 
+---
+
 ## 設定変更時の注意
 
 `aerospace.toml` は `xdg.configFile` でNix管理のファイルとして生成されるため，`darwin-rebuild switch` を実行しないと反映されません．また，ファイルを書き換えただけではAeroSpace自身が読みに行かない（`after-startup-command` は起動時にしか走らない）ため，`darwin-rebuild switch` の後は上記の `aerospace reload-config` を実行するか，次回ログインまで待つ必要があります．
+
+---
+
+## 関連ファイル
+
+| ファイル | 役割 |
+| :--- | :--- |
+| `modules/apps/aerospace/default.nix` | `aerospace.toml`本体・LaunchAgentの定義 |
+| `modules/apps/aerospace/launch-borders.sh` | JankyBordersの起動・matugen配色連携スクリプト |
+| `modules/theming/matugen/mac/wallpaper-pick-popup.sh` | 壁紙ピッカーのポップアップ起動スクリプト |
+| `modules/theming/matugen/mac/wallpaper-pick-gui.py` | 壁紙ピッカーのローカルHTTPサーバ本体 |

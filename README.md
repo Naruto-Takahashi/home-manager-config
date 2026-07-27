@@ -70,7 +70,7 @@ OSレベルのシステム定義から，シェル環境，ウィンドウマネ
 │   │                          #   ホスト別パイプライン (wsl/, mac/)
 │   └── desktop/               # Linux GUI 共通 (パッケージ, デスクトップエントリ, MIME)
 ├── profiles/                  # 全ホスト共通プロファイル (base.nix)
-└── docs/                      # 各種仕様・キーマップ解説ドキュメント
+└── docs/                      # 各種仕様・キーマップ解説ドキュメント ([索引](docs/README.md))
 ```
 
 ![divider](https://capsule-render.vercel.app/api?type=rect&height=3&color=0:e6c384,50:7aa89f,100:a292a3)

@@ -4,6 +4,10 @@
 `matugen-apply` (WSL: `~/.local/bin/matugen-apply`) が壁紙変更のたびに
 `~/.cache/matugen/colors.lua` へ書き出し、各アプリがそこから読む。
 
+**目次**: [色の定義](#色の定義) / [用途の割り当て](#用途の割り当て) / [反映の仕組み](#反映の仕組み) / [関連ファイル](#関連ファイル)
+
+---
+
 ## 色の定義
 
 | 名前 | 由来 | 説明 |
@@ -29,6 +33,8 @@
   壁紙を変えたら `modules/theming/matugen/bake-fallbacks.sh` でこれらを
   今の壁紙色に一括更新できる (詳細は後述の「フォールバックの一括更新」)。
 
+---
+
 ## 用途の割り当て
 
 | 場所 | accent | secondary | tertiary | complement | triad |
@@ -52,6 +58,8 @@
   matugen の `error` 色 (colors.lua にも出力) を使用。
 - komorebi の unfocused 枠は matugen の outline トーン、yazi のフルボーダーは
   muted と surface の中間色 (実行時合成)、nvim のメニュー文字は text。
+
+---
 
 ## 反映の仕組み
 
@@ -294,3 +302,17 @@ WSL/Mac は matugen-apply.sh に palette.css からの抽出を足し、NixOS �
 `config.toml` にネイティブ `[templates.x]` を足すだけでよい。色相回転が
 必要なら、いずれのOSも `modules/theming/matugen/` にテンプレートを足し、
 それぞれのスクリプトから `render-template.sh` を呼べばよい。
+
+---
+
+## 関連ファイル
+
+| ファイル | 役割 |
+| :--- | :--- |
+| `modules/theming/matugen/lib/derive-colors.py` | complement/triad/accent_pale/selection_bgの派生色計算 (全ホスト共通) |
+| `modules/theming/matugen/lib/render-template.sh` | `@@KEY@@`プレースホルダのテンプレート置換エンジン (全ホスト共通) |
+| `modules/theming/matugen/templates/` | starship/lazygit/cz.toml/eza/atuin/btop用の共通テンプレート |
+| `modules/theming/matugen/wsl/matugen-apply.sh` | WSL側の壁紙変更〜配色反映パイプライン |
+| `modules/theming/matugen/mac/matugen-apply.sh` | Mac側の壁紙変更〜配色反映パイプライン |
+| `modules/wm/hyprland/config/matugen/config.toml` | NixOS側のmatugenネイティブテンプレート定義 |
+| `modules/theming/matugen/bake-fallbacks.sh` | 現在のmatugenキャッシュ値を全フォールバック箇所へ一括反映するスクリプト |

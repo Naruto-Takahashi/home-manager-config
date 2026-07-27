@@ -4,6 +4,8 @@
 `git commit` にgitmojiを自動で付与する。git CLI直接実行、lazygit(nvim内/外)、
 Claude CodeなどのAIエージェント経由のコミットも `git commit` を呼ぶ限り対象になる。
 
+---
+
 ## 使い方
 
 `type: subject` または `type(scope): subject` のConventional Commits風に書けば、
@@ -16,6 +18,8 @@ feat: add sample file
 
 型を推定できない自由文には `💬` が付く。すでに絵文字や `:shortcode:` が
 先頭にある場合は何もしない(手動で選びたい時はそのまま書けばよい)。
+
+---
 
 ## マッピング表
 
@@ -58,6 +62,8 @@ fix(deps): downgrade broken package
 
 メッセージに `downgrade` の文字列が含まれる場合のみ⬇️、それ以外は⬆️になる。
 
+---
+
 ## 対話的に選びたい場合: commitizen (cz)
 
 自動推定に任せず、type/scope/subjectを対話的に選んでコミットしたい場合は
@@ -91,6 +97,8 @@ lazygit内では **`c`** (通常のcommitChangesを上書き) に `cz commit` �
 - 型を意識せず素早くコミットしたい / AIエージェント経由 → 何もせず通常通りコミット(自動推定)
 - type/subjectをきちんと選びたい → `cz commit` (lazygitなら `c`)
 
+---
+
 ## エスケープハッチ
 
 - 絵文字や `:shortcode:` を自分で先頭に書けば自動付与はスキップされる
@@ -100,6 +108,8 @@ lazygit内では **`c`** (通常のcommitChangesを上書き) に `cz commit` �
 - `commit-msg` フックは絵文字が無くても警告のみでコミットは通す(拒否しない、
   上記の`--no-verify`/`w`を使わなくても`prepare-commit-msg`が💬を付けるので
   実際には常に絵文字が付く)
+
+---
 
 ## 適用範囲
 
@@ -112,3 +122,15 @@ gitconfig (`modules/apps/git`、`programs.git.includes`) の
 ```
 git config --local core.hooksPath ""
 ```
+
+---
+
+## 関連ファイル
+
+| ファイル | 役割 |
+| :--- | :--- |
+| `modules/apps/git-hooks/default.nix` | フック配置・`cz`ラッパーの定義 |
+| `modules/apps/git-hooks/hooks/prepare-commit-msg` | type/scope推定とgitmoji自動付与の実装 (`MAP`連想配列) |
+| `modules/apps/git-hooks/hooks/commit-msg` | 絵文字未付与時の警告 (拒否はしない) |
+| `modules/apps/git-hooks/cz.toml` | commitizen (`cz commit`) の対話選択肢定義 |
+| `modules/apps/git` | `programs.git.includes`の`includeIf`で個人リポジトリのみ有効化 |

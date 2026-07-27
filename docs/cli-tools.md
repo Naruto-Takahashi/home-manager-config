@@ -51,6 +51,8 @@ atuin / btop / tealdeer の配色は Matugen 連携 (壁紙由来 + kanagawa-dra
 - 実行時間列 (例: `20ms`) は成功=緑・失敗=赤 (zsh syntax-highlighting と同じ固定色)。経過時間列は非表示 (実行時刻は `Ctrl+O` のインスペクタで確認)
 - 注: 見た目の大部分は `modules/shell/atuin/fzf-style.patch` によるソースパッチで実現している (atuin はソースから再ビルドされる)。数字ショートカット (Alt+1..9) は komorebi のワークスペース移動と衝突するため番号表示ごと無効化
 
+---
+
 ## tealdeer (tldr) — コマンドの使用例を引く
 
 | コマンド | 動作 |
@@ -62,6 +64,8 @@ atuin / btop / tealdeer の配色は Matugen 連携 (壁紙由来 + kanagawa-dra
 - キャッシュは自動更新 (`auto_update`) なので手動の `tldr --update` は不要
 - 細かいオプションの正確な仕様は従来どおり `man <コマンド>` で
 
+---
+
 ## fd — find の現代版
 
 | コマンド | 動作 |
@@ -71,6 +75,8 @@ atuin / btop / tealdeer の配色は Matugen 連携 (壁紙由来 + kanagawa-dra
 | **`fd -H <パターン>`** | 隠しファイルも含める |
 | **`fd <パターン> /path`** | 検索場所を指定 |
 | **`fd -x <cmd> {}`** | ヒットした各ファイルにコマンド実行 (例: `fd -e log -x rm {}`) |
+
+---
 
 ## delta — git diff の美しい表示
 
@@ -84,12 +90,16 @@ atuin / btop / tealdeer の配色は Matugen 連携 (壁紙由来 + kanagawa-dra
 - シンタックス配色 (`delta.syntax-theme`) は `modules/apps/bat` が登録している `Kanagawa Dragon` テーマ。既定の `Monokai Extended` は他ツールと配色が馴染まないため、kanagawa.nvim本家のtmTheme (無印wave配色) を `lua/kanagawa/themes.lua` の dragon 色定義に合わせて手動で色置換したものを使っている (upstreamにdragon版tmThemeは存在しないため自前で用意、`modules/apps/bat/kanagawa-dragon.tmTheme`)
 - bat自体もこの `Kanagawa Dragon` テーマが既定 (`bat <file>` の表示にも反映される)
 
+---
+
 ## eza — ls の置き換え
 
 `ls`/`ll`/`la`/`l`/`tree` エイリアスと `cd` 後の自動一覧表示 (`chpwd`) は全て eza を使う。ファイル種別ごとの色分けは yazi の `theme-template.toml` と同じ拡張子→役割 (tertiary/complement/triad/error/secondary) の対応で揃えており、アイコンの色もファイル名の文字色と一致させている (`modules/apps/eza/theme.yml`、matugen環境では `~/.cache/matugen/eza/theme.yml` を `EZA_CONFIG_DIR` 経由で優先)。
 
 - 拡張子/ファイル名それぞれに `filename.foreground` と `icon.style.foreground` の両方を同じ色で指定する必要がある (eza はアイコン色をファイル名の色から自動導出しないため)
 - 旧来の固定 `LS_COLORS` は eza のテーマ (特に `di`=ディレクトリ色) を上書きしてしまうため撤去済み
+
+---
 
 ## btop — システムモニタ
 
@@ -107,6 +117,8 @@ atuin / btop / tealdeer の配色は Matugen 連携 (壁紙由来 + kanagawa-dra
 | **`q`** | 終了 |
 
 - テーマは `matugen` 固定 (壁紙変更で自動追従)。アプリ内でテーマを変えても次の home-manager 適用では戻らないが、`btop.conf` は書き換え可能なので他のアプリ内設定は自由に保存できる
+
+---
 
 ## smassh — タイピング練習
 

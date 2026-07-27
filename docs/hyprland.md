@@ -73,9 +73,22 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 * **ログアウト / 電源メニュー起動**:
   - `Ctrl` + `Alt` + `Delete` (Hyprlandセッションの終了)
 
+---
+
 ## 現在使われていないキー
 
 以下はKanata側 (`modules/input/kanata/config.kbd`) の`hyp-*`エイリアスとしては存在しますが，Hyprland側の対応するバインドが現状無く，押しても何も起こりません（過去の機能移動の名残）:
 
 - `Alt` + `N` (`SUPER` + `N`，かつてNeovim起動用だった)
 - `Alt` + `B` (`SUPER` + `B`，ブラウザ起動は`Alt`+`V`へ移動済み)
+
+---
+
+## 関連ファイル
+
+| ファイル | 役割 |
+| :--- | :--- |
+| `modules/wm/hyprland/config/hypr/configs/keybinds.conf` | キーバインド本体 (このドキュメントの一次情報源) |
+| `modules/wm/hyprland/config/hypr/hyprland.conf` | `$terminal`/`$fileManager`/`$menu`等の変数定義 |
+| `modules/wm/hyprland/config/hypr/scripts/wppicker.sh` | 壁紙ピッカー・Matugen配色反映スクリプト |
+| `modules/wm/hyprland/config/waybar/` | Waybar (ステータスバー) 設定 |

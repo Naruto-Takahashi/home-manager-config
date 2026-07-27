@@ -4,6 +4,8 @@ Yaziは**Rust製の高速CUIファイルマネージャ**です．
 非同期I/Oと非同期プレビューによる極めて高いレスポンス性が特長で，Vim風のキーバインドを採用しています．  
 本環境では **kanagawa-dragon フレーバー** をベースに，Matugen パレット (壁紙連動) でフォルダ色・ファイル種別色・ステータスバーを動的に上書きしています ([matugen-palette.md](matugen-palette.md) 参照)．
 
+**目次**: [起動方法](#起動方法) / [画面構成](#基本的な画面構成) / [キーバインド一覧](#キーバインド一覧) / [テーマカスタマイズ](#テーマカスタマイズ本環境の設定) / [外部ツール連携](#外部ツール連携) / [ワークフロー例](#実践的なワークフロー例) / [関連ファイル](#関連ファイル)
+
 ---
 
 ## 起動方法
@@ -296,3 +298,13 @@ yazi ~/ghq/github.com/Naruto-Takahashi/
 - [Yazi GitHub リポジトリ](https://github.com/sxyazi/yazi)
 - [Cyberdream テーマ](https://github.com/scottmckendry/cyberdream.nvim)
 - [Nerd Fonts](https://www.nerdfonts.com/)
+
+---
+
+## 関連ファイル
+
+| ファイル | 役割 |
+| :--- | :--- |
+| `modules/apps/yazi/default.nix` | Yazi有効化・keymap上書き・テーマ配置 |
+| `modules/apps/yazi/init.lua` | Matugen配色フォールバック定義 |
+| `modules/apps/yazi/theme-template.toml` | Matugenテンプレート (`@@プレースホルダ@@`) |

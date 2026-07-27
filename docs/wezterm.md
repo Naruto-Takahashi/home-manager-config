@@ -123,3 +123,13 @@ WezTermの標準ショートカットをすべて無効化（`disable_default_ke
 | **`V`** (`Shift + v`) | ビジュアルラインモード (行単位選択の開始) |
 | **`Ctrl + v`** | ビジュアルブロックモード (矩形選択の開始) |
 | **`y`** | 選択範囲をシステムクリップボードにコピーしてコピーモードを終了 |
+
+---
+
+## 関連ファイル
+
+| ファイル | 役割 |
+| :--- | :--- |
+| `modules/apps/wezterm/wezterm.lua` | 外観・タブタイトル自動検知ロジック |
+| `modules/apps/wezterm/keybinds.lua` | キーバインド・Leaderキー・key_tables定義 |
+| `modules/apps/wezterm/default.nix` | home-manager配置・matugen配色連携 |

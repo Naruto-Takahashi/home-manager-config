@@ -2,6 +2,8 @@
 
 このドキュメントでは，[modules/apps/neovim/default.nix](../modules/apps/neovim/default.nix) を通じて管理されている Neovim の基本設計，独自マッピング，および強力なプラグインエコシステムについて詳細に解説します．
 
+**目次**: [基本設定](#基本設定-general-options) / [主要キーマップ](#主要キーマップ-core-keymaps) / [カスタムマクロ・コマンド](#強力な独自カスタムマクロコマンド) / [プラグインエコシステム](#主要プラグインエコシステム-plugin-ecosystem) / [プラグイン個別キーバインド](#各プラグイン個別キーバインド詳細) / [関連ファイル](#関連ファイル)
+
 ---
 
 ## 基本設定 (General Options)
@@ -243,3 +245,15 @@
 補足:
 - Select系 (`s`/`S`/`\19`) は Visual系 (`v`/`V`/`\22`) と対になっており，Visualモード中に `Ctrl-g` を押すとトグルできる．見た目はVisualとほぼ同じだが，直接文字を打つと選択範囲がそのまま置き換わる点が違う (LSPのスニペット補完でプレースホルダーを埋める際などにNeovimが自動で使うモード)．
 - Command-line・Terminal・確認プロンプト待ちは対応表からは未対応のままにしている (Command-lineは実質見えない，Terminalは低頻度，残り2つは一瞬しか存在しないため優先度が低いと判断)．必要になれば `mode_colors` テーブルにキーを追加するだけで対応できる．
+
+---
+
+## 関連ファイル
+
+| ファイル | 役割 |
+| :--- | :--- |
+| `modules/apps/neovim/default.nix` | Neovim有効化・extraPackages・treesitterパーサー配置 |
+| `modules/apps/neovim/nvim/init.lua` | Lazy.nvimブートストラップ・プラグイン一覧 |
+| `modules/apps/neovim/nvim/lua/vim-options.lua` | 基本オプション・キーマップ定義 |
+| `modules/apps/neovim/nvim/lua/plugins/` | プラグイン個別設定 |
+| `modules/apps/neovim/nvim/lua/matugen.lua` | Matugen配色フォールバック定義 |

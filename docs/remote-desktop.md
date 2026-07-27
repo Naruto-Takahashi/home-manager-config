@@ -15,6 +15,8 @@ Windows ノート ──(Tailscale: NAT越えVPN)──> NixOS (研究室PC)
 - **SSH**: Sunshineが落ちたときの復旧経路．Tailscale経由のみ到達可能で，大学LANには公開していない．
 - 自動ログイン + スリープ無効化により，**再起動後も無操作でリモート接続可能な状態に復帰**する．
 
+---
+
 ## NixOS側の設定 (nix-config管理)
 
 すべて `hosts/nixos/default.nix` に宣言済み．新しいマシンでは通常のNixOSセットアップ手順（README参照）を踏むだけで以下が有効になる．
@@ -27,6 +29,8 @@ Windows ノート ──(Tailscale: NAT越えVPN)──> NixOS (研究室PC)
 | `services.displayManager.autoLogin` | 再起動後にセッションを自動開始（getty無効化のバグ回避付き） |
 | `systemd.targets.sleep` ほか | サスペンド系を全無効化し，無人中の切断を防止 |
 | `hyprland.conf` の `exec-once` | HyprlandがsystemdのGraphical Session Targetを起動しないため，Sunshineを明示起動 |
+
+---
 
 ## 初回セットアップ手順（新しいマシンで1回だけ必要な手動作業）
 
@@ -56,6 +60,8 @@ tailscale ip -4
 
 - Moonlightにホストがオンライン表示され，接続するとデスクトップが操作できること
 - **再起動テスト**: NixOSマシンを再起動し，何も触らずに1〜2分待ってからMoonlightで接続できること（Tailscaleの経路確立に少し時間がかかる）
+
+---
 
 ## 運用メモ
 

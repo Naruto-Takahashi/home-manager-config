@@ -92,9 +92,13 @@ cd nix-config
    aerospace reload-config
    ```
 
+---
+
 ## この構成で有効になるもの
 
 AeroSpace (WM) + JankyBorders，Kanata (キーリマップ，`Ctrl+Cmd`変換)，Matugen壁紙配色 (壁紙ピッカー含む)，Homebrew Cask管理。詳細は [aerospace.md](aerospace.md) / [kanata.md](kanata.md) / [matugen-palette.md](matugen-palette.md) を参照してください。
+
+---
 
 ## 手動作業が残る理由 (SIP/TCC)
 

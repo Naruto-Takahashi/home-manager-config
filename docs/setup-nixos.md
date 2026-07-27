@@ -30,6 +30,8 @@ cd nix-config
 4. **リモートデスクトップの初回認証（必要な場合）**
    Tailscaleのログインや Sunshine のペアリングなど，Nixで再現されない認証ステートの初期化手順は [remote-desktop.md](remote-desktop.md) を参照してください．
 
+---
+
 ## この構成で有効になるもの
 
 Hyprland (WM) + Waybar，Kanata (キーリマップ，`Super`変換)，fcitx5+Mozc，Matugen壁紙配色，Tailscale+Sunshine無人リモート接続。詳細は各ドキュメント ([hyprland.md](hyprland.md) / [kanata.md](kanata.md) / [matugen-palette.md](matugen-palette.md) / [remote-desktop.md](remote-desktop.md)) を参照してください。

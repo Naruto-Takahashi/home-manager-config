@@ -30,6 +30,8 @@ cd nix-config
    exec zsh
    ```
 
+---
+
 ## この構成で有効になるもの
 
 キーボードリマップは(WSLからはWindows側のキーボードを直接掴めないため)Kanataではなく [AutoHotkey](../modules/input/ahk/main.ahk) が担当します。komorebi (WM) + YASB (ステータスバー) はWindows側で動作し，`sync-win`で設定を配置します。Matugen壁紙配色はWSL側で完結します (壁紙選択→配色反映)。Obsidian MCP連携もこのホストのみ有効です。詳細は [komorebi.md](komorebi.md) / [kanata.md](kanata.md) / [matugen-palette.md](matugen-palette.md) を参照してください。

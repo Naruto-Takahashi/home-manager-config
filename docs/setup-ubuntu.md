@@ -1,4 +1,4 @@
-# 🟠 Ubuntu デスクトップ環境セットアップ手順 (`nalt-ubuntu`)
+# Ubuntu デスクトップ環境セットアップ手順 (`nalt-ubuntu`)
 
 [README.md](../README.md) の「どれがどのOSで動くか」対応表も参照してください。
 

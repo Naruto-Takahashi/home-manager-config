@@ -1,4 +1,4 @@
-# 📔 Obsidian MCP 連携 (外部脳)
+# Obsidian MCP 連携 (外部脳)
 
 **WSL2専用**です．[modules/services/obsidian-mcp.nix](../modules/services/obsidian-mcp.nix) で管理されている，ObsidianのVaultをAIエージェントの「外部脳」として使う仕組みです．セッションを跨いで知識・作業ログを引き継ぐことを目的としています．
 

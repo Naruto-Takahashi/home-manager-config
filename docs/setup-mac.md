@@ -1,4 +1,4 @@
-# 🍎 macOS (darwin) セットアップ手順 (`nalt-mac`)
+# macOS (darwin) セットアップ手順 (`nalt-mac`)
 
 [README.md](../README.md) の「どれがどのOSで動くか」対応表も参照してください。
 

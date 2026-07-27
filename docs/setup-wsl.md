@@ -1,4 +1,4 @@
-# 🪟 WSL2 (Ubuntu) セットアップ手順 (`nalt-wsl`)
+# WSL2 (Ubuntu) セットアップ手順 (`nalt-wsl`)
 
 [README.md](../README.md) の「どれがどのOSで動くか」対応表も参照してください。
 

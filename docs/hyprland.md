@@ -1,4 +1,4 @@
-# 🗔 Hyprland キーバインド・操作詳細 (Hyprland Workflows)
+# Hyprland キーバインド・操作詳細 (Hyprland Workflows)
 
 このドキュメントは、NixOS環境で使用する **Hyprland** Waylandコンポジタのキーバインドとワークフローに関する詳細設定を解説します。
 
@@ -6,7 +6,7 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 
 ---
 
-## 🚀 1. アプリケーションの起動と管理 (App Launchers)
+## 1. アプリケーションの起動と管理 (App Launchers)
 
 | 操作内容 | ショートカットキー | 内部で送信されるキー |
 | :--- | :--- | :--- |
@@ -18,7 +18,7 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 
 ---
 
-## 🗔 2. ウィンドウ操作 (GlazeWM 互換) (Window Management)
+## 2. ウィンドウ操作 (GlazeWM 互換) (Window Management)
 
 | 操作内容 | ショートカットキー | 内部で送信されるキー |
 | :--- | :--- | :--- |
@@ -32,7 +32,7 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 
 ---
 
-## 📁 3. ワークスペースの移動 (GlazeWM 互換) (Workspace Navigation)
+## 3. ワークスペースの移動 (GlazeWM 互換) (Workspace Navigation)
 
 | 操作内容 | ショートカットキー | 内部で送信されるキー |
 | :--- | :--- | :--- |
@@ -44,7 +44,7 @@ Kanataキーリマップ（Alt長押しでSuperキーへ変換）と連携し、
 
 ---
 
-## 🎨 4. 便利機能とシステムコントロール (Utilities)
+## 4. 便利機能とシステムコントロール (Utilities)
 
 * **壁紙チェンジャーの起動**:
   - `Alt` + `W` (`SUPER` + `W`)

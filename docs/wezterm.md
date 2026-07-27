@@ -1,10 +1,10 @@
-# 💻 WezTerm ターミナルエミュレータ設定・キーバインド詳細
+# WezTerm ターミナルエミュレータ設定・キーバインド詳細
 
 このドキュメントでは，[modules/apps/wezterm/](../modules/apps/wezterm/) に定義されている WezTerm ターミナルの機能設計，外観カスタマイズ，およびキーバインドについて詳細に解説します．
 
 ---
 
-## 🎨 美しい外観と機能設計 (Design & Aesthetics)
+## 美しい外観と機能設計 (Design & Aesthetics)
 
 配色は Matugen パレット (壁紙連動．[matugen-palette.md](matugen-palette.md) 参照) に追従します．
 
@@ -19,7 +19,7 @@
 
 ---
 
-## 🔍 インテリジェントなプロセス自動検知（動的タブタイトル）
+## インテリジェントなプロセス自動検知（動的タブタイトル）
 
 `format-tab-title` イベントに，現在実行中のプログラム名（プロセス）を監視してタブタイトルをインテリジェントに上書きするカスタムスクリプトを組み込んでいます．
 
@@ -35,7 +35,7 @@
 
 ---
 
-## ⌨️ キーバインド・操作ショートカット (Leader: Ctrl+Space)
+## キーバインド・操作ショートカット (Leader: Ctrl+Space)
 
 WezTermの標準ショートカットをすべて無効化（`disable_default_key_bindings = true`）し，**独自の Leader キー操作系**（tmux/screen風）で完全に制御します．
 
@@ -84,7 +84,7 @@ WezTermの標準ショートカットをすべて無効化（`disable_default_ke
 
 ---
 
-## 🛠️ 各種特殊モードの操作詳細
+## 各種特殊モードの操作詳細
 
 ### A. ペインのリサイズモード (`Leader + s`)
 

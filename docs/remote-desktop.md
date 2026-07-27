@@ -1,4 +1,4 @@
-# 🖥️ リモートデスクトップ (Tailscale + Sunshine + Moonlight)
+# リモートデスクトップ (Tailscale + Sunshine + Moonlight)
 
 大学VPNを使わずに，外部ネットワーク（自宅など）のWindows端末から研究室のNixOSマシンへ無人リモート接続するための構成です．
 

@@ -1,4 +1,4 @@
-# 🗔 komorebi ウィンドウマネージャ キーバインド一覧
+# komorebi ウィンドウマネージャ キーバインド一覧
 
 Windows環境のタイル型ウィンドウマネージャ **komorebi** の操作チートシートです．
 キーバインドは AutoHotkey (`modules/wm/komorebi/komorebi.ahk`) で定義され，`sync-win` で Windows 側 (`C:\Users\tnaru\.config\komorebi\`) に同期されます．
@@ -9,7 +9,7 @@ Windows環境のタイル型ウィンドウマネージャ **komorebi** の操�
 
 ---
 
-## ⌨️ キーバインド
+## キーバインド
 
 ### 1. フォーカス・ウィンドウ移動 (Vim 風)
 
@@ -71,7 +71,7 @@ Windows環境のタイル型ウィンドウマネージャ **komorebi** の操�
 
 ---
 
-## 🛠️ 関連ファイル
+## 関連ファイル
 
 | ファイル | 役割 |
 | :--- | :--- |

@@ -1,4 +1,4 @@
-# 🗔 AeroSpace ウィンドウマネージャ キーバインド・設定詳細
+# AeroSpace ウィンドウマネージャ キーバインド・設定詳細
 
 **macOS専用**です．[modules/apps/aerospace/default.nix](../modules/apps/aerospace/default.nix) で宣言的に管理されているタイル型ウィンドウマネージャ **AeroSpace** の操作・配色連携・自動化まわりを解説します．NixOSの[Hyprland](hyprland.md)，Windows/WSLの[komorebi](komorebi.md)に相当する役割です．
 
@@ -6,7 +6,7 @@
 
 ---
 
-## ⌨️ キーバインド (Main Mode)
+## キーバインド (Main Mode)
 
 すべて `Alt + <キー>` （実際に送信されるのは `Ctrl+Cmd + <キー>`）です．
 
@@ -58,7 +58,7 @@
 
 ---
 
-## 🎨 配色連携 (Matugen) と枠線 (JankyBorders)
+## 配色連携 (Matugen) と枠線 (JankyBorders)
 
 アクティブウィンドウの枠線ハイライトは Homebrew の `borders` (JankyBorders) が担当します．色は壁紙から抽出した [Matugen](matugen-palette.md) のパレット (`~/.cache/matugen/colors.lua` の `accent`/`muted`) に自動追従します．
 
@@ -66,7 +66,7 @@
 - matugenキャッシュが無い場合は，WSL/NixOS側と同じ青ベースのフォールバック配色を使います．
 - ギャップ (`[gaps]`) は `inner.horizontal/vertical = 10`，`outer.left/bottom/right = 8`，`outer.top = 4`．WSL側komorebiの値 (`default_container_padding=6` / `default_workspace_padding=1`) と揃える案も試しましたが，見た目の好みでMac独自の値に戻しています．
 
-## 🖼️ 壁紙ピッカー
+## 壁紙ピッカー
 
 `Alt + W` (`ctrl-cmd-w`) で [`wallpaper-pick-popup.sh`](../modules/theming/matugen/mac/wallpaper-pick-popup.sh) が起動し，Vivaldiのapp-modeウィンドウでサムネイルグリッドのポップアップが開きます．クリックすると即座に壁紙変更とMatugen配色反映（このAeroSpaceの枠線色を含む）が走ります．詳細は [matugen-palette.md](matugen-palette.md) を参照してください．
 
@@ -78,7 +78,7 @@ on-window-detected = [
 ]
 ```
 
-## 🔁 ログイン時の自動リカバリ (LaunchAgent)
+## ログイン時の自動リカバリ (LaunchAgent)
 
 AeroSpace自身の `start-at-login = true` はmacOSのログインアイテムとして働きますが，**ログインセッションが完全に立ち上がる前に起動してしまうことがあります**．その場合，カスタム設定 (キーバインド・gaps・`on-window-detected`等) を読み込めずAeroSpaceの初期値 (ギャップ0・独自バインド無し) のまま起動してしまい，`after-startup-command` (borders起動) も取りこぼされます．
 
@@ -90,6 +90,6 @@ AeroSpace自身の `start-at-login = true` はmacOSのログインアイテム�
 aerospace reload-config
 ```
 
-## ⚠️ 設定変更時の注意
+## 設定変更時の注意
 
 `aerospace.toml` は `xdg.configFile` でNix管理のファイルとして生成されるため，`darwin-rebuild switch` を実行しないと反映されません．また，ファイルを書き換えただけではAeroSpace自身が読みに行かない（`after-startup-command` は起動時にしか走らない）ため，`darwin-rebuild switch` の後は上記の `aerospace reload-config` を実行するか，次回ログインまで待つ必要があります．

@@ -1,5 +1,7 @@
 # 全構成が評価 (eval) できることを検証する。ビルドはしない。
 # importパス切れ・構文エラー・オプションのtypoをpush時点で検出するのが目的。
+# ビルドは重いので、flake.lock自動更新PR (update_flake_lock_action) の時だけ
+# build ジョブで全構成を実際にビルドし、依存更新による壊れを検出する。
 name: check
 
 on:
@@ -66,3 +68,23 @@ jobs:
             done < <(grep -oE '\]\([^)]+\)' "$file" | sed -E 's/^\]\((.*)\)$/\1/')
           done < <(git ls-files 'docs/*.md' README.md)
           exit $fail
+
+  build-linux:
+    if: github.head_ref == 'update_flake_lock_action'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - name: build nalt-wsl
+        run: nix build '.#homeConfigurations."nalt-wsl".activationPackage' --no-link
+      - name: build nixos
+        run: nix build '.#nixosConfigurations.nixos.config.system.build.toplevel' --no-link
+
+  build-mac:
+    if: github.head_ref == 'update_flake_lock_action'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - name: build nalt-mac
+        run: nix build '.#homeConfigurations."nalt-mac".activationPackage' --no-link

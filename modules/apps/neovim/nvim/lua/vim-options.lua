@@ -227,19 +227,6 @@ vim.keymap.set("n", "J", "mzJ`z", { desc = "Join Lines (Keep Cursor Position)" }
 -- (直前にヤンクした内容を連続でペーストできる)
 vim.keymap.set("v", "p", '"_dP', { desc = "Paste Without Overwriting Register" })
 
--- GitHub 上の KEYBINDINGS.md を開く
-vim.keymap.set("n", "<leader>m", function()
-    local url = "https://github.com/Naruto-Takahashi/dotfiles/blob/main/nvim/KEYBINDINGS.md"
-    local cmd
-    if vim.fn.has("win32") == 1 then
-        cmd = "start " .. url
-    else
-        -- WSL / Linux: powershell.exe 経由で Windows 側のブラウザを開く
-        cmd = string.format("powershell.exe -Command Start-Process '%s'", url)
-    end
-    vim.fn.jobstart(cmd, { detach = true })
-end, { desc = "Open KEYBINDINGS.md on GitHub" })
-
 -- ==========================================================================
 --  Zenn Tools (Custom)
 -- ==========================================================================

@@ -177,15 +177,26 @@ function atuin-fzf() {
   # atuin自身のTUIにあった「UI内Ctrl+Rでフィルタを切り替える」挙動の代替。
   # (atuin history listにはhost単位のフィルタフラグが無いため3段階まで)
   # モード名は旧パッチ同様、外枠のタイトルとして埋め込む (--border-label)。
-  selected=$(atuin history list --cmd-only --print0 | fzf --read0 -q "$LBUFFER" \
+  # atuin-history-colored (modules/shell/atuin/default.nix) が終了コードに
+  # 応じた緑(成功)/赤(失敗)の●を先頭に付けて出力する。fzfの reload() は
+  # 新しいシェルプロセスで動くためこのzsh関数を直接呼べず、実行可能ファイル
+  # として切り出してある。--ansi で色付きドットを実際の色として表示する。
+  # 各候補は "装飾付き表示\x01生コマンド" の2フィールド。fzfは--ansiでも
+  # 選択結果からANSIエスケープコードを取り除いてしまい、●という文字だけが
+  # BUFFERに混入してコマンドが実行できなくなる実害があったため、
+  # --delimiter/--with-nthで表示は1列目(装飾込み)だけに絞りつつ、
+  # 実際に使うのは常に2列目(無加工の生コマンド)にしている。
+  selected=$(atuin-history-colored | fzf --read0 --ansi -q "$LBUFFER" \
+    --delimiter=$'\x01' --with-nth=1 \
     --border-label ' GLOBAL ' \
     --bind 'ctrl-r:transform:case "$FZF_BORDER_LABEL" in
-      " GLOBAL ") echo "reload(atuin history list --cmd-only --print0 --cwd)+change-border-label( DIRECTORY )" ;;
-      " DIRECTORY ") echo "reload(atuin history list --cmd-only --print0 --session)+change-border-label( SESSION )" ;;
-      *) echo "reload(atuin history list --cmd-only --print0)+change-border-label( GLOBAL )" ;;
+      " GLOBAL ") echo "reload(atuin-history-colored --cwd)+change-border-label( DIRECTORY )" ;;
+      " DIRECTORY ") echo "reload(atuin-history-colored --session)+change-border-label( SESSION )" ;;
+      *) echo "reload(atuin-history-colored)+change-border-label( GLOBAL )" ;;
     esac')
   if [[ -n $selected ]]; then
-    BUFFER="$selected"
+    # 1列目(装飾込み表示)を捨て、2列目(生コマンド)だけをバッファへ反映する
+    BUFFER=${selected#*$'\x01'}
     CURSOR=$#BUFFER
   fi
   zle reset-prompt

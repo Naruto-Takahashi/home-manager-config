@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/flakehub-cache-action@v9
+      - uses: DeterminateSystems/flakehub-cache-action@v3
       - name: nix flake check
         run: nix flake check --no-build
       - name: evaluate all homeConfigurations
@@ -40,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/flakehub-cache-action@v9
+      - uses: DeterminateSystems/flakehub-cache-action@v3
       - name: shellcheck (zsh スクリプトは対象外)
         run: |
           git ls-files '*.sh' \
@@ -86,7 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/flakehub-cache-action@v9
+      - uses: DeterminateSystems/flakehub-cache-action@v3
       - name: build nalt-wsl
         run: nix build '.#homeConfigurations."nalt-wsl".activationPackage' --no-link
       - name: build nixos
@@ -97,6 +97,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/flakehub-cache-action@v9
+      - uses: DeterminateSystems/flakehub-cache-action@v3
       - name: build nalt-mac
         run: nix build '.#homeConfigurations."nalt-mac".activationPackage' --no-link

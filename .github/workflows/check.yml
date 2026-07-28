@@ -5,13 +5,11 @@
 # TUIを自前パッチでビルドしていた頃は重かったが、パッチを撤廃しキャッシュが
 # 効くようになったため常時実行にしている。
 #
-# flakehub-cache-action: nixosConfigurations.nixos (カーネルモジュール等
-# 含むフルシステム) をリポジトリに変更が無くても毎回イチからビルドし直して
-# いて重かったため導入。ビルド成果物をFlakeHub Cacheに保存し、次回以降
-# 変更が無い派生物はそこから復元する (cache.nixos.orgに無い/古いバイナリ
-# でも、自分たちの過去のCI実行結果を再利用できる)。
-# 旧 magic-nix-cache-action は2025年2月に廃止され動作していなかったため
-# 乗り換えた (公式に案内されている後継)。
+# build-linuxのnixosConfigurations.nixosビルド(カーネルモジュール等含む
+# フルシステム)は変更が無くても毎回イチから作り直され重い。magic-nix-cache-
+# action (2025年2月廃止・実質無効) → flakehub-cache-action と2度キャッシュ
+# 導入を試みたが、後者は初回キャッシュアップロードだけでbuild-macが
+# 24分→30分と大幅に悪化したため撤廃し、素の状態に戻した。
 name: check
 
 on:
@@ -25,7 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/flakehub-cache-action@v3
       - name: nix flake check
         run: nix flake check --no-build
       - name: evaluate all homeConfigurations
@@ -40,7 +37,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/flakehub-cache-action@v3
       - name: shellcheck (zsh スクリプトは対象外)
         run: |
           git ls-files '*.sh' \
@@ -86,7 +82,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/flakehub-cache-action@v3
       - name: build nalt-wsl
         run: nix build '.#homeConfigurations."nalt-wsl".activationPackage' --no-link
       - name: build nixos
@@ -97,6 +92,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/flakehub-cache-action@v3
       - name: build nalt-mac
         run: nix build '.#homeConfigurations."nalt-mac".activationPackage' --no-link

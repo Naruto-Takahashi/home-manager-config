@@ -25,8 +25,14 @@ let
     name = "atuin-history-colored";
     runtimeInputs = [ pkgs.atuin pkgs.gawk ];
     text = ''
-      # $@ で --cwd / --session をそのままatuinへ中継できる (Ctrl+Rでの
-      # GLOBAL → DIRECTORY → SESSION 切り替え用)。
+      # $@ で --filter-mode directory / --filter-mode session をそのまま
+      # atuinへ中継できる (Ctrl+Rでの GLOBAL → DIRECTORY → SESSION 切り替え用)。
+      #
+      # `atuin history list` ではなく `atuin search` (クエリ無し=全件) を
+      # 使う。search はデフォルトで重複コマンドを除外してくれる
+      # (--include-duplicatesを付けない限り)。同じコマンドを何度も打った
+      # 履歴が1件に畳まれ、一覧が探しやすくなる。
+      #
       # 色は #98bb6c (成功) / #e46876 (失敗) — zsh-syntax-highlighting の
       # command/unknown-token と同じ固定値 (functions.zsh 参照)。真の色
       # (24bit ANSI, \033[38;2;R;G;Bm) を使い，ターミナルの配色スキーム
@@ -37,11 +43,12 @@ let
       # 見た目の●という文字だけがBUFFERに混入してコマンドが壊れる実害が
       # あったため，表示用フィールドを装飾で汚しても実際に使うのは常に
       # \x01より後ろの生コマンド(無加工)、という形にして回避している。
-      atuin history list --format '{exit}\t{command}' --print0 "$@" | awk -v RS='\0' -v ORS='\0' '
+      atuin search --format '{exit}\t{command}' --print0 "$@" | awk -v RS='\0' -v ORS='\0' '
       {
         sep = index($0, "\t")
         ec = substr($0, 1, sep - 1)
         cmd = substr($0, sep + 1)
+        if (cmd == "") next
         sym = (ec == "0") ? "\033[38;2;152;187;108m\xe2\x97\x8f\033[0m" : "\033[38;2;228;104;118m\xe2\x97\x8f\033[0m"
         printf "%s %s\x01%s%s", sym, cmd, cmd, ORS
       }'

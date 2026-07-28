@@ -175,7 +175,7 @@ function atuin-fzf() {
   # Ctrl+R (fzf内): global(全履歴) → directory(現在のディレクトリのみ) →
   # session(現在のシェルセッションのみ) → globalの順にトグルする。以前の
   # atuin自身のTUIにあった「UI内Ctrl+Rでフィルタを切り替える」挙動の代替。
-  # (atuin history listにはhost単位のフィルタフラグが無いため3段階まで)
+  # (atuin searchにはhost単位のフィルタフラグが無いため3段階まで)
   # モード名は旧パッチ同様、外枠のタイトルとして埋め込む (--border-label)。
   # atuin-history-colored (modules/shell/atuin/default.nix) が終了コードに
   # 応じた緑(成功)/赤(失敗)の●を先頭に付けて出力する。fzfの reload() は
@@ -190,8 +190,8 @@ function atuin-fzf() {
     --delimiter=$'\x01' --with-nth=1 \
     --border-label ' GLOBAL ' \
     --bind 'ctrl-r:transform:case "$FZF_BORDER_LABEL" in
-      " GLOBAL ") echo "reload(atuin-history-colored --cwd)+change-border-label( DIRECTORY )" ;;
-      " DIRECTORY ") echo "reload(atuin-history-colored --session)+change-border-label( SESSION )" ;;
+      " GLOBAL ") echo "reload(atuin-history-colored --filter-mode directory)+change-border-label( DIRECTORY )" ;;
+      " DIRECTORY ") echo "reload(atuin-history-colored --filter-mode session)+change-border-label( SESSION )" ;;
       *) echo "reload(atuin-history-colored)+change-border-label( GLOBAL )" ;;
     esac')
   if [[ -n $selected ]]; then

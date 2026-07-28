@@ -167,7 +167,7 @@ bindkey -M vicmd '^g' ghq-fzf
 # 任せることで、fzfのネイティブな枠線・ハイライト設定 (FZF_DEFAULT_OPTS、
 # matugen追従) がそのまま使える。
 function atuin-fzf() {
-  local selected
+  local response key selected
   # --read0/--print0: `\`継続の複数行コマンドは実際に改行込みで1件の履歴として
   # 保存されているため、改行区切り(fzfのデフォルト)で渡すと複数候補に分解されて
   # しまう。NUL区切りにすることで1コマンド=1候補として扱う (fzfは--read0時、
@@ -186,18 +186,46 @@ function atuin-fzf() {
   # BUFFERに混入してコマンドが実行できなくなる実害があったため、
   # --delimiter/--with-nthで表示は1列目(装飾込み)だけに絞りつつ、
   # 実際に使うのは常に2列目(無加工の生コマンド)にしている。
-  selected=$(atuin-history-colored | fzf --read0 --ansi -q "$LBUFFER" \
+  # Ctrl+O: 選択中のコマンドを削除する。`atuin search --delete <query>`は
+  # 非対話実行だとファジー検索が不安定で、意図しない無関係なコマンドまで
+  # 巻き込んで削除してしまう実害を検証で確認した (クエリの再検索に依存し、
+  # 選択した行そのものを厳密に指すわけではないため)。そのためここでは独自の
+  # 削除ロジックを組まず、atuin公式のインタラクティブTUI (atuin search -i)
+  # を選択中のコマンドをクエリとして起動する。あちらは実際に選んだ行のID
+  # に対して削除するため安全。atuin-delete-entry (modules/shell/atuin/default.nix)
+  # が起動直後のフォーカス移動 (atuin側のCtrl-O) と、ユーザーがCtrl-Dで
+  # 削除した後のEscによる画面閉じまでを自動化し、実際の削除操作(Ctrl-D)
+  # のみユーザーの手動操作として残す。TUIを閉じると現在のフィルタモードを
+  # 保ったままこちらの一覧を再読み込みする。
+  # Enter: 選択したコマンドをその場で即実行する。Tab: 従来のEnterと同じく
+  # バッファに詰めるだけで実行はしない (編集してから使いたい場合用)。
+  # --expect=tab で押されたキー名を出力の1行目に、以降を選択されたエントリ
+  # そのものにして返してもらい (デフォルトのEnterでは1行目は空)、どちらが
+  # 押されたかで動作を分岐する。
+  response=$(atuin-history-colored | fzf --read0 --ansi -q "$LBUFFER" \
     --delimiter=$'\x01' --with-nth=1 \
+    --expect=tab \
     --border-label ' GLOBAL ' \
     --bind 'ctrl-r:transform:case "$FZF_BORDER_LABEL" in
       " GLOBAL ") echo "reload(atuin-history-colored --filter-mode directory)+change-border-label( DIRECTORY )" ;;
       " DIRECTORY ") echo "reload(atuin-history-colored --filter-mode session)+change-border-label( SESSION )" ;;
       *) echo "reload(atuin-history-colored)+change-border-label( GLOBAL )" ;;
+    esac' \
+    --bind 'ctrl-o:execute(atuin-delete-entry {2})+transform:case "$FZF_BORDER_LABEL" in
+      " DIRECTORY ") echo "reload(atuin-history-colored --filter-mode directory)" ;;
+      " SESSION ") echo "reload(atuin-history-colored --filter-mode session)" ;;
+      *) echo "reload(atuin-history-colored)" ;;
     esac')
+  key=${response%%$'\n'*}
+  selected=${response#*$'\n'}
   if [[ -n $selected ]]; then
     # 1列目(装飾込み表示)を捨て、2列目(生コマンド)だけをバッファへ反映する
     BUFFER=${selected#*$'\x01'}
     CURSOR=$#BUFFER
+    if [[ $key != tab ]]; then
+      zle accept-line
+      return
+    fi
   fi
   zle reset-prompt
 }

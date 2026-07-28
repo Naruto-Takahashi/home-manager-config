@@ -54,9 +54,51 @@ let
       }'
     '';
   };
+
+  # --- atuin-delete-entry ---
+  # atuin-fzf (Ctrl+O) が使う、atuin本家のインタラクティブTUI (atuin search -i)
+  # を「選択中のコマンドをクエリにして」開くヘルパー。
+  # atuin search -iにクエリを渡して起動すると検索ボックス側にフォーカスが
+  # ある状態で始まり、そのままではCtrl-Dでの削除が効かない。一度Ctrl-O
+  # (0x0f) を押してフォーカスを結果リストへ移す必要があると、atuinバイナリ
+  # に埋め込まれたヘルプ文字列 ("<ctrl-o>: search<ctrl-d>: delete") から
+  # 確認済み。この「フォーカス移動」自体は何も変更しない操作なので自動送信
+  # して手間を減らすが、実際の削除操作(Ctrl-D)自体はユーザーの手動操作の
+  # まま残す (誤爆防止。atuin search --deleteでのクエリ指定削除は非対話
+  # 実行だとファジー検索が不安定で無関係な履歴を巻き込む実害を確認済みの
+  # ため、独自の削除ロジックは組まずatuin本家TUIに委ねている)。
+  #
+  # ユーザーがCtrl-Dを押すと削除は実行されるが、atuinのTUIはそのまま
+  # 検索/一覧画面に留まり、Escで抜けるまで元のfzf側に戻ってこない。
+  # 削除自体は既にユーザーの意思で実行済みなので、その直後のEsc(画面を
+  # 閉じるだけの操作)は自動化しても誤爆リスクが無い。expectのinteractで
+  # ユーザーが打ったCtrl-D (\x04) を検知したら、それをそのままatuinへ
+  # 転送しつつ (=削除を実行させる)、少し待ってEsc (\x1b) を追加送信して
+  # TUIごと閉じ、fzf側の一覧再読み込みへ自動的に戻す。
+  atuin-delete-entry = pkgs.writeTextFile {
+    name = "atuin-delete-entry";
+    destination = "/bin/atuin-delete-entry";
+    executable = true;
+    text = ''
+      #!${pkgs.expect}/bin/expect
+      set query [lindex $argv 0]
+      spawn ${pkgs.atuin}/bin/atuin search -i -- $query
+      # atuinのTUIが描画・入力受付を開始する前にCtrl-Oを送ると無視される
+      # ことがあったため、送信前に少し待つ。
+      after 400
+      send "\x0f"
+      interact {
+        "\x04" {
+          send -- "\x04"
+          after 300
+          send -- "\x1b"
+        }
+      }
+    '';
+  };
 in
 {
-  home.packages = [ atuin-history-colored ];
+  home.packages = [ atuin-history-colored atuin-delete-entry ];
 
   programs.atuin = {
     enable = true;

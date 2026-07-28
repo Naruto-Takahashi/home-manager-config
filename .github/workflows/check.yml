@@ -5,11 +5,13 @@
 # TUIを自前パッチでビルドしていた頃は重かったが、パッチを撤廃しキャッシュが
 # 効くようになったため常時実行にしている。
 #
-# magic-nix-cache-action: nixosConfigurations.nixos (カーネルモジュール等
+# flakehub-cache-action: nixosConfigurations.nixos (カーネルモジュール等
 # 含むフルシステム) をリポジトリに変更が無くても毎回イチからビルドし直して
-# いて重かったため導入。GitHub Actionsのキャッシュにビルド成果物を保存し、
-# 次回以降変更が無い派生物はそこから復元する (cache.nixos.orgに無い/古い
-# バイナリでも、自分たちの過去のCI実行結果を再利用できる)。
+# いて重かったため導入。ビルド成果物をFlakeHub Cacheに保存し、次回以降
+# 変更が無い派生物はそこから復元する (cache.nixos.orgに無い/古いバイナリ
+# でも、自分たちの過去のCI実行結果を再利用できる)。
+# 旧 magic-nix-cache-action は2025年2月に廃止され動作していなかったため
+# 乗り換えた (公式に案内されている後継)。
 name: check
 
 on:
@@ -23,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - uses: DeterminateSystems/flakehub-cache-action@v9
       - name: nix flake check
         run: nix flake check --no-build
       - name: evaluate all homeConfigurations
@@ -38,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - uses: DeterminateSystems/flakehub-cache-action@v9
       - name: shellcheck (zsh スクリプトは対象外)
         run: |
           git ls-files '*.sh' \
@@ -84,7 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - uses: DeterminateSystems/flakehub-cache-action@v9
       - name: build nalt-wsl
         run: nix build '.#homeConfigurations."nalt-wsl".activationPackage' --no-link
       - name: build nixos
@@ -95,6 +97,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - uses: DeterminateSystems/flakehub-cache-action@v9
       - name: build nalt-mac
         run: nix build '.#homeConfigurations."nalt-mac".activationPackage' --no-link

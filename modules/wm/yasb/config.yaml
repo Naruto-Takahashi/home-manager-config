@@ -171,6 +171,8 @@ widgets:
         - ""  # Icon for 31-60% volume
         - ""  # Icon for 61-100% volume
       callbacks:
+        on_left: "toggle_mute"
+        on_middle: "toggle_volume_menu"
         on_right: "exec cmd.exe /c start ms-settings:sound"
   clock:
     type: "yasb.clock.ClockWidget"

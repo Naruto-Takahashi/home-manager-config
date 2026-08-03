@@ -39,7 +39,7 @@
 }
 /* MATUGEN:END */
 *{
-    font-size: 12px;
+    font-size: 10px;
     color: var(--text);
     font-weight: 600;
     font-family: "JetBrainsMono NFP";
@@ -54,14 +54,14 @@
 }
 /* 各ウィジェットを半透明のアイランドとして表示 */
 .widget {
-    padding: 0 12px;
-    margin: 3px 4px;
+    padding: 0 8px;
+    margin: 2px 3px;
     background-color: var(--island);
-    border-radius: 13px;
+    border-radius: 10px;
     border: 1px solid rgba(128, 128, 128, 0);
 }
 .widget .icon {
-    font-size: 16px;
+    font-size: 12px;
     color: var(--icon);
 }
 /* cava・曲名(media)・音量を1つの島に結合 (隣接辺のマージン・角丸・境界ボーダーを消す) */
@@ -124,24 +124,24 @@
 }
 /* ===== komorebi ワークスペース ===== */
 .komorebi-workspaces {
-    margin: 2px 4px;
-    border-radius: 13px;
+    margin: 1px 3px;
+    border-radius: 10px;
 }
 .komorebi-workspaces .offline-status {
     color: var(--subtext0);
-    font-size: 12px;
+    font-size: 10px;
     padding: 0 4px;
     font-weight: 600;
 }
 .komorebi-workspaces .ws-btn {
     border: none;
     background-color: rgba(192, 192, 192, 0.15);
-    margin: 0px 4px;
+    margin: 0px 3px;
     padding: 0;
     color: rgba(0, 0, 0, 0);
-    border-radius: 5px;
-    height: 10px;
-    width: 10px;
+    border-radius: 4px;
+    height: 8px;
+    width: 8px;
 }
 .komorebi-workspaces .ws-btn.populated {
     background-color: var(--accent-sub);
@@ -149,12 +149,12 @@
 .komorebi-workspaces .ws-btn.active {
     /* ピル内に通し番号を表示 (ハイライト上で読める暗色) */
     color: var(--base);
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 700;
     background-color: var(--highlight);
-    width: 36px;
-    height: 16px;
-    border-radius: 8px;
+    width: 28px;
+    height: 13px;
+    border-radius: 6px;
 }
 /* ===== タスクバー (ウィンドウ一覧) ===== */
 .taskbar-widget {
@@ -164,9 +164,9 @@
 .taskbar-widget .app-container {
     background-color: rgba(192, 192, 192, 0.15); /* 空ワークスペース(ws-btn)と同色 */
     border: none;
-    border-radius: 8px;
-    margin: 4px 4px;
-    padding: 0 10px;
+    border-radius: 6px;
+    margin: 2px 3px;
+    padding: 0 8px;
 }
 /* フォーカス中ウィンドウ: ffc20dの島・黒文字 */
 .taskbar-widget .app-container.foreground {
@@ -182,7 +182,7 @@
 }
 .taskbar-widget .app-container .app-title {
     color: var(--text);
-    font-size: 13px;
+    font-size: 11px;
     font-family: Bahnschrift;
     padding-left: 4px;
 }
@@ -195,7 +195,7 @@
 }
 /* ===== 時計 ===== */
 .clock-widget .label {
-    font-size: 14px;
+    font-size: 11px;
     font-family: Bahnschrift;
 }
 /* ===== カレンダーポップアップ ===== */
@@ -265,7 +265,7 @@
     color: var(--icon);
 }
 .volume-widget .label {
-    font-size: 14px;
+    font-size: 11px;
     font-family: Bahnschrift;
 }
 /* ===== 音量ポップアップ ===== */
@@ -291,7 +291,7 @@
 /* ===== メディア (再生中の曲) ===== */
 .media-widget .label {
     font-family: Bahnschrift;
-    font-size: 14px;
+    font-size: 11px;
     padding: 0 0px;
 }
 .media-widget .btn {
@@ -334,7 +334,7 @@
 /* ===== 電源ボタン ===== */
 .power-menu-widget .label {
 	color: var(--accent-sub);
-    font-size: 16px;
+    font-size: 12px;
 }
 /* ===== 電源メニューポップアップ ===== */
 .uptime {

@@ -37,24 +37,20 @@ cd nix-config
    curl -fsSL https://raw.githubusercontent.com/89luca89/distrobox/main/install | bash -s -- --prefix ~/.local
    export PATH="$HOME/.local/bin:$PATH"
    ```
-2. **独立`$HOME`を持つrootless podman コンテナの作成**
+2. **[`bootstrap.sh`](../hosts/nalt-distrobox/bootstrap.sh) でコンテナを作る**
    ```bash
-   mkdir -p ~/distrobox-homes/nixcli-dev
-   distrobox create --name nixcli --image docker.io/library/ubuntu:24.04 \
-     --home ~/distrobox-homes/nixcli-dev --yes
+   bash hosts/nalt-distrobox/bootstrap.sh
    ```
-   `--home`を付けないとホストの実`$HOME`がそのまま共有されてしまうので必須。
-   UID/ユーザー名/sudoグループはホストと同じものがコンテナ内にも作られる。
-3. **コンテナ内にNixをインストール** (コンテナ内はrootが使えるため `/nix` を通常通り作成可能)
-   ```bash
-   distrobox enter nixcli -- bash -c '
-     sudo mkdir -m 0755 -p /nix && sudo chown "$(id -un)" /nix
-     curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
-     mkdir -p ~/.config/nix
-     echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-   '
-   ```
-4. **git/gh認証のセットアップ** (コンテナ独自の`$HOME`にはホストの認証情報が無いため)
+   独立`$HOME`を持つUbuntuコンテナの作成，`git`/`podman`/ビルドツールの導入，
+   Nixのシングルユーザーインストール，flakes機能の有効化までが1コマンドで完了する
+   (`NIXCLI_NAME`/`NIXCLI_HOME`環境変数で名前・home先を上書き可能。詳細はスクリプト
+   自体のコメントを参照)。
+   > 元々`distrobox.ini` + `distrobox assemble create`で宣言的にやろうとしたが，
+   > distrobox 1.8.2.5で`--additional-packages`と`--init-hooks`を同時に使うと
+   > コマンド生成が壊れるバグ (init-hooksの値にシングルクォートのネストがあると
+   > `sh: line 1: <container-id-hash>: command not found`になる) を踏んだため，
+   > 素の`distrobox create`を直接呼ぶ`bootstrap.sh`に切り替えた。
+3. **git/gh認証のセットアップ** (コンテナ独自の`$HOME`にはホストの認証情報が無いため)
    ```bash
    # GitHub用SSH鍵をコピー (このリポジトリはgit@github.com:...のSSH URLを使う設定のため)
    mkdir -p ~/distrobox-homes/nixcli-dev/.ssh
@@ -62,15 +58,14 @@ cd nix-config
    chmod 700 ~/distrobox-homes/nixcli-dev/.ssh
    chmod 600 ~/distrobox-homes/nixcli-dev/.ssh/id_ed25519
    ```
-5. **リポジトリのclone** (git無しなので一時的にaptで導入)
+4. **リポジトリのclone** (`git`は`.ini`のadditional_packagesで導入済み)
    ```bash
    distrobox enter nixcli -- bash -c '
-     sudo apt-get update -qq && sudo apt-get install -y -qq git ca-certificates
      mkdir -p ~/ghq/github.com/Naruto-Takahashi
      git clone git@github.com:Naruto-Takahashi/nix-config.git ~/ghq/github.com/Naruto-Takahashi/nix-config
    '
    ```
-6. **Home Manager プロファイルの適用**
+5. **Home Manager プロファイルの適用**
    ```bash
    distrobox enter nixcli -- bash -c '
      . ~/.nix-profile/etc/profile.d/nix.sh
@@ -80,7 +75,7 @@ cd nix-config
    ```
    `hosts/nalt-distrobox/default.nix`の`home.homeDirectory`は`builtins.getEnv "HOME"`で
    動的に取得するようにしてあるので，独立homeのパスをリポジトリ側で書き換える必要はない。
-7. **yaziの配色を生成** (このホストには壁紙連動のmatugenパイプラインが無いため，
+6. **yaziの配色を生成** (このホストには壁紙連動のmatugenパイプラインが無いため，
    `theme.toml`が自動生成されない。フォールバック色で一度だけ手動生成する)
    ```bash
    distrobox enter nixcli -- bash -c '

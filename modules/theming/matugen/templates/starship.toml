@@ -5,6 +5,7 @@ command_timeout = 5000
 palette = "matugen"
 
 format = """
+${custom.nixcli_badge}\
 ${custom.ssh_host}\
 $directory\
 [](fg:accent bg:dark)\
@@ -21,8 +22,16 @@ add_newline = true
 [os]
 disabled = true
 
+[custom.nixcli_badge]
+command = '''
+printf '⠀nixcli in %s⠀' "$(hostname -s 2>/dev/null || hostname)"
+'''
+when = '[ -n "$container" ]'
+style = "fg:on_accent bg:tertiary bold"
+format = "[$output]($style)[](fg:tertiary bg:accent)"
+
 [custom.ssh_host]
-command = """
+command = '''
 if [ -n "$SSH_CONNECTION" ] || [ -n "$SSH_CLIENT" ]; then
   # directoryブロック等と同じ余白感に揃える。starshipのcustomモジュールは
   # 出力の前後の空白文字(スペース含む)をトリムしてしまうため、
@@ -32,8 +41,8 @@ else
   # アイコン無し: 幅2のブロック (以前のちょうど良い幅)
   echo "⠀"
 fi
-"""
-when = "true"
+'''
+when = '[ -z "$container" ]'
 style = "fg:on_accent bg:secondary bold"
 format = "[$output]($style)[](fg:secondary bg:accent)"
 

@@ -72,6 +72,11 @@
   home.packages = [
     pkgs.smassh # MonkeyType 風の TUI タイピング練習
     pkgs.fd # find の現代版 (fzf バックエンドにも)
+    # ghq-fzf (Ctrl+G, modules/shell/zsh/functions.zsh) と telescope-ghq.nvim
+    # (modules/apps/neovim) が両方とも依存する。以前はdesktop系ホストのみ
+    # modules/desktop/packages.nix経由で入っていたが、CLI専用ホスト
+    # (nalt-distrobox) で欠けていたため全ホスト共通のここに移した
+    pkgs.ghq
     pkgs.delta # git diff のシンタックスハイライト付きページャ (~/.gitconfig が参照)
     pkgs.comma # `, <cmd>` で未インストールのコマンドをその場で一時実行
     pkgs.just # コマンドランナー (justfile に定型タスクをまとめる)

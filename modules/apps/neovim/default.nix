@@ -108,6 +108,12 @@ in
       # importしないため、ここで明示的に供給する (eza同様の理由)。
       pkgs.ripgrep
       pkgs.fd
+      # telescope-fzf-native.nvim等、buildフックでネイティブ拡張をmakeする
+      # プラグイン用。同じ理由でWSL/NixOS以外 (Mac、nalt-distrobox) には
+      # 無いと"make: command not found"でビルドが失敗し、該当プラグインの
+      # config()実行時にエラーになる。
+      pkgs.gcc
+      pkgs.gnumake
     ];
   };
 

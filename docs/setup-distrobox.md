@@ -58,7 +58,7 @@ cd nix-config
    chmod 700 ~/distrobox-homes/nixcli-dev/.ssh
    chmod 600 ~/distrobox-homes/nixcli-dev/.ssh/id_ed25519
    ```
-4. **リポジトリのclone** (`git`は`.ini`のadditional_packagesで導入済み)
+4. **リポジトリのclone** (`git`は`bootstrap.sh`のadditional-packagesで導入済み)
    ```bash
    distrobox enter nixcli -- bash -c '
      mkdir -p ~/ghq/github.com/Naruto-Takahashi
@@ -73,8 +73,11 @@ cd nix-config
      nix run --impure github:nix-community/home-manager -- switch --flake .#nalt-distrobox --impure
    '
    ```
-   `hosts/nalt-distrobox/default.nix`の`home.homeDirectory`は`builtins.getEnv "HOME"`で
-   動的に取得するようにしてあるので，独立homeのパスをリポジトリ側で書き換える必要はない。
+   `hosts/nalt-distrobox/default.nix`の`home.homeDirectory`は`builtins.getEnv "HOME"`
+   (未設定/pure評価時はダミー値にフォールバック) で動的に取得するようにしてあるので，
+   独立homeのパスをリポジトリ側で書き換える必要はない。フォールバックが要るのは
+   CIの`nix build`/`nix flake check`が`--impure`無しで評価するため
+   (`--impure`無しだと`builtins.getEnv`は常に空文字列を返す仕様のため)。
 6. **yaziの配色を生成** (このホストには壁紙連動のmatugenパイプラインが無いため，
    `theme.toml`が自動生成されない。フォールバック色で一度だけ手動生成する)
    ```bash
@@ -99,6 +102,10 @@ cd nix-config
 
 ```bash
 nixcli() {
+  if ! command -v distrobox >/dev/null 2>&1; then
+    echo "distroboxが見つかりません" >&2
+    return 1
+  fi
   local dev_home="$HOME/distrobox-homes/nixcli-dev"
   env \
     -u 'BASH_FUNC__module_raw%%' -u 'BASH_FUNC_ml%%' -u 'BASH_FUNC_module%%' \

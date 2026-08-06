@@ -93,6 +93,7 @@ OSごとの詳しい手順は個別ページに分けています．上の対応
 | **NixOS** | [docs/setup-nixos.md](docs/setup-nixos.md) | 最もシンプル。`nixos-rebuild switch`一発 |
 | **WSL2** | [docs/setup-wsl.md](docs/setup-wsl.md) | 適用後に`sync-win`でWindows側へ設定を同期 |
 | **macOS** | [docs/setup-mac.md](docs/setup-mac.md) | 手順が最も多い。TCC/SIPの都合で数点だけ手動のGUI操作が残る |
+| **sudo無し共有Linux (rootless podman)** | [docs/setup-distrobox.md](docs/setup-distrobox.md) | CLIツールのみのアドオン的プロファイル。distroboxコンテナ内に`/nix`を作る |
 
 ![divider](https://capsule-render.vercel.app/api?type=rect&height=3&color=0:e6c384,50:7aa89f,100:a292a3)
 
@@ -157,6 +158,7 @@ The short version:
 | NixOS | [docs/setup-nixos.md](docs/setup-nixos.md) | `sudo nixos-rebuild switch --flake .#nixos --impure`, then reboot |
 | WSL2 | [docs/setup-wsl.md](docs/setup-wsl.md) | Install Nix, `nix run github:nix-community/home-manager -- switch --flake .#nalt-wsl --impure`, then `sync-win` to push config to the Windows side |
 | macOS | [docs/setup-mac.md](docs/setup-mac.md) | `sudo nix run github:LnL7/nix-darwin -- switch --flake .#nalt-mac --impure`, then a few manual TCC/SIP permission grants (unavoidable — see the guide) |
+| Sudo-less shared Linux (rootless podman) | [docs/setup-distrobox.md](docs/setup-distrobox.md) | CLI-only add-on profile: `distrobox create` an Ubuntu container, install Nix inside it (real `/nix`, no sudo needed on the host), `nix run github:nix-community/home-manager -- switch --flake .#nalt-distrobox --impure` |
 
 
 </details>

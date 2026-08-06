@@ -9,6 +9,13 @@ export ZSH_AUTOSUGGEST_USE_ASYNC="true"
 export ZSH_AUTOSUGGEST_MIN_SIZE=2
 
 # --- パスおよび環境変数設定 ---
+# EDITOR/VISUAL未設定だとedit-command-line ('v'キー) 等がデフォルトの
+# 最小構成vi/vimにフォールバックしてしまうため明示する。
+# (NixOS/Darwinホストではprograms.neovim.defaultEditorが同じ値を設定するが，
+#  standalone home-manager非対応ホスト向けにも常に有効にしておく)
+export EDITOR="nvim"
+export VISUAL="nvim"
+
 # 外部ツールなどのパスを追加します．
 export PATH="$HOME/.local/bin:$HOME/.fzf/bin:$PATH"
 export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/home/nalt/lib/ac-library-master

@@ -45,6 +45,13 @@
           extraSpecialArgs = { inherit nixgl kanagawa-dragon-yazi; };
         };
 
+        # rootless podman (distrobox) コンテナ内のCLI専用プロファイル
+        "nalt-distrobox" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./hosts/nalt-distrobox ];
+          extraSpecialArgs = { inherit kanagawa-dragon-yazi; };
+        };
+
         # Mac環境用プロファイル (M1 Mac Mini)
         "nalt-mac" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."aarch64-darwin";

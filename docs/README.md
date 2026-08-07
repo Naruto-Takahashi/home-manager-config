@@ -9,6 +9,7 @@
 | [setup-nixos.md](setup-nixos.md) | NixOSへの導入手順 |
 | [setup-wsl.md](setup-wsl.md) | WSL2への導入手順 |
 | [setup-mac.md](setup-mac.md) | macOSへの導入手順 (TCC/SIP関連の手動作業を含む) |
+| [setup-distrobox.md](setup-distrobox.md) | sudo無し共有Linuxホストへの導入手順 (rootless podman/distroboxコンテナ内にNixを構築) |
 | [remote-desktop.md](remote-desktop.md) | NixOS向けリモートデスクトップ (Tailscale + Sunshine + Moonlight) |
 
 ## ウィンドウマネージャー・キーリマップ

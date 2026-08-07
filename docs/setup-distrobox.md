@@ -1,4 +1,4 @@
-# rootless podman (distrobox) セットアップ手順 (`nalt-distrobox`)
+# rootless podman (distrobox) セットアップ手順 (`distrobox`)
 
 [README.md](../README.md) の「どれがどのOSで動くか」対応表も参照してください。
 
@@ -6,7 +6,7 @@ sudo権限が無く `/nix` を作成できない共有Linuxホスト (バイト�
 CLIツールのみの軽量プロファイルです。[distrobox](https://github.com/89luca89/distrobox)
 で作った rootless podman コンテナの中に通常の (`/nix` を持つ) Nixをインストールします。
 
-他の3ホスト (`nixos` / `nalt-wsl` / `nalt-mac`) がOS本体ごと宣言的に管理するのに対し，
+他の3ホスト (`nixos` / `wsl` / `mac`) がOS本体ごと宣言的に管理するのに対し，
 このホストは「sudoの無い既存Linux環境に，CLI環境だけを足す」ためのアドオン的な位置づけです。
 
 ## コンテナの`$HOME`はホストと共有しない
@@ -70,7 +70,7 @@ cd nix-config
    distrobox enter nixcli -- bash -c '
      . ~/.nix-profile/etc/profile.d/nix.sh
      cd ~/ghq/github.com/Naruto-Takahashi/nix-config
-     nix run --impure github:nix-community/home-manager -- switch --flake .#nalt-distrobox --impure
+     nix run --impure github:nix-community/home-manager -- switch --flake .#distrobox --impure
    '
    ```
    `hosts/distrobox/default.nix`の`home.homeDirectory`は`builtins.getEnv "HOME"`

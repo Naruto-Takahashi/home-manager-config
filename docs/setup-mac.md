@@ -1,4 +1,4 @@
-# macOS (darwin) セットアップ手順 (`nalt-mac`)
+# macOS (darwin) セットアップ手順 (`mac`)
 
 [README.md](../README.md) の「どれがどのOSで動くか」対応表も参照してください。
 
@@ -42,10 +42,10 @@ cd nix-config
     # システムの適用と有効化 (初回起動時は nix run でブートストラップ)
     cd ~/ghq/github.com/Naruto-Takahashi/nix-config
     git add .
-    sudo nix run github:LnL7/nix-darwin -- switch --flake .#nalt-mac --impure
+    sudo nix run github:LnL7/nix-darwin -- switch --flake .#mac --impure
 
    # 2回目以降の更新適用 (こちらが推奨・高速)
-   darwin-rebuild switch --flake .#nalt-mac
+   darwin-rebuild switch --flake .#mac
    ```
    初回適用時に，Kanataバイナリを安定パス (`/usr/local/bin/kanata`) へ再署名して
    配置する自己署名証明書が自動生成されます（TCC権限をリビルドのたびに失い直さない

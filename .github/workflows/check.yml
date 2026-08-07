@@ -27,8 +27,8 @@ jobs:
         run: nix flake check --no-build
       - name: evaluate all homeConfigurations
         run: |
-          nix eval '.#homeConfigurations."nalt-wsl".activationPackage.drvPath'
-          nix eval '.#homeConfigurations."nalt-mac".activationPackage.drvPath'
+          nix eval '.#homeConfigurations."wsl".activationPackage.drvPath'
+          nix eval '.#homeConfigurations."mac".activationPackage.drvPath'
       - name: evaluate nixosConfigurations
         run: nix eval '.#nixosConfigurations.nixos.config.system.build.toplevel.drvPath'
 
@@ -82,10 +82,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - name: build nalt-wsl
-        run: nix build '.#homeConfigurations."nalt-wsl".activationPackage' --no-link
-      - name: build nalt-distrobox
-        run: nix build '.#homeConfigurations."nalt-distrobox".activationPackage' --no-link
+      - name: build wsl
+        run: nix build '.#homeConfigurations."wsl".activationPackage' --no-link
+      - name: build distrobox
+        run: nix build '.#homeConfigurations."distrobox".activationPackage' --no-link
       - name: build nixos
         run: nix build '.#nixosConfigurations.nixos.config.system.build.toplevel' --no-link
 
@@ -94,5 +94,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - name: build nalt-mac
-        run: nix build '.#homeConfigurations."nalt-mac".activationPackage' --no-link
+      - name: build mac
+        run: nix build '.#homeConfigurations."mac".activationPackage' --no-link

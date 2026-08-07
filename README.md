@@ -23,7 +23,7 @@ OSレベルのシステム定義から，シェル環境，ウィンドウマネ
 
 ## どれがどのOSで動くか (対応表)
 
-このリポジトリは3つのホスト (`nixosConfigurations.nixos` / `homeConfigurations.nalt-wsl` / `darwinConfigurations.nalt-mac`) を1つのFlakeから宣言的に管理しています．
+このリポジトリは3つのホスト (`nixosConfigurations.nixos` / `homeConfigurations.wsl` / `darwinConfigurations.mac`) を1つのFlakeから宣言的に管理しています．
 全ホスト共通の土台は [`profiles/base.nix`](profiles/base.nix) で，そこにホストごとの [`hosts/<host>/`](hosts) が個別モジュールを足していく構造です．
 **同じ「Alt長押しでウィンドウ操作」のような機能でも，OSごとに実装方式が違う**箇所があるので，表で確認してから各ドキュメントに進んでください．
 
@@ -106,8 +106,8 @@ Declarative configurations for NixOS, WSL2, and macOS managed via **Nix Flakes**
 
 ## What runs where (OS support matrix)
 
-This repo manages three hosts (`nixosConfigurations.nixos` / `homeConfigurations.nalt-wsl` /
-`darwinConfigurations.nalt-mac`) from a single flake. All hosts
+This repo manages three hosts (`nixosConfigurations.nixos` / `homeConfigurations.wsl` /
+`darwinConfigurations.mac`) from a single flake. All hosts
 share [`profiles/base.nix`](profiles/base.nix) as a baseline, and each [`hosts/<host>/`](hosts)
 adds host-specific modules on top. **The same logical feature (e.g. "hold Alt to manage windows")
 is often implemented differently per OS** — check this table before diving into a doc.
@@ -156,9 +156,9 @@ The short version:
 | Host | Setup guide | One-liner |
 | :--- | :--- | :--- |
 | NixOS | [docs/setup-nixos.md](docs/setup-nixos.md) | `sudo nixos-rebuild switch --flake .#nixos --impure`, then reboot |
-| WSL2 | [docs/setup-wsl.md](docs/setup-wsl.md) | Install Nix, `nix run github:nix-community/home-manager -- switch --flake .#nalt-wsl --impure`, then `sync-win` to push config to the Windows side |
-| macOS | [docs/setup-mac.md](docs/setup-mac.md) | `sudo nix run github:LnL7/nix-darwin -- switch --flake .#nalt-mac --impure`, then a few manual TCC/SIP permission grants (unavoidable — see the guide) |
-| Sudo-less shared Linux (rootless podman) | [docs/setup-distrobox.md](docs/setup-distrobox.md) | CLI-only add-on profile: `distrobox create` an Ubuntu container, install Nix inside it (real `/nix`, no sudo needed on the host), `nix run github:nix-community/home-manager -- switch --flake .#nalt-distrobox --impure` |
+| WSL2 | [docs/setup-wsl.md](docs/setup-wsl.md) | Install Nix, `nix run github:nix-community/home-manager -- switch --flake .#wsl --impure`, then `sync-win` to push config to the Windows side |
+| macOS | [docs/setup-mac.md](docs/setup-mac.md) | `sudo nix run github:LnL7/nix-darwin -- switch --flake .#mac --impure`, then a few manual TCC/SIP permission grants (unavoidable — see the guide) |
+| Sudo-less shared Linux (rootless podman) | [docs/setup-distrobox.md](docs/setup-distrobox.md) | CLI-only add-on profile: `distrobox create` an Ubuntu container, install Nix inside it (real `/nix`, no sudo needed on the host), `nix run github:nix-community/home-manager -- switch --flake .#distrobox --impure` |
 
 
 </details>

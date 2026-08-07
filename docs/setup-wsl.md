@@ -1,4 +1,4 @@
-# WSL2 (Ubuntu) セットアップ手順 (`nalt-wsl`)
+# WSL2 (Ubuntu) セットアップ手順 (`wsl`)
 
 [README.md](../README.md) の「どれがどのOSで動くか」対応表も参照してください。
 
@@ -21,7 +21,7 @@ cd nix-config
    ```
 3. **Home Manager プロファイルの適用**
    ```bash
-   nix run github:nix-community/home-manager -- switch --flake .#nalt-wsl --impure
+   nix run github:nix-community/home-manager -- switch --flake .#wsl --impure
    ```
 4. **Windows側への設定ファイル同期**
    WSL2環境下で管理される WezTerm や komorebi / YASB の設定を Windows ホストに反映するため，以下の同期コマンドを実行します．

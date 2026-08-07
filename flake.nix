@@ -39,21 +39,21 @@
     {
       homeConfigurations = {
         # WSL環境用プロファイル
-        "nalt-wsl" = home-manager.lib.homeManagerConfiguration {
+        "wsl" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [ ./hosts/wsl ];
           extraSpecialArgs = { inherit nixgl kanagawa-dragon-yazi; };
         };
 
         # rootless podman (distrobox) コンテナ内のCLI専用プロファイル
-        "nalt-distrobox" = home-manager.lib.homeManagerConfiguration {
+        "distrobox" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [ ./hosts/distrobox ];
           extraSpecialArgs = { inherit kanagawa-dragon-yazi; };
         };
 
         # Mac環境用プロファイル (M1 Mac Mini)
-        "nalt-mac" = home-manager.lib.homeManagerConfiguration {
+        "mac" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages."aarch64-darwin";
           modules = [ ./hosts/mac ];
           extraSpecialArgs = { inherit kanagawa-dragon-yazi; };
@@ -79,7 +79,7 @@
 
       # Mac (nix-darwin) 環境用プロファイル
       darwinConfigurations = {
-        "nalt-mac" = darwin.lib.darwinSystem {
+        "mac" = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           modules = [
             ./hosts/mac/darwin.nix

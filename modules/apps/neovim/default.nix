@@ -109,7 +109,7 @@ in
       pkgs.ripgrep
       pkgs.fd
       # telescope-fzf-native.nvim等、buildフックでネイティブ拡張をmakeする
-      # プラグイン用。同じ理由でWSL/NixOS以外 (Mac、nalt-distrobox) には
+      # プラグイン用。同じ理由でWSL/NixOS以外 (Mac、distrobox) には
       # 無いと"make: command not found"でビルドが失敗し、該当プラグインの
       # config()実行時にエラーになる。
       pkgs.gcc

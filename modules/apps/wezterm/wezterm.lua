@@ -36,7 +36,6 @@ config.audible_bell = "Disabled"
 -- 実際に選ばれた配色スキームの背景色 (タブバーのBAR_BG計算で使う)。
 -- スキームが見つからない場合のフォールバックは黒 (従来どおり)。
 local scheme_background = "#000000"
-local selected_scheme = nil
 do
   local ok_schemes, schemes = pcall(function() return wezterm.color.get_builtin_schemes() end)
   if ok_schemes and schemes then
@@ -45,7 +44,6 @@ do
       if schemes[name] then
         config.color_scheme = name
         scheme_background = schemes[name].background or scheme_background
-        selected_scheme = schemes[name]
         break
       end
     end
@@ -119,15 +117,7 @@ end
 local bg_r, bg_g, bg_b = hex_to_rgb(scheme_background)
 local BAR_BG = string.format("rgba(%d, %d, %d, 0.85)", bg_r, bg_g, bg_b)
 
--- Claude CodeのANSIダークテーマは、ユーザー発言の背景色にANSI bright black
--- (brights[1]) を使っている。Kanagawa系スキームのbright blackは淡いグレー寄りで、
--- 白文字とのコントラストが弱く読みにくいため、ここだけ明示的に暗くする。
--- スキームの他のANSI色はそのまま流用し、bright black だけ差し替える。
-local brights = selected_scheme and selected_scheme.brights or {}
-brights[1] = "#3a3a3a"
-
 config.colors = {
-  brights = brights,
   tab_bar = {
     background = BAR_BG,
     -- 実際のタブ描画は下の format-tab-title が行うため，ここは保険の既定値

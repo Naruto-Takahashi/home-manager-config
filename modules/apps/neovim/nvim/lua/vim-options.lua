@@ -64,12 +64,16 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
         -- コマンドラインTAB補完(wildmenu)や補完ポップアップは既定でkanagawaの
         -- 青みがかった配色のままになっており，他を透過・matugen配色に揃えた
-        -- 中で浮いて見えるため，surface/accentに揃える
-        hl(0, "Pmenu", { bg = mc.surface, fg = mc.text })
+        -- 中で浮いて見えるため，surface/accentに揃える。
+        -- CmdlineポップアップやNormalFloatと同様にbg="none"にして
+        -- ターミナルの背景透過をそのまま活かす (fgはNormalFloat同様に明示)
+        hl(0, "Pmenu", { bg = "none", fg = mc.text })
         hl(0, "PmenuSel", { bg = mc.accent, fg = mc.on_accent, bold = true })
+        -- スクロールバー(溝/つまみ)はbg=noneにすると視認できなくなるため
+        -- 不透明のまま残す
         hl(0, "PmenuSbar", { bg = mc.surface })
         hl(0, "PmenuThumb", { bg = mc.muted })
-        hl(0, "PmenuBorder", { bg = mc.surface, fg = mc.muted })
+        hl(0, "PmenuBorder", { bg = "none", fg = mc.muted })
         hl(0, "WildMenu", { bg = mc.accent, fg = mc.on_accent, bold = true })
         -- 補完メニュー内でマッチした文字列部分 (nvim-cmp)
         hl(0, "CmpItemAbbrMatch", { fg = mc.accent, bold = true })

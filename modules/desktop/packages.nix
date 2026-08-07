@@ -32,10 +32,6 @@
     pkgs.wl-clipboard
     pkgs.kanata
 
-    # AI連携ツール
-    pkgs.gemini-cli
-    pkgs.claude-code
-
     # スクリーンショットツール
     pkgs.maim # 超軽量・極めて安定したスクリーンショットツール（GPUに依存しない）です．
     pkgs.slop # maim用の美しいドラッグ範囲選択ツールです．
@@ -75,22 +71,6 @@ fi
 EOF
         chmod +x $out/bin/vivaldi
         ln -s vivaldi $out/bin/vivaldi-stable
-      '';
-    })
-
-    # Antigravity CLI（Gemini CLIの後継）をNixで宣言的に管理します．
-    (pkgs.stdenv.mkDerivation {
-      pname = "antigravity-cli";
-      version = "1.1.4";
-      src = pkgs.fetchurl {
-        url = "https://storage.googleapis.com/antigravity-public/antigravity-cli/1.1.4-6277569641840640/linux-x64/cli_linux_x64.tar.gz";
-        hash = "sha256-qqtC45XLTjv+WuiJlKNAhl2Un3qefwYE/6Kj8eiq2/o=";
-      };
-      sourceRoot = ".";
-      installPhase = ''
-        mkdir -p $out/bin
-        cp antigravity $out/bin/agy
-        chmod +x $out/bin/agy
       '';
     })
   ];

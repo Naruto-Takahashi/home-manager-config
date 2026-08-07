@@ -1,7 +1,7 @@
 # =========================================================================
 # 全ホスト共通プロファイル (シェル環境 + コア CLI アプリ)
 # =========================================================================
-# wsl / mac / nixos の全ホストが import する共通セット。
+# wsl / mac / nixos / distrobox の全ホストが import する共通セット。
 # ホスト固有のモジュール (WM や OS 依存アプリ) は各 hosts/*/ 側で追加する。
 { config, pkgs, lib, ... }:
 
@@ -81,5 +81,26 @@
     pkgs.comma # `, <cmd>` で未インストールのコマンドをその場で一時実行
     pkgs.just # コマンドランナー (justfile に定型タスクをまとめる)
     # `cz commit` (対話コミット) は modules/apps/git-hooks で `cz` ラッパーとして提供
+
+    # AI連携ツール。ghq同様、以前はdesktop系ホストのみ
+    # modules/desktop/packages.nix経由で入っていたが、gchat/achatエイリアス
+    # (modules/shell/zsh/default.nix、全ホスト共通) がagyに依存しているため
+    # 全ホスト共通のここに移した (Mac/CLI専用ホストで欠けていた)
+    pkgs.gemini-cli
+    pkgs.claude-code
+    (pkgs.stdenv.mkDerivation {
+      pname = "antigravity-cli";
+      version = "1.1.4";
+      src = pkgs.fetchurl {
+        url = "https://storage.googleapis.com/antigravity-public/antigravity-cli/1.1.4-6277569641840640/linux-x64/cli_linux_x64.tar.gz";
+        hash = "sha256-qqtC45XLTjv+WuiJlKNAhl2Un3qefwYE/6Kj8eiq2/o=";
+      };
+      sourceRoot = ".";
+      installPhase = ''
+        mkdir -p $out/bin
+        cp antigravity $out/bin/agy
+        chmod +x $out/bin/agy
+      '';
+    })
   ];
 }

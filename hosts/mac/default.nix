@@ -37,8 +37,6 @@
     nodejs_22
     gh
     ghq
-    antigravity-cli
-    claude-code
     hackgen-nf-font
     kanata
   ];

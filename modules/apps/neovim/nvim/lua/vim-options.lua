@@ -380,3 +380,15 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.keymap.set("n", "<leader>r", rich_preview, { buffer = args.buf, desc = "Rich Preview (yazi同等)" })
   end,
 })
+
+-- render-markdown.nvimの表(罫線)はウィンドウ幅で切り詰める機能を持たないため，
+-- wrap有効のままだと幅が足りない時に罫線が折り返されてボックス構造ごと
+-- 崩れて見える。markdownだけnowrapにして横スクロール(zL/zH、マウスホイール
+-- 横スワイプ等)に倒すことで、崩れず表の形を保ったまま確認できる。
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.wrap = false
+    vim.opt_local.sidescrolloff = 4
+  end,
+})

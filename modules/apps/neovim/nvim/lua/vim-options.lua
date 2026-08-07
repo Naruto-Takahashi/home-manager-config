@@ -326,3 +326,57 @@ vim.api.nvim_create_user_command("ToHtmlSave", function()
 end, { desc = "Convert to HTML and save in the same directory" })
 
 vim.keymap.set("n", "<leader>th", ":ToHtmlSave<CR>", { desc = "TOhtml and Save" })
+
+-- ==========================================================================
+--  Rich Preview (<leader>r) — yaziのrich-preview.yaziと全く同じrich-cli呼び出し
+-- ==========================================================================
+-- render-markdown.nvim は行内の記号を差し替えるだけ (conceal) で，
+-- rich-cli (yaziのmd/csv/json/ipynb/rstプレビューが使っているのと同じ実体、
+-- modules/apps/yazi/default.nix参照) のような「独立したレンダラーによる
+-- 本格的な描画」とは別物で見劣りする。ブラウザ版(<leader>m、Mermaid対応)を
+-- 開くほどでもない時に、フローティング端末でyaziと同じ見た目のプレビューを
+-- 出せるようにする。オプションはyaziのrich-preview.yazi/main.luaと同一
+-- (-j 除く。あちらはyazi側でJSON行ごとに読むための指定で、ここでは
+-- ターミナルへ直接描画するだけなので不要)。
+local function rich_preview()
+  if vim.fn.executable("rich") == 0 then
+    vim.notify("rich-cli (`rich`コマンド) が見つかりません", vim.log.levels.WARN)
+    return
+  end
+  local file = vim.fn.expand("%:p")
+  local width = math.floor(vim.o.columns * 0.9)
+  local height = math.floor(vim.o.lines * 0.9)
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = math.floor((vim.o.lines - height) / 2),
+    col = math.floor((vim.o.columns - width) / 2),
+    style = "minimal",
+    border = "rounded",
+    title = " Rich Preview ",
+    title_pos = "center",
+  })
+  vim.fn.termopen({
+    "rich",
+    "--left",
+    "--line-numbers",
+    "--force-terminal",
+    "--panel=rounded",
+    "--guides",
+    "--max-width",
+    tostring(width - 2),
+    file,
+  })
+  local close_opts = { buffer = buf, silent = true, nowait = true }
+  vim.keymap.set({ "n", "t" }, "q", "<cmd>close<CR>", close_opts)
+  vim.keymap.set({ "n", "t" }, "<Esc>", "<cmd>close<CR>", close_opts)
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "csv", "json", "rst" },
+  callback = function(args)
+    vim.keymap.set("n", "<leader>r", rich_preview, { buffer = args.buf, desc = "Rich Preview (yazi同等)" })
+  end,
+})

@@ -6,7 +6,7 @@
 # 持ち込むための、独立$HOMEを持つrootless podmanコンテナを1コマンドで作る。
 #
 # 使い方:
-#   bash hosts/nalt-distrobox/bootstrap.sh
+#   bash hosts/distrobox/bootstrap.sh
 #
 # 環境変数で上書き可能:
 #   NIXCLI_NAME=nixcli               コンテナ名

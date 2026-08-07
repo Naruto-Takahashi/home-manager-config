@@ -48,7 +48,7 @@
         # rootless podman (distrobox) コンテナ内のCLI専用プロファイル
         "nalt-distrobox" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          modules = [ ./hosts/nalt-distrobox ];
+          modules = [ ./hosts/distrobox ];
           extraSpecialArgs = { inherit kanagawa-dragon-yazi; };
         };
 

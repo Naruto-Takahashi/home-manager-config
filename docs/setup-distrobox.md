@@ -37,9 +37,9 @@ cd nix-config
    curl -fsSL https://raw.githubusercontent.com/89luca89/distrobox/main/install | bash -s -- --prefix ~/.local
    export PATH="$HOME/.local/bin:$PATH"
    ```
-2. **[`bootstrap.sh`](../hosts/nalt-distrobox/bootstrap.sh) でコンテナを作る**
+2. **[`bootstrap.sh`](../hosts/distrobox/bootstrap.sh) でコンテナを作る**
    ```bash
-   bash hosts/nalt-distrobox/bootstrap.sh
+   bash hosts/distrobox/bootstrap.sh
    ```
    独立`$HOME`を持つUbuntuコンテナの作成，`git`/`podman`/ビルドツールの導入，
    Nixのシングルユーザーインストール，flakes機能の有効化までが1コマンドで完了する
@@ -73,7 +73,7 @@ cd nix-config
      nix run --impure github:nix-community/home-manager -- switch --flake .#nalt-distrobox --impure
    '
    ```
-   `hosts/nalt-distrobox/default.nix`の`home.homeDirectory`は`builtins.getEnv "HOME"`
+   `hosts/distrobox/default.nix`の`home.homeDirectory`は`builtins.getEnv "HOME"`
    (未設定/pure評価時はダミー値にフォールバック) で動的に取得するようにしてあるので，
    独立homeのパスをリポジトリ側で書き換える必要はない。フォールバックが要るのは
    CIの`nix build`/`nix flake check`が`--impure`無しで評価するため

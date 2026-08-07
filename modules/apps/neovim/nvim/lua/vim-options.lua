@@ -10,8 +10,6 @@ vim.cmd("set number")
 vim.cmd("set relativenumber") -- 動画では relative number を使うことが多いので合わせますが、お好みで変えてください
 vim.cmd("set clipboard=unnamedplus")
 vim.cmd("set mouse=a")
-vim.cmd("set cursorline")   -- カーソル行をハイライト
-vim.cmd("set cursorcolumn") -- カーソル列をハイライト
 vim.g.mapleader = " "       -- スペースキーをリーダーキーにする（Typecraft推奨）
 vim.opt.showmode = false    -- "-- INSERT --" 表示はステータスバーにあるため不要
 vim.opt.cmdheight = 0       -- コマンドライン行を隠して本文領域を1行広げる (入力時のみ出現)

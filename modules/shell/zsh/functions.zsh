@@ -308,3 +308,22 @@ function agy-ss() {
         echo "スクリーンショットが見つかりませんでした．($ss_dir)"
     fi
 }
+
+# 9. 現在の壁紙に対する matugen 抽出色を手動で上書きします．
+# (matugenは面積優先で色を選ぶため、面積の小さい印象的な色を拾えないことがある)
+function matugen-set-color() {
+    local hex="${1:?usage: matugen-set-color '#rrggbb' (現在の壁紙の抽出色を上書き)}"
+    local wallpaper
+    wallpaper="$(cat "$HOME/.cache/matugen/last-wallpaper" 2>/dev/null)"
+    if [ -z "$wallpaper" ]; then
+        echo "現在の壁紙が記録されていません．先に壁紙を設定してください．" >&2
+        return 1
+    fi
+    local wp_name="$(basename "$wallpaper")"
+    local overrides_file="$HOME/.config/matugen-wsl/color-overrides.conf"
+    grep -v "^${wp_name}=" "$overrides_file" > "${overrides_file}.tmp" 2>/dev/null || true
+    mv "${overrides_file}.tmp" "$overrides_file"
+    echo "${wp_name}=${hex}" >> "$overrides_file"
+    echo "登録しました: ${wp_name} -> ${hex}"
+    matugen-apply --reapply
+}

@@ -45,9 +45,24 @@ else
 fi
 
 if [[ -n "${img:-}" ]]; then
-    # --source-color-index 0: 候補色の対話選択を回避し最有力色を自動採用 (非TTYで必須)
-    matugen image "$img" -m dark --source-color-index 0 \
-        -c "$HOME/.config/matugen-wsl/config.toml"
+    # 手動オーバーライド (color-overrides.conf) があればそちらを優先する。
+    # matugenの自動抽出は面積優先のため、面積が小さいが目立つ色 (例: クッションの
+    # 深緑) を拾えないことがあり、それを人力で補正するための仕組み
+    override_hex=""
+    overrides_file="$HOME/.config/matugen-wsl/color-overrides.conf"
+    if [[ -f "$overrides_file" ]]; then
+        img_basename="$(basename "$img")"
+        override_hex="$(grep -v '^\s*#' "$overrides_file" | grep "^${img_basename}=" | tail -n1 | cut -d= -f2-)"
+    fi
+
+    if [[ -n "$override_hex" ]]; then
+        matugen color hex "$override_hex" -m dark \
+            -c "$HOME/.config/matugen-wsl/config.toml"
+    else
+        # --source-color-index 0: 候補色の対話選択を回避し最有力色を自動採用 (非TTYで必須)
+        matugen image "$img" -m dark --source-color-index 0 \
+            -c "$HOME/.config/matugen-wsl/config.toml"
+    fi
     printf '%s\n' "$img" > "$HOME/.cache/matugen/last-wallpaper"
 
     # ロック画面の壁紙もデスクトップと同じ画像に追従させる。

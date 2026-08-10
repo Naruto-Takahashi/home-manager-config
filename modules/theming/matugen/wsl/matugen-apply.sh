@@ -52,7 +52,10 @@ if [[ -n "${img:-}" ]]; then
     overrides_file="$HOME/.config/matugen-wsl/color-overrides.conf"
     if [[ -f "$overrides_file" ]]; then
         img_basename="$(basename "$img")"
-        override_hex="$(grep -v '^\s*#' "$overrides_file" | grep "^${img_basename}=" | tail -n1 | cut -d= -f2-)"
+        # 該当エントリが無い場合 grep は終了コード1を返し、pipefail 下では
+        # スクリプト全体が異常終了してしまう (--source-color-index 0 の自動抽出に
+        # フォールバックできず、壁紙を変えても配色が更新されない不具合になっていた)
+        override_hex="$(grep -v '^\s*#' "$overrides_file" | grep "^${img_basename}=" | tail -n1 | cut -d= -f2- || true)"
     fi
 
     if [[ -n "$override_hex" ]]; then

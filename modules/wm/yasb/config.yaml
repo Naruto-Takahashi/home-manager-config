@@ -53,7 +53,9 @@ bars:
         ]
   secondary-bar:
     enabled: true
-    screens: ['Mi Monitor']
+    # 自宅のMi Monitorと外出用モバイルモニタ(ZS-156)のどちらでも
+    # バーが表示されるよう、両方のモニタ名を列挙する (yasbc monitor-information で確認)
+    screens: ['Mi Monitor', 'ZS-156']
     class_name: "yasb-bar"
     alignment:
       position: "top"

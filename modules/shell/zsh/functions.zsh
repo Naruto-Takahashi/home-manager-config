@@ -327,3 +327,19 @@ function matugen-set-color() {
     echo "登録しました: ${wp_name} -> ${hex}"
     matugen-apply --reapply
 }
+
+# 10. 現在の壁紙から「人間の目に印象的な色」に近い候補を提案します．
+# (顕著性スコア = 頻度加重Lab距離 × 彩度。詳細は suggest-accent.py 参照)
+# 気に入った候補があれば `matugen-set-color <hex>` で確定してください
+function matugen-suggest-color() {
+    local wallpaper
+    wallpaper="$(cat "$HOME/.cache/matugen/last-wallpaper" 2>/dev/null)"
+    if [ -z "$wallpaper" ]; then
+        echo "現在の壁紙が記録されていません．先に壁紙を設定してください．" >&2
+        return 1
+    fi
+    python3 "$HOME/ghq/github.com/Naruto-Takahashi/nix-config/modules/theming/matugen/lib/suggest-accent.py" \
+        "$wallpaper" "${1:-5}"
+    echo
+    echo "気に入った色があれば: matugen-set-color '#RRGGBB'"
+}

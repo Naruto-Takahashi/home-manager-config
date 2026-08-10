@@ -88,6 +88,7 @@
     pkgs.ghq
     pkgs.gh # GitHub CLI (PR/issue操作など開発に必須)
     pkgs.jq # JSON整形・抽出 (gh/APIレスポンスの確認などで頻出)
+    pkgs.imagemagick # 画像処理 (matugenの色抽出補助スクリプトが使用)
     pkgs.comma # `, <cmd>` で未インストールのコマンドをその場で一時実行
     pkgs.just # コマンドランナー (justfile に定型タスクをまとめる)
     # `cz commit` (対話コミット) は modules/apps/git-hooks で `cz` ラッパーとして提供

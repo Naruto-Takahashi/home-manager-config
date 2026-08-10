@@ -53,9 +53,10 @@ bars:
         ]
   secondary-bar:
     enabled: true
-    # 自宅のMi Monitorと外出用モバイルモニタ(ZS-156)のどちらでも
-    # バーが表示されるよう、両方のモニタ名を列挙する (yasbc monitor-information で確認)
-    screens: ['Mi Monitor', 'ZS-156']
+    # "*" = primary-bar (DISPLAY1) に割り当てられていない画面すべてに適用される
+    # ワイルドカード指定。モニタ名を列挙する方式だと未知のモニタで表示されなく
+    # なるため、どのモニタを繋いでも自動でバーが出るようこちらを使う
+    screens: ["*"]
     class_name: "yasb-bar"
     alignment:
       position: "top"

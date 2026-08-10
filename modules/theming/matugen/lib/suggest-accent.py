@@ -123,7 +123,9 @@ def main() -> int:
             if other == c:
                 continue
             sal += (on / total) * lab_distance(lab_cache[c], lab_cache[other])
-        sal *= math.sqrt(chroma(c) + 1)
+        # sqrt(彩度)では影(黒つぶれ)や壁のようなほぼ無彩色が上位に残ってしまう
+        # ため、彩度そのもの(2乗)で強めにペナルティをかけ、無彩色を明確に下げる
+        sal *= chroma(c) ** 2
         scores.append((sal, c, n / total))
 
     scores.sort(key=lambda t: t[0], reverse=True)

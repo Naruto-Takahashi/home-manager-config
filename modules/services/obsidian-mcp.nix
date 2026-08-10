@@ -264,8 +264,10 @@ in
   };
 
   # Claude Codeはグローバル ~/.claude/CLAUDE.md を全プロジェクトで自動的に
-  # 読み込むため，宣言的に配置するだけで自律的な読み書きが有効になる
-  home.file."${config.home.homeDirectory}/.claude/CLAUDE.md".text = claudeObsidianRules;
+  # 読み込むため，宣言的に配置するだけで自律的な読み書きが有効になる。
+  # CLAUDE.md自体の生成は modules/apps/claude-code が一元管理しているため，
+  # ここでは追加ルールとして注入するのみ
+  programs.claudeCode.extraInstructions = [ claudeObsidianRules ];
 
   # --- Obsidian Vault作成アクティベーションフック ---
   # ObsidianのVaultディレクトリを初期作成するフックです．

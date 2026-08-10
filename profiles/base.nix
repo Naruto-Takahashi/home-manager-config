@@ -32,8 +32,11 @@
     ../modules/apps/lazygit
     ../modules/apps/git-hooks
     ../modules/apps/btop
+    ../modules/apps/claude-code
     ../modules/theming/matugen
   ];
+
+  programs.claudeCode.enable = true;
 
   # -----------------------------------------------------------------------
   # 全ホスト共通の小物 CLI ツール
@@ -94,7 +97,7 @@
     # (modules/shell/zsh/default.nix、全ホスト共通) がagyに依存しているため
     # 全ホスト共通のここに移した (Mac/CLI専用ホストで欠けていた)
     pkgs.gemini-cli
-    pkgs.claude-code
+    # claude-code本体は modules/apps/claude-code (programs.claudeCode.enable) が提供
     (pkgs.stdenv.mkDerivation {
       pname = "antigravity-cli";
       version = "1.1.4";

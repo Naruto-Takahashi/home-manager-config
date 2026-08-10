@@ -77,7 +77,7 @@ config.skip_close_confirmation_for_processes_named = {
   "wsl.exe", "wslhost.exe", "conhost.exe",
   "powershell.exe", "pwsh.exe", "cmd.exe"
 }
-config.window_background_opacity = 0.85
+config.window_background_opacity = 0.90
 config.macos_window_background_blur = 20
 -- 本文の上下に控えめな余白 (タブバー自体は仕様上、常に上端に張り付く)
 config.window_padding = { left = "1cell", right = "1cell", top = 6, bottom = 6 }
@@ -106,7 +106,7 @@ config.tab_max_width = 24
 config.use_fancy_tab_bar = false
 
 -- タブバーの配色（メイン表示領域との溶け込みが最優先）．
---   本体 = 選択中スキームの背景色 × window_background_opacity 0.85
+--   本体 = 選択中スキームの背景色 × window_background_opacity 0.90
 --   バー地も同じ色×0.85で塗ると境目なく馴染みます．
 --   (黒決め打ちだとスキームの実際の背景(純黒ではない)とズレて帯が見えてしまう。
 --    "none" 指定は素通し=完全透過になるため使いません)

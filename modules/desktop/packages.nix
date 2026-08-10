@@ -12,20 +12,16 @@
     # 基本CLIユーティリティ
     pkgs.eza
     pkgs.bat
-    pkgs.fzf
     pkgs.feh
     pkgs.picom
-    pkgs.zoxide
     pkgs.ghq
     pkgs.git
-    pkgs.gh
 
     # 開発環境・コンパイラ
     pkgs.gcc
     pkgs.gnumake
     pkgs.python3
     pkgs.nodejs_22
-    pkgs.ripgrep
 
     # クリップボード・ユーティリティ
     pkgs.xclip

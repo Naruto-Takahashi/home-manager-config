@@ -77,7 +77,8 @@
     # modules/desktop/packages.nix経由で入っていたが、CLI専用ホスト
     # (distrobox) で欠けていたため全ホスト共通のここに移した
     pkgs.ghq
-    pkgs.delta # git diff のシンタックスハイライト付きページャ (~/.gitconfig が参照)
+    pkgs.gh # GitHub CLI (PR/issue操作など開発に必須)
+    pkgs.jq # JSON整形・抽出 (gh/APIレスポンスの確認などで頻出)
     pkgs.comma # `, <cmd>` で未インストールのコマンドをその場で一時実行
     pkgs.just # コマンドランナー (justfile に定型タスクをまとめる)
     # `cz commit` (対話コミット) は modules/apps/git-hooks で `cz` ラッパーとして提供

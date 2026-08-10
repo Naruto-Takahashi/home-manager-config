@@ -5,9 +5,13 @@
 # include等を初回のみ手動追記する運用)、他の設定と同じく一元管理したいので
 # programs.git に移行する。ホスト固有の値 (WSLのcredential.helperなど)は
 # 各hosts/*/default.nix側で programs.git.extraConfig に追記する
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
+  home.packages = [
+    pkgs.delta # git diff のシンタックスハイライト付きページャ (下記 core.pager が参照)
+  ];
+
   programs.git = {
     enable = true;
 

@@ -72,6 +72,12 @@
   home.packages = [
     pkgs.smassh # MonkeyType 風の TUI タイピング練習
     pkgs.fd # find の現代版 (fzf バックエンドにも)
+    pkgs.curl # HTTPリクエスト。系OSに依存せずNixで保証する
+    pkgs.wget # ファイルダウンロード。curl同様、系OSに依存せず保証する
+    pkgs.tmux # SSH接続断からの復帰用。セッション永続化に必須
+    pkgs.less # pager。git log等が暗黙に依存するため系OSに頼らず保証する
+    pkgs.file # ファイル種別判定
+    pkgs.man-db # man コマンド本体
     # ghq-fzf (Ctrl+G, modules/shell/zsh/functions.zsh) と telescope-ghq.nvim
     # (modules/apps/neovim) が両方とも依存する。以前はdesktop系ホストのみ
     # modules/desktop/packages.nix経由で入っていたが、CLI専用ホスト

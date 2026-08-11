@@ -20,6 +20,14 @@
     margin-left: auto !important;
     margin-right: 12px !important;
     -webkit-app-region: no-drag !important;
+    /* AirZenifyの `.window-buttongroup { position:absolute; top:0 }` は、
+       位置の基準となる .auto-hide-wrapper.top 自体が常にtop:-12pxの
+       位置にいる (表示/非表示に関わらず、高さ0の固定アンカーとして)
+       ため、ボタン自体もtop:-12pxになりウィンドウ上端で上半分が
+       クリップされ下半分しか見えなかった (CDPでgetBoundingClientRect
+       を確認して判明。opacity切り替えのタイミングの問題ではなかった)。
+       +12pxして相殺し、常にウィンドウ内に収まるようにする */
+    top: 12px !important;
 }
 
 /* 信号ボタン(.window-buttongroup)は実際には#header(AirZenifyがopacityを
@@ -138,10 +146,10 @@
 /* フローティングパネル有効時、実際の#panels-containerのクラスは
    AirZenifyが想定する `.overlay` ではなく `.expanded` (CDPで確認済み)。
    セレクタが一致せずパネル本体・パネルグループの背景/ブラーが
-   一度も適用されていなかった */
-#panels-container.expanded,
-#panels-container.expanded .panel-group,
-#panels-container.expanded .panel {
+   一度も適用されていなかった。.panel-group 1箇所だけに適用する
+   (#panels-container/.panel にも重ねると半透明が3層重なってタブバーより
+   濃く見えてしまっていた。それぞれの層は元々transparentのまま) */
+#panels-container.expanded .panel-group {
     background-color: var(--bg) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;

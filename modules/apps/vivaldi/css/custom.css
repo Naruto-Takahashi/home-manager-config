@@ -22,45 +22,15 @@
     -webkit-app-region: no-drag !important;
 }
 
-/* #titlebar (信号ボタンの実際の親、AirZenifyでは高さ0の位置決め専用要素
-   のまま放置されている) に実体のあるガラス風の帯を持たせる。
-   これにより:
-   - ボタンの位置基準がこの帯自身のtop:0になるので、以前やっていた
-     ボタン単体への+12pxオフセット補正が不要になる (このバーごと
-     正しい位置に置く方が素直)
-   - タブバー/パネルと同じ背景+ブラーが付き、信号ボタン以外の帯部分が
-     完全透明で見づらい問題も解消する
-   auto-hide-visibleはVivaldiがJSでマウス位置に応じて#browserへ
-   付け外しするクラス (CDPでcomputedStyleを確認して特定した) */
-/* AirZenify内に `#browser #titlebar { background: transparent !important; }`
-   という、詳細度がより高い (IDセレクタ2つ) ルールが別途あり、bareな
-   `#titlebar` セレクタでは!important同士でも詳細度で負けて背景が
-   透明のままだった。詳細度を合わせて上書きする */
-#browser #titlebar {
-    position: fixed !important;
-    /* position:fixedを指定しても実際にはビューポート基準にならず、
-       祖先要素 (backdrop-filter等を持つ) を基準にtop:-12pxの位置に
-       固定されたまま変わらなかった (getBoundingClientRectで確認)。
-       信号ボタンの位置補正で使ったのと同じ手口で+12pxし相殺する */
-    top: 12px !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 28px !important;
-    background-color: var(--bg) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    z-index: 9999 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transition: opacity 0.2s ease !important;
-}
-/* 上の #browser #titlebar ルール(詳細度: IDセレクタ2つ)にopacity:0が
-   含まれているため、こちらも同等以上の詳細度にしないと表示側が負けて
-   常に非表示のままになる (実機で再現・確認済み) */
-#browser.auto-hide-visible #titlebar {
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}
+/* タイトルバー(#titlebar)自体の表示・位置・自動非表示ロジックは
+   AirZenify標準のまま一切変更しない (信号ボタンの色以外)。
+   ガラス背景を追加したり位置をpxで補正する試みを何度か行ったが、
+   AirZenifyのタイトルバーはposition:absoluteかつ高さ0のアンカーを
+   基準にしており、そのオフセットがモニタのDPIスケーリングによって
+   変動するため、固定px値での補正はモニタが変わるたびに崩れることが
+   判明した (実機で複数モニタを跨いで再現・確認済み)。深追いすると
+   同じ不具合の繰り返しになるため、AirZenify標準の「ホバー時に右上へ
+   信号ボタンが素の見た目で現れる」動作をそのまま採用し、色だけ変える */
 
 /* タイトルバー内のボタン群以外の要素 (テキスト、アイコン等) をすべて非表示 */
 #titlebar > *:not(.window-buttongroup) {

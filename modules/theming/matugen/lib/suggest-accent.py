@@ -118,11 +118,17 @@ def ciede2000(lab1: tuple[float, float, float], lab2: tuple[float, float, float]
 
 
 def quantized_pixels(image_path: str, colors: int = 48, size: int = 150) -> list[tuple[int, int, int, int]]:
-    """Resize + posterize via ImageMagick, return (x, y, rgb) pixels (parsed from txt: format)."""
+    """Downsample + posterize via ImageMagick, return (x, y, rgb) pixels (parsed from txt: format).
+
+    -sample (nearest-neighbor) instead of -resize (filtered/interpolated) is used:
+    it's 2-3x faster on large wallpapers (no convolution), and as a bonus it doesn't
+    blend small regions into their surroundings, which better preserves the true
+    color of small-but-salient objects.
+    """
     out = subprocess.run(
         [
             "convert", image_path,
-            "-resize", f"{size}x{size}",
+            "-sample", f"{size}x{size}",
             "+dither", "-colors", str(colors),
             "txt:-",
         ],

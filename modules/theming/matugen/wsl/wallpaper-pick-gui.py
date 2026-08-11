@@ -109,15 +109,16 @@ function selectWallpaper(name) {{
   document.querySelectorAll('.card').forEach(function (c) {{ c.classList.remove('selected'); }});
   document.querySelector('.card[data-name="' + CSS.escape(name) + '"]').classList.add('selected');
   setStatus(true);
-  fetch('/select?name=' + encodeURIComponent(name))
-    .then(function () {{
-      setStatus(false);
-      loadSuggestions(name);
-    }});
+  // /select (壁紙反映) と /suggest (色候補計算) は互いに独立しているため並列実行する
+  // (直列だと合計待ち時間になり体感が重かった)
+  Promise.all([
+    fetch('/select?name=' + encodeURIComponent(name)),
+    loadSuggestions(name),
+  ]).then(function () {{ setStatus(false); }});
 }}
 
 function loadSuggestions(name) {{
-  fetch('/suggest?name=' + encodeURIComponent(name))
+  return fetch('/suggest?name=' + encodeURIComponent(name))
     .then(function (r) {{ return r.json(); }})
     .then(function (list) {{
       var box = document.getElementById('swatches');

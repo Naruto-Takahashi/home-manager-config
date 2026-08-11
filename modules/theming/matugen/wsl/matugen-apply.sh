@@ -63,7 +63,9 @@ if [[ -n "${img:-}" ]]; then
             -c "$HOME/.config/matugen-wsl/config.toml"
     else
         # --source-color-index 0: 候補色の対話選択を回避し最有力色を自動採用 (非TTYで必須)
-        matugen image "$img" -m dark --source-color-index 0 \
+        # -r nearest: 抽出結果はデフォルトフィルタとほぼ変わらない (検証済み) が
+        # 大きい壁紙で数百ms速くなる
+        matugen image "$img" -m dark --source-color-index 0 -r nearest \
             -c "$HOME/.config/matugen-wsl/config.toml"
     fi
     printf '%s\n' "$img" > "$HOME/.cache/matugen/last-wallpaper"

@@ -20,25 +20,36 @@
     margin-left: auto !important;
     margin-right: 12px !important;
     -webkit-app-region: no-drag !important;
-    /* AirZenifyの `.window-buttongroup { position:absolute; top:0 }` は、
-       位置の基準となる .auto-hide-wrapper.top 自体が常にtop:-12pxの
-       位置にいる (表示/非表示に関わらず、高さ0の固定アンカーとして)
-       ため、ボタン自体もtop:-12pxになりウィンドウ上端で上半分が
-       クリップされ下半分しか見えなかった (CDPでgetBoundingClientRect
-       を確認して判明。opacity切り替えのタイミングの問題ではなかった)。
-       +12pxして相殺し、常にウィンドウ内に収まるようにする */
-    top: 12px !important;
 }
 
-/* 信号ボタン(.window-buttongroup)は実際には#header(AirZenifyがopacityを
-   制御する対象)ではなく#titlebarの子要素で、#titlebarは常時opacity:1の
-   ままだった (CDPでDOM階層を確認して判明)。ボタン単体のopacityを
-   #browser側の状態クラスで別々に切り替えると、#titlebarラッパー自身の
-   高さ変化とタイミングがずれて中途半端に見える不具合があったため、
-   自前実装で元々やっていたように #titlebar ごとopacityを切り替える
-   方式に戻す。auto-hide-visibleはVivaldiがJSでマウス位置に応じて
-   #browserへ付け外しするクラス (CDPでcomputedStyleを確認して特定した) */
-#titlebar {
+/* #titlebar (信号ボタンの実際の親、AirZenifyでは高さ0の位置決め専用要素
+   のまま放置されている) に実体のあるガラス風の帯を持たせる。
+   これにより:
+   - ボタンの位置基準がこの帯自身のtop:0になるので、以前やっていた
+     ボタン単体への+12pxオフセット補正が不要になる (このバーごと
+     正しい位置に置く方が素直)
+   - タブバー/パネルと同じ背景+ブラーが付き、信号ボタン以外の帯部分が
+     完全透明で見づらい問題も解消する
+   auto-hide-visibleはVivaldiがJSでマウス位置に応じて#browserへ
+   付け外しするクラス (CDPでcomputedStyleを確認して特定した) */
+/* AirZenify内に `#browser #titlebar { background: transparent !important; }`
+   という、詳細度がより高い (IDセレクタ2つ) ルールが別途あり、bareな
+   `#titlebar` セレクタでは!important同士でも詳細度で負けて背景が
+   透明のままだった。詳細度を合わせて上書きする */
+#browser #titlebar {
+    position: fixed !important;
+    /* position:fixedを指定しても実際にはビューポート基準にならず、
+       祖先要素 (backdrop-filter等を持つ) を基準にtop:-12pxの位置に
+       固定されたまま変わらなかった (getBoundingClientRectで確認)。
+       信号ボタンの位置補正で使ったのと同じ手口で+12pxし相殺する */
+    top: 12px !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 28px !important;
+    background-color: var(--bg) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    z-index: 9999 !important;
     opacity: 0 !important;
     pointer-events: none !important;
     transition: opacity 0.2s ease !important;

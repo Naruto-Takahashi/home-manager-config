@@ -54,7 +54,10 @@
     pointer-events: none !important;
     transition: opacity 0.2s ease !important;
 }
-.auto-hide-visible #titlebar {
+/* 上の #browser #titlebar ルール(詳細度: IDセレクタ2つ)にopacity:0が
+   含まれているため、こちらも同等以上の詳細度にしないと表示側が負けて
+   常に非表示のままになる (実機で再現・確認済み) */
+#browser.auto-hide-visible #titlebar {
     opacity: 1 !important;
     pointer-events: auto !important;
 }

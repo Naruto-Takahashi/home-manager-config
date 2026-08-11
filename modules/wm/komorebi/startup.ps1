@@ -3,6 +3,17 @@
 # 1. AutoHotkey (main.ahkがエントリポイント。komorebi.ahkはそこから#Includeされる)
 Start-Process "C:\Users\tnaru\Tools\Customization\main.ahk"
 
+# 1.1 kanata (SandS/CapsLock/Alt-IME切り替え。AHKの `Key & Key` コンボ実装が
+# キー状態を稀に取りこぼす不具合の対策として移行中。main.ahk側は
+# KanataActive()でkanata起動を検知すると該当ホットキーを自動的に無効化する
+# ため、二重定義のまま共存できる。ロールバックしたい場合はこのプロセスを
+# 終了するだけでよい (AHK再起動不要)
+$kanataExe = "C:\Users\tnaru\.config\kanata-wsl\kanata-windows.exe"
+$kanataConfig = "C:\Users\tnaru\.config\kanata-wsl\config.kbd"
+if ((Test-Path $kanataExe) -and (Test-Path $kanataConfig)) {
+    Start-Process $kanataExe -ArgumentList "-c", "`"$kanataConfig`""
+}
+
 # 2. Komorebi
 $env:PATH += ";C:\Program Files\masir\bin"
 Start-Process "C:\Program Files\komorebi\bin\komorebic.exe" -ArgumentList "start --masir" -WindowStyle Hidden

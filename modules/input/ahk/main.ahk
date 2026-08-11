@@ -18,6 +18,17 @@ SetWorkingDir %A_ScriptDir%
 ; 外部ライブラリの読み込み (IME制御関数群)
 #Include %A_ScriptDir%\lib\ime_functions.ahk
 
+; kanata (modules/input/kanata/wsl.nix) がSandS/CapsLock/Alt-IME切り替えを
+; 肩代わりする移行を進めている (AHKの `Key & Key` コンボ実装がキー状態を
+; 稀に取りこぼし「押されっぱなし」になる不具合の対策)。kanataが起動中は
+; 下記の該当セクションを自動的に無効化し、二重処理による衝突を防ぐ。
+; ロールバックしたい場合はkanataを終了するだけでよい (AHK再起動不要、
+; ホットキー押下のたびにこの条件が再評価されるため即座に有効化される)
+KanataActive() {
+    Process, Exist, kanata-windows.exe
+    return (ErrorLevel != 0)
+}
+
 ; komorebi/YASB操作用キーバインド。役割としては別モジュール
 ; (modules/wm/komorebi/komorebi.ahk) が持つため配置場所を分けているが、
 ; 起動するAHKプロセスは1つに集約するためここから#Includeする
@@ -27,6 +38,11 @@ SetWorkingDir %A_ScriptDir%
 ; =============================================================================
 ; キー・リマッピング設定 (Key Remappings)
 ; =============================================================================
+
+; kanata稼働中は下記ブロック (CapsLock/LCtrl/Space/Alt-IME) を無効化する。
+; #IfWinActiveとの入れ子ができないため、途中のwezterm限定ブロックも
+; 同じ #If の複合条件式に統一している
+#If !KanataActive()
 
 ; --- CapsLock単押しでEscape（かつIME OFF），長押しでCtrl化 ---
 ; ※レジストリや他ソフト等で CapsLock が F13 にマップされていることを前提とします．
@@ -76,7 +92,8 @@ Space & e::Send {Blind}{End}  ; 行末移動
 Space & u:: Send, ^z          ; 元に戻す (Undo)
 Space & b:: Send, {Backspace} ; バックスペース (Backspace)
 Space & x:: Send, {Delete}    ; デリート (Delete)
-#IfWinActive ahk_exe wezterm-gui.exe
+
+#If !KanataActive() && WinActive("ahk_exe wezterm-gui.exe")
 ; WezTermアクティブ時はCtrl+Space/Ctrl+;を透過してLeaderキーとして機能させつつ，IMEをOFFにする
 ~^Space::
     Sleep 10
@@ -86,8 +103,8 @@ Return
     Sleep 10
     IME_SET(0) ; 英語入力（IME OFF）へ強制切り替え
 Return
-#IfWinActive
 
+#If !KanataActive()
 ^Space::    Send, ^{Space}    ; Ctrl + Space のパススルー（衝突回避）
 !Space::    Send, !{Space}    ; Alt + Space のパススルー（衝突回避）
 
@@ -110,6 +127,7 @@ Return
     Return
 ~RAlt::SendInput, {vkE8} ; キーの衝突防止ダミー出力を送信
 
+#If
 ; --- Escapeキー押下時に強制的にIMEをOFFにする設定 ---
 $Esc::
     SendInput, {LCtrl up}{RCtrl up}{Esc}

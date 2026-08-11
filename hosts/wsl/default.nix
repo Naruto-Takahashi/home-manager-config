@@ -10,6 +10,7 @@
   imports = [
     ../../profiles/base.nix
     ../../modules/input/ahk
+    ../../modules/input/kanata/wsl.nix
     ../../modules/wm/komorebi
     ../../modules/wm/yasb
     ../../modules/services/obsidian-mcp.nix

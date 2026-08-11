@@ -284,6 +284,11 @@ function sync-win() {
     echo "Syncing Vivaldi CSS..."
     mkdir -p /mnt/c/Users/tnaru/Tools/Vivaldi
     cp -L ~/.config/vivaldi/custom.css /mnt/c/Users/tnaru/Tools/Vivaldi/custom.css
+    echo "Syncing kanata (Windows)..."
+    mkdir -p /mnt/c/Users/tnaru/.config/kanata-wsl
+    cp -L ~/.local/bin/kanata-windows.exe /mnt/c/Users/tnaru/.config/kanata-wsl/kanata-windows.exe
+    cp -L ~/.config/kanata-wsl/config.kbd /mnt/c/Users/tnaru/.config/kanata-wsl/config.kbd
+    cp -L ~/.config/ahk/ime-off.ahk ~/.config/ahk/ime-on.ahk /mnt/c/Users/tnaru/Tools/Customization/
     echo "Done."
 }
 

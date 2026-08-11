@@ -4,14 +4,19 @@
 
 ## 対象OS・実装方式の違い (重要)
 
-**このドキュメントの内容は NixOS・macOS にのみ適用されます。Windows/WSL2環境ではKanataは一切使われません**（WSL上のプロセスはWindows側のキーボード入力を物理的に捕まえられないため）。同等の機能はWindows専用の [AutoHotkeyスクリプト](../modules/input/ahk/main.ahk) が別実装で提供しています（設定は共通ではなく、`main.ahk` 側で個別にメンテナンスされています）。
+**Windows/WSL2環境では、kanataはWindows側でネイティブに動く別バイナリとして稼働します**（WSL上のプロセスはWindows側のキーボード入力を物理的に捕まえられないため、WSL内でkanataを動かすのではなく、Windows用にビルドされたkanataバイナリをWindows側で直接起動する構成)。従来はWindows専用の [AutoHotkeyスクリプト](../modules/input/ahk/main.ahk) がSandS/CapsLock/Alt-IME切り替えを独自実装していたが、AHKの `Key & Key` コンボ実装がキー状態を稀に取りこぼし「押されっぱなし」になる不具合があったため、その部分をkanataへ移行した(`modules/input/kanata/wsl.nix` / `wsl-config.nix`)。AHK側の実装は削除せず、kanata稼働中は自動的に無効化される形で残してあり(`main.ahk`の`KanataActive()`)、kanataのプロセスを終了するだけで即座にAHK実装へロールバックできる。komorebi固有のWMショートカット(Alt+文字)は元々AHK側で素のAlt修飾として直接実装されているため変更していない。
 
-Kanataを使う2ホストの間でも、レイヤー定義 (`config.kbd`) は共通の1ファイルですが、`wmmodifier-` プレースホルダの実際の変換先がホストごとに異なります（ホスト側の `.nix` ファイルで文字列置換）:
+Kanataを使う3ホストの間で、レイヤー定義 (`config.kbd`) は共通の1ファイルですが、`wmmodifier-` プレースホルダの実際の変換先がホストごとに異なります（ホスト側の `.nix` ファイルで文字列置換）:
 
 | ホスト | `wmmodifier-` の変換先 | 連携するWM | 備考 |
 | :--- | :--- | :--- | :--- |
 | **NixOS** | `M-` (Super単体) | Hyprland ([hyprland.md](hyprland.md)) | `modules/input/kanata/kanata-config.nix` |
 | **macOS** | `C-M-` (Ctrl+Cmd) | AeroSpace ([aerospace.nix](../modules/apps/aerospace/default.nix)) | macOS標準の`Cmd`単体ショートカットと衝突しないよう二重修飾にしている |
+| **WSL** | `A-` (Alt単体) | komorebi ([komorebi.md](komorebi.md)) | `modules/input/kanata/wsl-config.nix`。既存のAHK側 `!` (Alt) ホットキー群と同じ信号になるためkomorebi.ahk側は無変更で動く |
+
+WSLはさらに以下の点が個別の置換で上書きされています（`wsl-config.nix`）:
+- `caps` → `f13` (本機はレジストリのScancode MapでCapsLock物理キーをF13として送出する設定にしているため)
+- `eisu`/`kana` → `@ime-off`/`@ime-on` (Win32 API (`ImmSetOpenStatus`) 経由のIME制御はkanata単体ではWindows上で直接行えないため、`cmd`アクションで実績のあるAHKの`ime_functions.ahk` (`ime-off.ahk`/`ime-on.ahk`) へ委譲する。`danger-enable-cmd`が必要)
 
 macOSはさらに以下の3点が個別の置換で上書きされています（`hosts/mac/default.nix`）:
 - `cap-ctrl-action` → `(layer-toggle ctrl-layer)` (CapsLock長押し時のレイヤー)
@@ -108,11 +113,12 @@ Kanata をバックグラウンドサービスとして稼働させることで�
 
 ## 5. Windows専用の補完: AutoHotkey (modules/input/ahk)
 
-kanataはクロスプラットフォームだが，Windowsの一部機能(IMEのオン/オフをWin32 API経由で確実に制御する処理，SandS，WezTermとの連携)はkanataだけでは実現できないため，`modules/input/ahk/main.ahk` をAutoHotkeyの実行ファイルとして併用している。役割としてはkanataと同じ「キーボードリマップ」層に属するため`modules/input/`配下に置いているが，実装はWindows専用。
+kanataはクロスプラットフォームだが，WezTermとの連携やExplorer統合(Everything検索)等，kanataだけでは実現できない機能があるため，`modules/input/ahk/main.ahk` をAutoHotkeyの実行ファイルとして併用している。役割としてはkanataと同じ「キーボードリマップ」層に属するため`modules/input/`配下に置いているが，実装はWindows専用。
 
 * エントリポイントは `main.ahk` の1つのみ。komorebi固有のホットキー定義 (`modules/wm/komorebi/komorebi.ahk`、[komorebi.md](komorebi.md) 参照) はここから絶対パスで `#Include` される
-* IME制御関数 (`ImmGetDefaultIMEWnd` 等のWin32 API呼び出し) は `modules/input/ahk/lib/ime_functions.ahk` に切り出している
+* IME制御関数 (`ImmGetDefaultIMEWnd` 等のWin32 API呼び出し) は `modules/input/ahk/lib/ime_functions.ahk` に切り出している。kanataからも `cmd` アクション経由で `ime-off.ahk`/`ime-on.ahk` (同ライブラリを使う一発実行スクリプト) が呼ばれる
 * `sync-win` が `~/.config/ahk` 配下をまるごと Windows の `Tools\Customization\` へコピーする
+* SandS/CapsLock/Alt-IME切り替えの実装自体は上記の通りkanataへ移行済みだが、main.ahk側にも同等のコードを残してあり、kanataが起動していない間は自動的に有効化される (`KanataActive()`)。ロールバックはkanataのプロセスを終了するだけでよい
 
 ---
 

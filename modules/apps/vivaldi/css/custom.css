@@ -11,17 +11,6 @@
  */
 
 /* ==========================================================================
-   ガラス効果の不透明度を上げる (AirZenify本体の変数を上書き)
-   ========================================================================== */
-/* AirZenifyの既定 (アルファ0.22) は薄すぎて、白いWebページの裏に来ると
-   明るい文字(colorFg)とのコントラストが崩れて読めなくなる。文字色は
-   テーマ依存で変えられないため、背景側の不透明度を上げて対処する */
-:root {
-    --bgDark: rgba(0, 0, 0, 0.55);
-    --bgLight: rgba(255, 255, 255, 0.55);
-}
-
-/* ==========================================================================
    macOS風ウィンドウコントロール (最小化・最大化・閉じるボタン) の色・並び順
    ========================================================================== */
 #browser.win .window-buttongroup {
@@ -33,17 +22,20 @@
     -webkit-app-region: no-drag !important;
 }
 
-/* AirZenifyは信号ボタンを position:absolute で#headerの外側に独立配置して
-   いるため、#headerがopacity:0で折りたたまれてもボタンの高さ(26〜31px)分
-   だけ下端がはみ出て見える。ヘッダーと同じ「ホバー(自動非表示解除)時のみ
-   表示」に揃える。auto-hide-visibleはVivaldiがJSでマウス位置に応じて
+/* 信号ボタン(.window-buttongroup)は実際には#header(AirZenifyがopacityを
+   制御する対象)ではなく#titlebarの子要素で、#titlebarは常時opacity:1の
+   ままだった (CDPでDOM階層を確認して判明)。ボタン単体のopacityを
+   #browser側の状態クラスで別々に切り替えると、#titlebarラッパー自身の
+   高さ変化とタイミングがずれて中途半端に見える不具合があったため、
+   自前実装で元々やっていたように #titlebar ごとopacityを切り替える
+   方式に戻す。auto-hide-visibleはVivaldiがJSでマウス位置に応じて
    #browserへ付け外しするクラス (CDPでcomputedStyleを確認して特定した) */
-.window-buttongroup {
+#titlebar {
     opacity: 0 !important;
     pointer-events: none !important;
     transition: opacity 0.2s ease !important;
 }
-.auto-hide-visible .window-buttongroup {
+.auto-hide-visible #titlebar {
     opacity: 1 !important;
     pointer-events: auto !important;
 }
@@ -138,4 +130,19 @@
 #browser.auto-hide:not(.fullscreen) #webpage-stack {
     box-shadow: none !important;
     margin: 0 !important;
+}
+
+/* ==========================================================================
+   パネル本体 (入力欄以外) にガラス効果が付いていなかったのを直す
+   ========================================================================== */
+/* フローティングパネル有効時、実際の#panels-containerのクラスは
+   AirZenifyが想定する `.overlay` ではなく `.expanded` (CDPで確認済み)。
+   セレクタが一致せずパネル本体・パネルグループの背景/ブラーが
+   一度も適用されていなかった */
+#panels-container.expanded,
+#panels-container.expanded .panel-group,
+#panels-container.expanded .panel {
+    background-color: var(--bg) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
 }

@@ -44,6 +44,12 @@ let
       # 検知できない。config.kbd内で "caps" はdefsrc行にのみ1箇所しか
       # 出現しないため単純な文字列置換で安全に対応できる
       "caps  lalt"
+      # alt-layer中のspc位置 (@hyp-d = Super+D相当) をそのまま素直に
+      # wmmodifier-d (= A-d) へ展開すると、Alt+SpaceがAlt+Dに化けてしまい
+      # PowerToys Command Palette (Alt+Space) が起動できなくなる。
+      # macOS向け (hosts/mac/default.nix) と同じく、この1箇所だけ
+      # 素のAlt+Spaceパススルーに直接上書きする
+      "@hyp-d "
     ]
     [
       "C-A-h"
@@ -56,6 +62,7 @@ let
       "@ime-on"
       "process-unmapped-keys yes\n  danger-enable-cmd yes"
       "f13   lalt"
+      "A-spc "
     ]
     base;
 

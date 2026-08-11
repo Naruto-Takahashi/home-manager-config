@@ -1,162 +1,31 @@
 /*
- * Vivaldi Custom UI - Transparent Address Bar & No Borders
+ * Vivaldi Custom UI - 個別カスタム (AirZenify.css に無い独自要素のみ)
+ *
+ * タブバー/パネルの自動非表示・透過、アドレスバー透過、ヘッダーのhover表示
+ * などは air-zenify.css (ELGUAPOLIFE/Zen-Theme-CSS-for-Vivaldi-Browser、
+ * Vivaldi 7.9+ のネイティブUI自動非表示前提) に一本化したためここでは
+ * 扱わない。前提として以下のVivaldi設定が必要:
+ *   - Settings > Appearance/Tabs でUI自動非表示 (Auto-hide) を有効化
+ *   - Show Title Bar を無効化
+ *   - Theme設定で Transparent Tab Bar を有効化 (Blur = 0)
  */
 
 /* ==========================================================================
-   Tab Bar Bottom Border Removal (Existing)
+   macOS風ウィンドウコントロール (最小化・最大化・閉じるボタン) の色・並び順
    ========================================================================== */
-#tabs-tabbar-container,
-.tabbar-wrapper,
-#browser .tabbar {
-    border-bottom: none !important;
-    box-shadow: none !important;
-}
-#tabs-tabbar-container::after,
-.tabbar-wrapper::after,
-#browser .tabbar::after {
-    content: none !important;
-    display: none !important;
-    border: none !important;
-}
-
-/* タブバーの自動非表示設定（通常時） */
-#tabs-tabbar-container {
-    position: absolute !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    z-index: 999 !important;
-    transform: translateX(calc(-100% + 10px)) !important; /* 左端に10px残して判定エリアを縮小 */
-    opacity: 0 !important; /* 通常時は完全に透明にし，ノイズを排除 */
-    transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out !important;
-
-    /* ダークグレーのすりガラス効果 */
-    background-color: rgba(30, 30, 30, 0.3) !important; /* 30%の究極の透明感へ復帰 */
-    backdrop-filter: blur(10px) !important;
-    border-right: none !important; /* 実線を廃止 */
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.18) !important; /* ソフトなぼかし影で馴染ませる */
-    border-radius: 0 8px 8px 0 !important; /* 右側の角を丸めてフローティング化 */
-}
-
-/* タブバーにホバーしたときにスライドイン表示 */
-#tabs-tabbar-container:hover {
-    transform: translateX(0) !important;
-    opacity: 1 !important;
-}
-
-/* ==========================================================================
-   Address Bar Transparency & Styling (New)
-   ========================================================================== */
-
-/* アドレスバー（ツールバー）の背景を透明化 */
-.mainbar, 
-.toolbar-mainbar,
-.toolbar-addressbar {
-    /* 完全に透明にする場合 */
-    background-color: transparent !important;
-    
-    /* 文字が見づらい場合は、以下のコメントアウトを外して「半透明すりガラス」にしてください */
-    /* background-color: rgba(var(--colorBgInt), 0.6) !important; */
-    /* backdrop-filter: blur(10px) !important; */
-    
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* ヘッダー全体も透明化・高さ自動調整・位置調整 */
-#header {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    height: auto !important;
-    min-height: 0 !important;
-    /* タイトルバーを非表示にするため，上部余白を0にする */
-    margin-top: 0px !important;
-}
-
-/* アドレス入力欄・検索欄を周囲になじませる（半透明化） */
-.UrlBar-AddressField,
-.UrlBar-SearchField,
-.addressfield, 
-.searchfield {
-    background-color: rgba(128, 128, 128, 0.15) !important; /* 薄いグレー */
-    border: none !important;
-    box-shadow: none !important;
-    color: var(--colorFg) !important; /* 文字色はテーマに従う */
-}
-
-/* 入力欄のフォーカス時も見やすく調整 */
-.UrlBar-AddressField:focus-within,
-.UrlBar-SearchField:focus-within,
-.addressfield:focus-within, 
-.searchfield:focus-within {
-    background-color: var(--colorBg) !important; /* フォーカス時は不透明にして見やすく */
-    box-shadow: 0 0 0 1px var(--colorHighlightBg) !important;
-}
-
-/* ボタン類の背景も馴染ませる */
-.button-toolbar {
-    background-color: transparent !important;
-}
-
-/* 
- * 以前の境界線削除設定（念のため残存）
- */
-.address-top .mainbar::before,
-.toolbar-mainbar::before {
-    display: none !important;
-}
-
-/* ==========================================================================
-   Hide Title Bar & Window Controls
-   ========================================================================== */
-#titlebar {
-    display: flex !important;
-    background-color: transparent !important;
-    height: 24px !important; /* 高さを少し狭める */
-    align-items: center !important; /* 垂直中央揃え */
-    padding: 0 !important;
-    -webkit-app-region: drag !important; /* ウィンドウドラッグ有効化 */
-    
-    /* タイトルバーを画面最上部に強制固定 */
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 9999 !important;
-
-    /* 自動非表示（通常時は透明，ホバー時に表示） */
-    opacity: 0 !important;
-    transition: opacity 0.2s ease-in-out !important;
-}
-
-/* タイトルバーにホバーしたときに表示 */
-#titlebar:hover {
-    opacity: 1 !important;
-}
-
-/* macOS風ウィンドウコントロール（最小化・最大化・閉じるボタン） */
 #browser.win .window-buttongroup {
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-end !important; /* 右寄せにする場合 */
-    margin-left: auto !important; /* 強制的に右寄せ（これが重要） */
+    justify-content: flex-end !important;
+    margin-left: auto !important;
     margin-right: 12px !important;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-    -webkit-app-region: no-drag !important; /* ボタン部分はドラッグ無効（クリック有効） */
-    
-    /* ボタン位置を少し下げる微調整 */
-    position: relative !important;
-    top: 1px !important;
+    -webkit-app-region: no-drag !important;
 }
 
-/* タイトルバー内のボタン群以外の要素（テキスト、アイコン等）をすべて非表示 */
+/* タイトルバー内のボタン群以外の要素 (テキスト、アイコン等) をすべて非表示 */
 #titlebar > *:not(.window-buttongroup) {
     display: none !important;
 }
-
-/* 念のため個別のクラスも指定して非表示を徹底 */
 #titlebar .vivaldi,
 #titlebar .title,
 .vivaldi-button-wrapper {
@@ -167,67 +36,51 @@
     width: 12px !important;
     height: 12px !important;
     border-radius: 50% !important;
-    margin: 0 13px !important; /* 間隔変更: 隙間26px (左右13px) */
+    margin: 0 13px !important; /* 間隔: 隙間26px (左右13px) */
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
     fill: transparent !important;
 }
-
 #browser.win .window-buttongroup button svg {
     display: none !important;
 }
 
-/* 
- * ボタンの並び順と色を変更
- * ユーザー要望: 緑(最小化) -> 黄(最大化) -> 赤(閉じる)
- * カスタムカラー適用
- */
-
-/* 最小化 (緑) - Order 1 */
+/* 並び順: 緑(最小化) -> 黄(最大化) -> 赤(閉じる)、カスタムカラー */
 #browser.win .window-buttongroup button.window-minimize {
     order: 1 !important;
-    background-color: #929c79 !important; /* Custom Green */
+    background-color: #929c79 !important; /* Green */
 }
 #browser.win .window-buttongroup button.window-minimize:hover {
     background-color: #838d6d !important;
 }
-
-/* 最大化/元に戻す (黄) - Order 2 */
 #browser.win .window-buttongroup button.window-maximize,
 #browser.win .window-buttongroup button.window-restore {
     order: 2 !important;
-    background-color: #ceab88 !important; /* Custom Yellow */
+    background-color: #ceab88 !important; /* Yellow */
 }
 #browser.win .window-buttongroup button.window-maximize:hover,
 #browser.win .window-buttongroup button.window-restore:hover {
     background-color: #bf9b78 !important;
 }
-
-/* 閉じる (赤) - Order 3 */
 #browser.win .window-buttongroup button.window-close {
     order: 3 !important;
-    background-color: #a86c6c !important; /* Custom Red */
+    background-color: #a86c6c !important; /* Red */
 }
 #browser.win .window-buttongroup button.window-close:hover {
     background-color: #965d5d !important;
 }
 
-/* Vivaldiボタン（メニュー）が表示されなくなる場合があるため、
-   必要であればショートカットキーでメニューを呼び出してください */
-
 /* ==========================================================================
-   Compact Tab Bar (Tab Height Reduction)
+   タブの高さを詰める (AirZenifyのデフォルト30pxより少しコンパクトに)
    ========================================================================== */
-/* 個々のタブの高さを詰める（垂直・水平問わず有効） */
 .tab-position .tab {
-    height: 28px !important; /* 少し余裕を持たせて28px（標準よりコンパクト） */
+    height: 28px !important;
 }
 .button-toolbar.newtab {
     height: 28px !important;
     top: 0 !important;
 }
-/* タブ内の余白・配置調整 */
 .tab-content {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
@@ -235,84 +88,4 @@
     margin-bottom: 0 !important;
     display: flex !important;
     align-items: center !important;
-}
-
-/* ==========================================================================
-   Panel Transparency & No Borders
-   ========================================================================== */
-#panels-container {
-    /* コンテナ自体は透明: 子の .panel-group が blur+bg を担う */
-    background-color: transparent !important;
-    border: none !important;
-    border-left: none !important; /* 実線を廃止 */
-    border-radius: 8px 0 0 8px !important; /* 左側の角を丸めてフローティング化 */
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.18) !important; /* ソフトなぼかし影で馴染ませる */
-
-    /* パネルの右側配置と自動非表示 */
-    position: absolute !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    right: 0 !important; /* 右端に配置 */
-    left: auto !important; /* 左側設定を解除 */
-    z-index: 999 !important;
-    transform: translateX(calc(100% - 10px)) !important; /* 右端に10px残して判定エリアを縮小 */
-    opacity: 0 !important; /* 通常時は完全に透明にし，ノイズを排除 */
-    transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out !important;
-}
-
-/* パネルコンテナにホバーしたときに右からスライドイン表示 */
-#panels-container:hover {
-    transform: translateX(0) !important; /* 本来の位置へ */
-    opacity: 1 !important;
-}
-
-/* パネルスイッチ（アイコン列）: タブバーと同じ blur+bg */
-#switch {
-    background-color: rgba(30, 30, 30, 0.3) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border: none !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-}
-
-/* #switch と .panel-group の隙間を除去 */
-#panels-container {
-    gap: 0 !important;
-}
-.panel-group {
-    margin: 0 !important;
-}
-
-/* 展開されたパネル部分: タブバーと同じ値で直接 blur をかける */
-.panel-group {
-    background-color: rgba(30, 30, 30, 0.3) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* 各パネルコンテンツ: panel-group に重ならないよう透明 */
-.panel {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* パネルヘッダー */
-header.panel-header,
-.webpanel-header {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* 境界線として機能している可能性のある疑似要素も削除 */
-#switch::before,
-#switch::after,
-.panel-group::before,
-.panel-group::after {
-    display: none !important;
-    border: none !important;
 }

@@ -33,6 +33,9 @@ let
       "wmmodifier-A-j"
       "wmmodifier-A-k"
       "wmmodifier-A-l"
+      # hyp-tab (Alt+Tab) だけは下記コメントの理由でAHKへのcmd委譲に
+      # 変えたいため、汎用の "wmmodifier-" 置換より前に置いて先にマッチさせる
+      "wmmodifier-tab"
       "cap-ctrl-action"
       "wmmodifier-"
       "eisu"
@@ -56,6 +59,7 @@ let
       "C-A-j"
       "C-A-k"
       "C-A-l"
+      "@alt-tab-step"
       "lctl"
       "A-"
       "@ime-off"
@@ -78,6 +82,13 @@ let
     (defalias
       ime-off (cmd "C:/Program Files/AutoHotkey/v1.1.37.02/AutoHotkeyU64.exe" "C:/Users/tnaru/Tools/Customization/ime-off.ahk")
       ime-on  (cmd "C:/Program Files/AutoHotkey/v1.1.37.02/AutoHotkeyU64.exe" "C:/Users/tnaru/Tools/Customization/ime-on.ahk")
+      ;; alt-layer中のhyp-tab (Alt+Tab) 用。kanataの仮想キー出力は
+      ;; 実際にはOSレベルでAltキーが押されている状態を再現できず
+      ;; (GetAsyncKeyStateで検出不可なことを実機で確認済み)、Windows標準の
+      ;; Alt+Tabウィンドウ切り替え (Alt保持中はTab連打で選択、Alt解放で
+      ;; 確定) が一瞬で閉じてしまう不具合になっていた。実際にAltキーを
+      ;; 保持できるAHK側 (alt-tab-step.ahk) へ委譲する
+      alt-tab-step (cmd "C:/Program Files/AutoHotkey/v1.1.37.02/AutoHotkeyU64.exe" "C:/Users/tnaru/Tools/Customization/alt-tab-step.ahk")
     )
 
   '';

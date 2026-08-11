@@ -205,6 +205,18 @@ ReapplyDisplayConfig:
     Run, komorebic replace-configuration "C:\Users\tnaru\.config\komorebi\komorebi.json", , Hide
     ; 再適用完了を待つ (早すぎると YASB が古い状態を読んで再構築する)
     Sleep, 4000
+    ; replace-configuration はkomorebi.json由来のワークスペース名
+    ; (デフォルトの1始まり) に戻してしまい、起動時のみ実行される
+    ; startup.ps1のworkspace-nameリネーム(サブモニターを6-9にする)が
+    ; 失われてしまう (実機で確認済み: サブモニターの表示が1始まりに
+    ; 戻ってしまう不具合)。ここでも同じリネームをやり直す
+    SysGet, monitorCount, MonitorCount
+    if (monitorCount > 1) {
+        Run, komorebic workspace-name 1 0 6, , Hide
+        Run, komorebic workspace-name 1 1 7, , Hide
+        Run, komorebic workspace-name 1 2 8, , Hide
+        Run, komorebic workspace-name 1 3 9, , Hide
+    }
     ; YASB のウィジェットも watch_config 経由で再構築 (バー再起動なし)
     Run, %ComSpec% /c copy /y "C:\Users\tnaru\.config\yasb\config.yaml" "%A_Temp%\yasb-reapply.yaml" & copy /y "%A_Temp%\yasb-reapply.yaml" "C:\Users\tnaru\.config\yasb\config.yaml", , Hide
     Sleep, 2000

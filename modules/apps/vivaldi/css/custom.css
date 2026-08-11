@@ -40,6 +40,13 @@
        付けても面積が無く見えない。position/topには触れず高さだけ足す */
     height: 28px !important;
 }
+/* #titlebarの親(.auto-hide-wrapper.top) にもair-zenify.css側で同じ
+   ガラス背景 (var(--bg)+blur) が別途かかっており、#titlebar自身の
+   背景と二重に重なってタブバーより濃く見えていた (CDPで両方とも
+   rgba(0,0,0,0.22)であることを確認済み)。親側は打ち消して1層だけにする */
+.auto-hide-wrapper.top {
+    background-color: transparent !important;
+}
 
 #browser.win .window-buttongroup button {
     width: 12px !important;
@@ -80,13 +87,9 @@
     background-color: #965d5d !important;
 }
 
-/* タイトルバー内のボタン群以外の要素 (テキスト、アイコン等) をすべて非表示 */
-#titlebar > *:not(.window-buttongroup) {
-    display: none !important;
-}
-#titlebar .vivaldi,
-#titlebar .title,
-.vivaldi-button-wrapper {
+/* ウィンドウタイトルのテキストだけ非表示にする。Vivaldiメニュー
+   ボタン (左上のハンバーガー) は復活させる */
+#titlebar .title {
     display: none !important;
 }
 

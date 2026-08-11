@@ -11,74 +11,21 @@
  */
 
 /* ==========================================================================
-   macOS風ウィンドウコントロール (最小化・最大化・閉じるボタン) の色・並び順
+   信号ボタン (最小化・最大化・閉じるボタン) は非表示にする
    ========================================================================== */
-#browser.win .window-buttongroup {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    margin-left: auto !important;
-    margin-right: 12px !important;
-    -webkit-app-region: no-drag !important;
-}
-
-/* タイトルバー(#titlebar)自体の表示・位置・自動非表示ロジックは
-   AirZenify標準のまま一切変更しない (信号ボタンの色以外)。
-   ガラス背景を追加したり位置をpxで補正する試みを何度か行ったが、
-   AirZenifyのタイトルバーはposition:absoluteかつ高さ0のアンカーを
-   基準にしており、そのオフセットがモニタのDPIスケーリングによって
-   変動するため、固定px値での補正はモニタが変わるたびに崩れることが
-   判明した (実機で複数モニタを跨いで再現・確認済み)。深追いすると
-   同じ不具合の繰り返しになるため、AirZenify標準の「ホバー時に右上へ
-   信号ボタンが素の見た目で現れる」動作をそのまま採用し、色だけ変える */
-
-/* タイトルバー内のボタン群以外の要素 (テキスト、アイコン等) をすべて非表示 */
-#titlebar > *:not(.window-buttongroup) {
+/* AirZenify標準の `.window-buttongroup { position:absolute; top:0 }` は
+   位置基準の親要素 (高さ0のアンカー、実体はCSS transformでスライド
+   イン/アウトするネイティブの自動非表示機構) 自体がモニタのDPI
+   スケーリングや表示状態によって位置が変動し、常にウィンドウ上端で
+   クリップされて下半分しか見えない不具合があった。position:staticへ
+   変更する・px固定値で補正する等、複数の方法を試したが安定させられ
+   なかった (実機で複数モニタを跨いで再現・確認済み)。CSSだけで
+   このtransformベースの位置決めを外側から安定して制御するのは
+   難しいと判断し、ボタン自体を非表示にした。ウィンドウの最小化・
+   最大化・閉じるはタスクバーやWindowsのショートカット (Alt+F4、
+   Win+↓ 等) で操作する */
+.window-buttongroup {
     display: none !important;
-}
-#titlebar .vivaldi,
-#titlebar .title,
-.vivaldi-button-wrapper {
-    display: none !important;
-}
-
-#browser.win .window-buttongroup button {
-    width: 12px !important;
-    height: 12px !important;
-    border-radius: 50% !important;
-    margin: 0 13px !important; /* 間隔: 隙間26px (左右13px) */
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    fill: transparent !important;
-}
-#browser.win .window-buttongroup button svg {
-    display: none !important;
-}
-
-/* 並び順: 緑(最小化) -> 黄(最大化) -> 赤(閉じる)、カスタムカラー */
-#browser.win .window-buttongroup button.window-minimize {
-    order: 1 !important;
-    background-color: #929c79 !important; /* Green */
-}
-#browser.win .window-buttongroup button.window-minimize:hover {
-    background-color: #838d6d !important;
-}
-#browser.win .window-buttongroup button.window-maximize,
-#browser.win .window-buttongroup button.window-restore {
-    order: 2 !important;
-    background-color: #ceab88 !important; /* Yellow */
-}
-#browser.win .window-buttongroup button.window-maximize:hover,
-#browser.win .window-buttongroup button.window-restore:hover {
-    background-color: #bf9b78 !important;
-}
-#browser.win .window-buttongroup button.window-close {
-    order: 3 !important;
-    background-color: #a86c6c !important; /* Red */
-}
-#browser.win .window-buttongroup button.window-close:hover {
-    background-color: #965d5d !important;
 }
 
 /* ==========================================================================

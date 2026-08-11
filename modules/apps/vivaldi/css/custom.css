@@ -44,8 +44,16 @@
    ガラス背景 (var(--bg)+blur) が別途かかっており、#titlebar自身の
    背景と二重に重なってタブバーより濃く見えていた (CDPで両方とも
    rgba(0,0,0,0.22)であることを確認済み)。親側は打ち消して1層だけにする */
+/* Vivaldi 7.9+ ネイティブのフローティング自動非表示バー自体に付く
+   box-shadow (1pxの縁取り + 右下方向のドロップシャドウ、CDPで実測確認
+   済み: `rgba(0,0,0,0.1) 0 0 0 1px, rgba(0,0,0,0.3) 0 3px 10px 0`) が、
+   下方向のスライドインアニメーションと組み合わさって「斜め右下に厚みが
+   伸びながら浮き上がる」ように見えていた。air-zenify.css/custom.cssの
+   どちらにも由来せずVivaldi本体の意匠のため、フラットに見せたい場合は
+   ここで打ち消す */
 .auto-hide-wrapper.top {
     background-color: transparent !important;
+    box-shadow: none !important;
 }
 
 #browser.win .window-buttongroup button {

@@ -125,7 +125,30 @@ Return
 ; gui-startupイベントでspawn_window生成と同時にpositionを渡しても、
 ; いずれも実機で効果が無いことを確認済み)。--position はwezterm-gui start
 ; 自体のCLI引数として使えるため、これを直接使う
+; komorebic query の出力を一時ファイル経由で受け取る。
+; WScript.Shell.Exec は (AHKのRun ", , Hide" と違って) コンソールウィンドウを
+; 完全に隠せず一瞬表示することがあり、それをkomorebiが新規ウィンドウとして
+; 検知してフォーカス/ワークスペースを奪ってしまう副作用があったため、
+; 確実に隠せるAHKネイティブのRunWaitに戻した
+KomorebicQuery(queryName) {
+    outFile := A_Temp . "\komorebi-query-" . queryName . ".txt"
+    FileDelete, %outFile%
+    RunWait, %ComSpec% /c komorebic query %queryName% > "%outFile%" 2>nul, , Hide
+    FileRead, result, %outFile%
+    return Trim(result, " `t`r`n")
+}
+
 LaunchWeztermOnCursorMonitor(extraArgs) {
+    ; ALT+1等でワークスペースを切り替えた直後 (特に空ワークスペースへの
+    ; 切り替え時) は mouse_follows_focus によるカーソル移動が非同期で、
+    ; 直後にこの関数が呼ばれるとカーソルがまだ古いモニタに残っていることが
+    ; ある (レースコンディション)。その状態で --position にカーソル座標を
+    ; 渡すと意図しないモニタ/ワークスペースに開かれてしまうため、
+    ; spawn前に「現在フォーカス中のモニタ/ワークスペース」を明示的に
+    ; 問い合わせておき、起動後に強制的にそこへ移動させることで確実にする
+    focusedMonitor := KomorebicQuery("focused-monitor-index")
+    focusedWorkspace := KomorebicQuery("focused-workspace-index")
+
     CoordMode, Mouse, Screen
     MouseGetPos, CursorX, CursorY
     ; Run,コマンドはカンマを自身の引数区切りとして解釈するため、
@@ -161,6 +184,15 @@ LaunchWeztermOnCursorMonitor(extraArgs) {
         if (newHwnd) {
             WinActivate, ahk_id %newHwnd%
             WinWaitActive, ahk_id %newHwnd%, , 1
+            ; komorebiがカーソル位置で決めた配置先が、実際に切り替え先
+            ; だったワークスペースと異なる場合に備えて強制的に揃える。
+            ; komorebi側が新規ウィンドウを完全に管理下に置くまで間があるため
+            ; (500ms未満だと move-to-monitor-workspace が反映されないことを
+            ; 実機で確認済み)、ある程度待ってから実行する
+            if (focusedMonitor != "" && focusedWorkspace != "") {
+                Sleep, 500
+                Run, komorebic move-to-monitor-workspace %focusedMonitor% %focusedWorkspace%, , Hide
+            }
             Break
         }
     }

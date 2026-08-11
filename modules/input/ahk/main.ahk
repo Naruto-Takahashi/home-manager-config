@@ -69,29 +69,12 @@ Return
 ; =============================================================================
 ; スペースキー拡張設定 (SandS & Vim Mode)
 ; =============================================================================
-
-; --- SandS (Space and Shift) 挙動 of 定義 ---
-; 単押し時：スペース文字を出力
-Space Up::Send, {Space}
-; Shift + Space時：スペース文字を出力（連続入力可能）
-+Space::Send, {Space}
-
-; --- Vim風カーソル移動 (Space + HJKL) ---
-Space & h::Send {Blind}{Left}
-; NOTE: 下方向への移動
-Space & j::Send {Blind}{Down}
-; NOTE: 上方向への移動
-Space & k::Send {Blind}{Up}
-Space & l::Send {Blind}{Right}
-
-; --- ナビゲーションの拡張定義 ---
-Space & a::Send {Blind}{Home} ; 行頭移動
-Space & e::Send {Blind}{End}  ; 行末移動
-
-; --- テキスト編集用ショートカット ---
-Space & u:: Send, ^z          ; 元に戻す (Undo)
-Space & b:: Send, {Backspace} ; バックスペース (Backspace)
-Space & x:: Send, {Delete}    ; デリート (Delete)
+; kanata (modules/input/kanata/config.kbd の nav レイヤー) に完全移植済みの
+; ため削除。AHKの "Key & Key" カスタムコンビネーションは #If ガードが
+; false でも物理キー自体を常にフックしてしまう (コンボ検知のため) 仕様が
+; あり、Space Up::Send, {Space} がkanataのspc-nav (tap-hold-press) と
+; 同時に発火してSpaceキーが常に二重入力される不具合の原因になっていた
+; (実機でAHK単体停止により再現・解消を確認済み)。
 
 #If !KanataActive() && WinActive("ahk_exe wezterm-gui.exe")
 ; WezTermアクティブ時はCtrl+Space/Ctrl+;を透過してLeaderキーとして機能させつつ，IMEをOFFにする

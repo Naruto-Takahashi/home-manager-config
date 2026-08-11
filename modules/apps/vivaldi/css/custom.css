@@ -150,3 +150,13 @@
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
 }
+/* パネルアイコンが縦に並ぶ切り替えバー (#switch) は .panel-group の
+   兄弟要素 (#panels-container > #panels > .panel-group、#panels-container
+   > #switch という構造、CDPで確認済み) で3層重ね解消時に背景を巻き込みで
+   消してしまっていた。.panel-groupとは兄弟なので二重重ねの心配はなく、
+   ここだけ単独で背景を付け直す */
+#panels-container.expanded #switch {
+    background-color: var(--bg) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}

@@ -22,6 +22,21 @@
     -webkit-app-region: no-drag !important;
 }
 
+/* AirZenifyは信号ボタンを position:absolute で#headerの外側に独立配置して
+   いるため、#headerがopacity:0で折りたたまれてもボタンの高さ(26〜31px)分
+   だけ下端がはみ出て見える。ヘッダーと同じ「ホバー(自動非表示解除)時のみ
+   表示」に揃える。auto-hide-visibleはVivaldiがJSでマウス位置に応じて
+   #browserへ付け外しするクラス (CDPでcomputedStyleを確認して特定した) */
+.window-buttongroup {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease !important;
+}
+.auto-hide-visible .window-buttongroup {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
 /* タイトルバー内のボタン群以外の要素 (テキスト、アイコン等) をすべて非表示 */
 #titlebar > *:not(.window-buttongroup) {
     display: none !important;
@@ -88,4 +103,18 @@
     margin-bottom: 0 !important;
     display: flex !important;
     align-items: center !important;
+}
+
+/* ==========================================================================
+   自動非表示時、内側に影付きの余白 (内枠) が残ってしまうのを解消する
+   ========================================================================== */
+/* AirZenifyの#webpage-stackはinset box-shadowで縁取りを付けるが、
+   自動非表示モード向けのリセットルールが `.auto-hide #browser ...`
+   (子孫セレクタ、.auto-hideが別祖先要素である前提) と書かれている一方、
+   実際は auto-hide クラスは #browser 要素自身に付与されており
+   (CDPで確認済み)、このリセット自体が一度もマッチしていなかった。
+   正しい複合セレクタで明示的に消す */
+#browser.auto-hide:not(.fullscreen) #webpage-stack {
+    box-shadow: none !important;
+    margin: 0 !important;
 }

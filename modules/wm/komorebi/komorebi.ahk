@@ -132,7 +132,38 @@ LaunchWeztermOnCursorMonitor(extraArgs) {
     ; screen:X,Y のカンマをそのまま埋め込むと途中で切れてしまう。
     ; 変数に組み立ててから渡すことでカンマをコマンド文字列の一部として扱う
     fullCmd := "wezterm-gui start --always-new-process --position screen:" . CursorX . "," . CursorY . extraArgs
+
+    ; spawn直後、komorebiのタイル配置処理(SetWindowPos等)にフォーカスを
+    ; 奪われてしまい前面のウィンドウのまま変わらないことがある。
+    ; spawn前後のwezterm-gui.exeウィンドウID一覧を比較して新規ウィンドウを
+    ; 特定し、明示的にアクティブ化することで確実にフォーカスさせる
+    WinGet, beforeList, List, ahk_exe wezterm-gui.exe
     Run, %fullCmd%
+
+    Loop, 40 {
+        Sleep, 50
+        WinGet, afterList, List, ahk_exe wezterm-gui.exe
+        newHwnd := 0
+        Loop, %afterList% {
+            id := afterList%A_Index%
+            isNew := true
+            Loop, %beforeList% {
+                if (id = beforeList%A_Index%) {
+                    isNew := false
+                    Break
+                }
+            }
+            if (isNew) {
+                newHwnd := id
+                Break
+            }
+        }
+        if (newHwnd) {
+            WinActivate, ahk_id %newHwnd%
+            WinWaitActive, ahk_id %newHwnd%, , 1
+            Break
+        }
+    }
 }
 
 ; --- モニタ抜き差し時の自動復旧処理本体 ---

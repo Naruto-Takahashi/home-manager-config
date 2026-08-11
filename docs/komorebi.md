@@ -71,6 +71,7 @@ Windows環境のタイル型ウィンドウマネージャ **komorebi** の操�
 | **`Alt + Y`** | WezTerm 上で yazi を起動 | **Y**azi |
 | **`Alt + N`** | WezTerm 上で nvim を起動 | **N**eovim |
 | **`Alt + V`** | Vivaldi を起動 | **V**ivaldi |
+| **`Alt + W`** | 壁紙ピッカー (Vivaldi app-modeポップアップ)。壁紙選択後、その場で顕著性ベースの色候補もクリックで試せる | **W**allpaper |
 
 ---
 

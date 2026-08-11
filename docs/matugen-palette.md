@@ -72,7 +72,7 @@
 
 | ホスト | 配置先 | ピッカー |
 | :--- | :--- | :--- |
-| **WSL** | `<Windowsユーザープロファイル>\Pictures\wallpapers`<br>(WSL側からは `/mnt/c/Users/<user>/Pictures/wallpapers`) | YASBの `wallpapers` ウィジェット、または `wallpaper-pick.sh` (ALT+W, fzf) |
+| **WSL** | `<Windowsユーザープロファイル>\Pictures\wallpapers`<br>(WSL側からは `/mnt/c/Users/<user>/Pictures/wallpapers`) | YASBの `wallpapers` ウィジェット、`ALT+W` (`wallpaper-pick-popup.sh`, Vivaldiポップアップ + 色候補クリック適用)、または `wallpaper-pick` (fzf端末版) |
 | **Mac** | `~/Pictures/Wallpapers` | `ctrl-cmd-w` (Vivaldiポップアップ、`wallpaper-pick-gui.py`) / `wallpaper-pick` (fzf端末版)。`MATUGEN_WALLPAPER_DIR` 環境変数で変更可 |
 | **NixOS (Hyprland)** | `~/Pictures/wallpapers` | rofiの壁紙ピッカー (`wppicker.sh`) |
 
@@ -123,6 +123,18 @@
   必ず reapply を実行する**こと。
 - `--reapply` は `~/.cache/matugen/last-wallpaper` に記録された前回の壁紙から
   フル再生成する (テンプレート更新も反映される)。
+- 壁紙変更の入口は3つ:
+  - YASBの `wallpapers` ウィジェット (run_after で matugen-apply)
+  - `ALT+W` → `wallpaper-pick-popup.sh` (Mac版と同じ設計) がWSL側で
+    ローカルHTTPサーバ (`wallpaper-pick-gui.py`) を起動し、Windows側の
+    Vivaldiをapp-modeで開いてサムネイルグリッドをポップアップ表示する
+    (WSL2のlocalhostフォワーディングで到達できるため追加設定不要)。
+    壁紙をクリックすると即座に反映され、`suggest-accent.py` による
+    顕著性ベースの色候補がその場に表示される。候補をクリックすると
+    `color-overrides.conf` に登録して即再反映、手動hex入力や
+    「自動抽出に戻す」も可能。Mac版と違い選択後もウィンドウは自動で
+    閉じない (色候補を試しながら比較できるようにするため)
+  - `wallpaper-pick` (fzfのターミナル版)
 
 ### NixOS (Hyprland)
 
@@ -293,7 +305,7 @@ Mac側 (`modules/apps/aerospace/launch-borders.sh` のAeroSpace枠色フォー�
 | パレット抽出 | palette.css の CSS変数から | mac-palette.css の CSS変数から (WSLと同じ変数名) | matugen が colors.lua を直接生成 |
 | 色相回転・プレースホルダ後処理 (yazi/lazygit) | `modules/theming/matugen/lib/` (共通) | `modules/theming/matugen/lib/` (共通) | `modules/theming/matugen/lib/` (共通) |
 | starship 生成方式 | render-template.sh (共通テンプレート) | render-template.sh (共通テンプレート) | render-template.sh (共通テンプレート) |
-| 壁紙変更の入口 | YASBウィジェット / ALT+W (fzf) | `ctrl-cmd-w` (Vivaldiポップアップ) / `wallpaper-pick` (fzf) | rofi (`wppicker.sh`) |
+| 壁紙変更の入口 | YASBウィジェット / `ALT+W` (Vivaldiポップアップ) / `wallpaper-pick` (fzf) | `ctrl-cmd-w` (Vivaldiポップアップ) / `wallpaper-pick` (fzf) | rofi (`wppicker.sh`) |
 | WM枠色の反映方式 | komorebi.json を sed → 同期 reload | `borders` へ同じコマンドを再実行 (IPCで生きたまま更新) | hyprland の post_hook |
 | 反映先が Windows | あり (/mnt/c へ配置 + sed) | なし | なし |
 

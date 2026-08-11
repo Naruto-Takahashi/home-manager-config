@@ -341,5 +341,5 @@ function matugen-suggest-color() {
     python3 "$HOME/ghq/github.com/Naruto-Takahashi/nix-config/modules/theming/matugen/lib/suggest-accent.py" \
         "$wallpaper" "${1:-5}"
     echo
-    echo "気に入った色があれば: matugen-set-color '#RRGGBB'"
+    echo "Like one? matugen-set-color '#RRGGBB'"
 }

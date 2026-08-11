@@ -22,4 +22,12 @@
     source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/modules/theming/matugen/wsl/matugen-apply.sh";
     force = true;
   };
+  home.file.".local/bin/wallpaper-pick" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/modules/theming/matugen/wsl/wallpaper-pick.sh";
+    force = true;
+  };
+  home.file.".local/bin/wallpaper-pick-popup" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/modules/theming/matugen/wsl/wallpaper-pick-popup.sh";
+    force = true;
+  };
 }

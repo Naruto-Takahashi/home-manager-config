@@ -103,6 +103,8 @@ HandleDisplayChange(wParam, lParam) {
 !y::LaunchWeztermOnCursorMonitor(" -- wsl.exe --cd ~ -e zsh -ic yazi")
 ; ALT+N: WezTerm で nvim
 !n::LaunchWeztermOnCursorMonitor(" -- wsl.exe --cd ~ -e zsh -ic nvim")
+; ALT+W: 壁紙ピッカー (Vivaldiのapp-modeポップアップ、色候補もその場で試せる)
+!w::Run, wsl.exe -e /home/nalt/.local/bin/wallpaper-pick-popup, , Hide
 ; ALT+V: Vivaldi (Chromium系は --window-position=X,Y でカーソルのあるモニタに開く)
 !v::
     CoordMode, Mouse, Screen

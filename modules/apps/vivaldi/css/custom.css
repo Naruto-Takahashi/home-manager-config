@@ -28,6 +28,19 @@
     -webkit-app-region: no-drag !important;
 }
 
+/* air-zenify.css に `#browser #titlebar { background: transparent !important; }`
+   という行があり、タイトルバーが常に透明になる直接の原因になっている。
+   位置には一切触れず、詳細度を合わせて背景だけ上書きする
+   (以前は位置も同時にいじって共倒れしたため、今回は分離する) */
+#browser #titlebar {
+    background-color: var(--bg) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    /* #titlebar自体は高さ0の位置決め専用要素のままなので、背景色を
+       付けても面積が無く見えない。position/topには触れず高さだけ足す */
+    height: 28px !important;
+}
+
 #browser.win .window-buttongroup button {
     width: 12px !important;
     height: 12px !important;

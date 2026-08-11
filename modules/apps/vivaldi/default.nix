@@ -20,11 +20,15 @@ let
 in
 {
   # --- VivaldiカスタムCSS設定 ---
-  # Vivaldi設定のCSS UI Mods Directoryを ~/.config/vivaldi (home-manager管理)
-  # に向けている (Settings > Appearance > Custom UI Modification)。
-  # \\wsl.localhost\... 経由でWindows側から直接参照されるため、
-  # home-manager switch すればWSL/Windows間の同期は不要で即座に反映される。
-  # custom.css はAirZenifyにない独自要素 (信号ボタンの色・タブ高さ) のみ持つ。
+  # Windows(Vivaldi)からWSL側のシンボリックリンクを \\wsl.localhost\...
+  # 経由で直接読ませると、リンク先を辿れずリンク文字列そのもの(数十バイト)を
+  # 読んでしまい、CSSが一切適用されない不具合がある (実機で確認済み。
+  # mkOutOfStoreSymlinkもfetchurlの結果もどちらもシンボリックリンクのため
+  # 影響を受ける)。そのため他のWindows向け設定 (wezterm/komorebi/yasb等)
+  # と同じく、sync-win (cp -L で実体を解決してコピー) で
+  # C:\Users\tnaru\Tools\Vivaldi\ へ配置し、Vivaldi設定のCSS UI Mods
+  # DirectoryもそちらへUIから向ける。custom.css はAirZenifyにない
+  # 独自要素 (信号ボタンの色・タブ高さ) のみ持つ。
   xdg.configFile."vivaldi/custom.css" = {
     source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/modules/apps/vivaldi/css/custom.css";
     force = true;

@@ -281,6 +281,10 @@ function sync-win() {
     cp -rL ~/.config/yasb/* /mnt/c/Users/tnaru/.config/yasb/
     # matugen生成済みパレットがあればstyles.cssに再適用します．
     [ -x ~/.local/bin/matugen-apply ] && ~/.local/bin/matugen-apply --reapply
+    echo "Syncing Vivaldi CSS..."
+    mkdir -p /mnt/c/Users/tnaru/Tools/Vivaldi
+    cp -L ~/.config/vivaldi/custom.css /mnt/c/Users/tnaru/Tools/Vivaldi/custom.css
+    cp -L ~/.config/vivaldi/air-zenify.css /mnt/c/Users/tnaru/Tools/Vivaldi/air-zenify.css
     echo "Syncing kanata (Windows)..."
     mkdir -p /mnt/c/Users/tnaru/.config/kanata-wsl
     cp -L ~/.local/bin/kanata-windows.exe /mnt/c/Users/tnaru/.config/kanata-wsl/kanata-windows.exe

@@ -18,11 +18,4 @@
     source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/modules/input/ahk/lib/ime_functions.ahk";
     force = true;
   };
-  # kanataのalt-layer(Tabキー)からcmdアクションで都度起動される
-  # (modules/input/kanata/wsl-config.nix 参照)。Windows標準のAlt+Tab
-  # ウィンドウ切り替えを疑似的な押しっぱなし挙動で再現するためのスクリプト。
-  xdg.configFile."ahk/alt-tab-step.ahk" = {
-    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/modules/input/ahk/alt-tab-step.ahk";
-    force = true;
-  };
 }

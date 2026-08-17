@@ -35,15 +35,25 @@ config.audible_bell = "Disabled"
 -- 見つからない場合は何もしない(デフォルトのまま)ので設定が壊れることはない。
 -- 実際に選ばれた配色スキームの背景色 (タブバーのBAR_BG計算で使う)。
 -- スキームが見つからない場合のフォールバックは黒 (従来どおり)。
+-- config.color_scheme (名前指定) とconfig.colorsを併用すると、
+-- selection_bg/selection_fgだけはWezTerm側の既知の癖でスキームの値が
+-- 優先されてしまい、cursor_bg等は正しく上書きされるのに選択ハイライト
+-- だけMatugen配色から浮いて見える不具合になっていた (実機で確認済み)。
+-- 本来ANSI16色パレットだけを拝借したいので、color_schemeとしては
+-- 設定せず、ansi/brightsだけ抜き出してconfig.colorsに直接統合する
+-- (これで selection_bg/fg を含め全キーがMatugen色で確実に上書きされる)
 local scheme_background = "#000000"
+local scheme_ansi = nil
+local scheme_brights = nil
 do
   local ok_schemes, schemes = pcall(function() return wezterm.color.get_builtin_schemes() end)
   if ok_schemes and schemes then
     local candidates = { "Kanagawa Dragon (Gogh)", "Kanagawa (Gogh)", "kanagawabones" }
     for _, name in ipairs(candidates) do
       if schemes[name] then
-        config.color_scheme = name
         scheme_background = schemes[name].background or scheme_background
+        scheme_ansi = schemes[name].ansi
+        scheme_brights = schemes[name].brights
         break
       end
     end
@@ -118,6 +128,8 @@ local bg_r, bg_g, bg_b = hex_to_rgb(scheme_background)
 local BAR_BG = string.format("rgba(%d, %d, %d, 0.85)", bg_r, bg_g, bg_b)
 
 config.colors = {
+  ansi = scheme_ansi,
+  brights = scheme_brights,
   tab_bar = {
     background = BAR_BG,
     -- 実際のタブ描画は下の format-tab-title が行うため，ここは保険の既定値
@@ -131,6 +143,11 @@ config.colors = {
   cursor_bg = colors.tertiary,
   cursor_fg = colors.surface,
   cursor_border = colors.tertiary,
+  -- selection_bg/fgが未指定だとWezTerm組み込みの既定色にフォールバックし、
+  -- 行選択時だけMatugen由来の配色から浮いて見えていた。カーソルと同じ
+  -- 配色 (tertiary/surface) に揃える
+  selection_bg = colors.tertiary,
+  selection_fg = colors.surface,
 }
 
 -- タブの形状: 平行四辺形 (左下三角 + 本体 + 右上三角)．

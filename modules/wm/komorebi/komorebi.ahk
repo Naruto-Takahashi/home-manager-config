@@ -210,8 +210,12 @@ ReapplyDisplayConfig:
     ; startup.ps1のworkspace-nameリネーム(サブモニターを6-9にする)が
     ; 失われてしまう (実機で確認済み: サブモニターの表示が1始まりに
     ; 戻ってしまう不具合)。ここでも同じリネームをやり直す
+    ; ensure-workspacesも起動時(startup.ps1)のみの実行で、これが無いと
+    ; サブモニター側の空ワークスペースが実体化されずYASBの空ドット表示が
+    ; 出なくなる (実機で確認済み)。workspace-nameより前に必ず実行する
     SysGet, monitorCount, MonitorCount
     if (monitorCount > 1) {
+        Run, komorebic ensure-workspaces 1 4, , Hide
         Run, komorebic workspace-name 1 0 6, , Hide
         Run, komorebic workspace-name 1 1 7, , Hide
         Run, komorebic workspace-name 1 2 8, , Hide
